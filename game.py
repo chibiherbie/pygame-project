@@ -12,8 +12,9 @@ if __name__ == '__main__':
     running = True
 
     all_sprites = pygame.sprite.Group()
+    level = pygame.sprite.Group()
     hero = pygame.sprite.Group()
-    Hero('data/image/hero/hero_2.jpg', all_sprites, hero)
+    hero = Hero('data/image/hero/hero_2.jpg', 0, 0, all_sprites, hero)
 
     pygame.mouse.set_visible(False)
 
