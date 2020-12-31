@@ -1,5 +1,6 @@
 import pygame
 from hero import Hero
+from level import Level
 
 
 if __name__ == '__main__':
@@ -14,9 +15,8 @@ if __name__ == '__main__':
     all_sprites = pygame.sprite.Group()
     level = pygame.sprite.Group()
     hero = pygame.sprite.Group()
-    hero = Hero('data/image/hero/hero_2.jpg', 0, 0, all_sprites, hero)
-
-    pygame.mouse.set_visible(False)
+    Hero('data/image/hero/hero_2.jpg', 100, 100, all_sprites, hero)
+    Level('data/maps/map1.txt', level, all_sprites)
 
     # основной цикл
     while running:
@@ -37,7 +37,8 @@ if __name__ == '__main__':
             if key[pygame.K_LEFT]:
                 hero.update(-10, 0)
 
-        all_sprites.draw(screen)  # рисуем игрока
+        all_sprites.draw(screen)  # рисуем всё
+        hero.draw(screen)
 
         pygame.display.flip()
 

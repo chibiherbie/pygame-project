@@ -8,7 +8,7 @@ class Hero(pygame.sprite.Sprite):
         self.image = pygame.image.load(os_name)
         self.image = pygame.transform.scale(self.image, (100, 100))  # размер ихображения
 
-        self.rect = self.image.get_rect().move(tile_width * pos_x + 15, tile_height * pos_y + 5)
+        self.rect = self.image.get_rect().move(pos_x,pos_y)
 
         self.x, self.y = 0, 0
 
