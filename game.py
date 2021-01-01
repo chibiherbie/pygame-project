@@ -3,6 +3,8 @@ from hero import Hero
 from level import Level
 
 
+FPS = 30
+
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('GAME')
@@ -12,11 +14,14 @@ if __name__ == '__main__':
 
     running = True
 
+    time = pygame.time.Clock()
+
     all_sprites = pygame.sprite.Group()
     level = pygame.sprite.Group()
+    wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
-    Hero('data/image/hero/hero_2.jpg', 100, 100, all_sprites, hero)
-    Level('data/maps/map1.txt', level, all_sprites)
+    Hero('data/image/hero/example.png', 100, 100, wall, all_sprites, hero)
+    Level('data/maps/map1.txt', level, all_sprites, wall)
 
     # основной цикл
     while running:
@@ -39,6 +44,8 @@ if __name__ == '__main__':
 
         all_sprites.draw(screen)  # рисуем всё
         hero.draw(screen)
+
+        time.tick(FPS)
 
         pygame.display.flip()
 

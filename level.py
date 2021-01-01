@@ -10,9 +10,10 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, name_level, lvl, sprite):
+    def __init__(self, name_level, lvl, sprite, wall):
         self.lvl = lvl
         self.all_sprite = sprite
+        self.wall = wall
         self.generate_level(self.load_level(name_level))
 
     def load_level(self, filename):
@@ -33,14 +34,14 @@ class Level:
                 if level[y][x] == '.':
                     Tile('empty', x, y, self.lvl, self.all_sprite)
                 elif level[y][x] == '#':
-                    Tile('floor', x, y, self.lvl, self.all_sprite)
+                    Tile('floor', x, y, self.wall, self.all_sprite)
                 else:
                     pass
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, tile_type, pos_x, pos_y, tiles_group, all_sprites):
-        super().__init__(tiles_group, all_sprites)
+    def __init__(self, tile_type, pos_x, pos_y, *group):
+        super().__init__(*group)
         self.image = tile_images[tile_type]
 
         self.image = pygame.transform.scale(self.image, (50, 50))  # размер изображения
