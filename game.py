@@ -3,7 +3,7 @@ from hero import Hero
 from level import Level
 
 
-FPS = 30
+FPS = 50
 
 if __name__ == '__main__':
     pygame.init()
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     level = pygame.sprite.Group()
     wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
-    Hero('data/image/hero/example.png', 100, 100, wall, all_sprites, hero)
+    player = Hero('data/image/hero/example.png', 100, 600, wall, all_sprites, hero)
     Level('data/maps/map1.txt', level, all_sprites, wall)
 
     # основной цикл
@@ -33,14 +33,23 @@ if __name__ == '__main__':
 
             # перемещение персонажа
             key = pygame.key.get_pressed()
-            if key[pygame.K_DOWN]:
-                hero.update(0, 10)
+            # if key[pygame.K_DOWN]:
+            #     hero.update(0, 1)
             if key[pygame.K_UP]:
-                hero.update(0, -10)
+                hero.update(0, -1)
             if key[pygame.K_RIGHT]:
                 hero.update(10, 0)
             if key[pygame.K_LEFT]:
                 hero.update(-10, 0)
+
+        if not player.isGround:
+            player.rect.y += player.speed
+            player.speed += 0.2
+
+            if pygame.sprite.spritecollideany(player, wall):
+                player.rect.y -= player.speed
+                player.speed = -4
+                player.isGround = True
 
         all_sprites.draw(screen)  # рисуем всё
         hero.draw(screen)
