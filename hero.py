@@ -14,16 +14,14 @@ class Hero(pygame.sprite.Sprite):
 
         self.wall = wall
         self.isGround = True
-        self.speed = -4
+        self.speed = -5
 
     def update(self, x, y):
         self.rect.x += x
-        self.rect.y += y
 
         if pygame.sprite.spritecollideany(self, self.wall):
             self.isGround = True
             self.rect.x -= x
-            self.rect.y -= y
 
         if y:
             self.isGround = False

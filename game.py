@@ -16,10 +16,12 @@ if __name__ == '__main__':
 
     time = pygame.time.Clock()
 
+    # группы спрайтов
     all_sprites = pygame.sprite.Group()
     level = pygame.sprite.Group()
     wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
+
     player = Hero('data/image/hero/example.png', 100, 600, wall, all_sprites, hero)
     Level('data/maps/map1.txt', level, all_sprites, wall)
 
@@ -42,14 +44,16 @@ if __name__ == '__main__':
             if key[pygame.K_LEFT]:
                 hero.update(-10, 0)
 
+        # прыжок персонажа
         if not player.isGround:
             player.rect.y += player.speed
-            player.speed += 0.2
 
             if pygame.sprite.spritecollideany(player, wall):
                 player.rect.y -= player.speed
-                player.speed = -4
+                player.speed = -5
                 player.isGround = True
+            else:
+                player.speed += 0.2
 
         all_sprites.draw(screen)  # рисуем всё
         hero.draw(screen)
