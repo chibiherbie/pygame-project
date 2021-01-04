@@ -6,7 +6,7 @@ class Hero(pygame.sprite.Sprite):
         super().__init__(*group)  # вызываем конструктор родительского класса Sprite
 
         self.image = pygame.image.load(os_name)
-        self.image = pygame.transform.scale(self.image, (30, 50))  # размер ихображения
+        self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
 
         self.rect = self.image.get_rect().move(pos_x,pos_y)
 
@@ -29,17 +29,16 @@ class Hero(pygame.sprite.Sprite):
         self.rect.y += self.yvel
         self.rect.x += self.xvel
 
-        for i in self.wall:
-            if pygame.sprite.collide_rect(self, i):
+        for spr in self.wall:
+            if pygame.sprite.collide_rect(self, spr):
                 if self.yvel > 0:
-                    self.rect.bottom = i.rect.top
+                    self.rect.bottom = spr.rect.top
                     self.isGround = True
                     self.yvel = 0
-                if self.yvel < 0:
-                    self.rect.top = i.rect.bottom
-                    self.yvel = 0
 
-        print(self.yvel)
+                if self.yvel < 0:
+                    self.rect.top = spr.rect.bottom
+                    self.yvel = 0
 
         if pygame.sprite.spritecollideany(self, self.wall):
             self.rect.x -= self.xvel
@@ -48,13 +47,3 @@ class Hero(pygame.sprite.Sprite):
             if self.isGround:
                 self.yvel = -self.speed
                 self.isGround = False
-
-        # if not player.isGround:
-        #     player.rect.y += player.speed
-        #
-        #     if pygame.sprite.spritecollideany(player, wall):
-        #         player.rect.y -= player.speed
-        #         player.speed = -5
-        #         player.isGround = True
-        #     else:
-        #         player.speed += 0.2

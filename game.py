@@ -22,7 +22,7 @@ if __name__ == '__main__':
     wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
 
-    player = Hero('data/image/hero/example.png', 100, 600, wall, all_sprites, hero)
+    player = Hero('data/image/hero/example.png', 100, 400, wall, all_sprites, hero)
     Level('data/maps/map1.txt', level, all_sprites, wall)
 
     # основной цикл
@@ -43,6 +43,7 @@ if __name__ == '__main__':
                 hero.update(5, 0)
             if key[pygame.K_LEFT]:
                 hero.update(-5, 0)
+
             hero.update(0, 0)
 
         all_sprites.draw(screen)  # рисуем всё
