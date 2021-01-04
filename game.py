@@ -38,22 +38,12 @@ if __name__ == '__main__':
             # if key[pygame.K_DOWN]:
             #     hero.update(0, 1)
             if key[pygame.K_UP]:
-                hero.update(0, -1)
+                hero.update(0, 1)
             if key[pygame.K_RIGHT]:
-                hero.update(10, 0)
+                hero.update(5, 0)
             if key[pygame.K_LEFT]:
-                hero.update(-10, 0)
-
-        # прыжок персонажа
-        if not player.isGround:
-            player.rect.y += player.speed
-
-            if pygame.sprite.spritecollideany(player, wall):
-                player.rect.y -= player.speed
-                player.speed = -5
-                player.isGround = True
-            else:
-                player.speed += 0.2
+                hero.update(-5, 0)
+            hero.update(0, 0)
 
         all_sprites.draw(screen)  # рисуем всё
         hero.draw(screen)
