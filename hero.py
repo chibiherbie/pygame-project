@@ -29,11 +29,11 @@ class Hero(pygame.sprite.Sprite):
         self.rect.y += self.yvel
         self.rect.x += self.xvel
 
-        if pygame.sprite.spritecollideany(self, self.wall):  # стена ли перед нами
+        wall = pygame.sprite.spritecollide(self, self.wall, False)  # касаемся ли мы стен
+        if wall:  #
             self.rect.x -= self.xvel
 
-        for spr in self.wall:  # проверка на нахождения персонажа на земле
-            if pygame.sprite.collide_rect(self, spr):
+            for spr in pygame.sprite.spritecollide(self, self.wall, False):  # for spr in wall:
                 if self.yvel > 0:
                     self.rect.bottom = spr.rect.top
                     self.isGround = True
