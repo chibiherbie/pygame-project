@@ -6,8 +6,8 @@ from level import Level
 class Camera:
     # зададим начальный сдвиг камеры
     def __init__(self):
-        self.dx = 0
-        self.dy = 0
+        self.dx = player.rect.x
+        self.dy = player.rect.y
 
     # сдвинуть объект obj на смещение камеры
     def apply(self, obj):
@@ -16,8 +16,8 @@ class Camera:
 
     # позиционировать камеру на объекте target
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
-        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2)
+        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2) // 50
+        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2) // 50
 
 
 FPS = 60
@@ -32,8 +32,8 @@ if __name__ == '__main__':
     running = True
 
     # перемещение
-    x = 0
-    y = 0
+    p_x = 0
+    p_y = 0
 
     time = pygame.time.Clock()
 
@@ -60,14 +60,14 @@ if __name__ == '__main__':
         # if key[pygame.K_DOWN]:
         #     hero.update(0, 1)
         if key[pygame.K_UP]:
-            y = 1
+            p_y = 1
         if key[pygame.K_RIGHT]:
-            x = 5
+            p_x = 5
         if key[pygame.K_LEFT]:
-            x = -5
+            p_x = -5
 
-        hero.update(x, y)
-        x, y = 0, 0
+        hero.update(p_x, p_y)
+        p_x, p_y = 0, 0
 
         camera.update(player)
         for sprite in all_sprites:
