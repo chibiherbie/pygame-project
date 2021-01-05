@@ -3,7 +3,7 @@ from hero import Hero
 from level import Level
 
 
-FPS = 50
+FPS = 60
 
 if __name__ == '__main__':
     pygame.init()
@@ -13,6 +13,10 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
 
     running = True
+
+    # перемещение
+    x = 0
+    y = 0
 
     time = pygame.time.Clock()
 
@@ -33,18 +37,19 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
 
-            # перемещение персонажа
-            key = pygame.key.get_pressed()
-            # if key[pygame.K_DOWN]:
-            #     hero.update(0, 1)
-            if key[pygame.K_UP]:
-                hero.update(0, 1)
-            if key[pygame.K_RIGHT]:
-                hero.update(5, 0)
-            if key[pygame.K_LEFT]:
-                hero.update(-5, 0)
+        # перемещение персонажа
+        key = pygame.key.get_pressed()
+        # if key[pygame.K_DOWN]:
+        #     hero.update(0, 1)
+        if key[pygame.K_UP]:
+            y = 1
+        if key[pygame.K_RIGHT]:
+            x = 5
+        if key[pygame.K_LEFT]:
+            x = -5
 
-            hero.update(0, 0)
+        hero.update(x, y)
+        x, y = 0, 0
 
         all_sprites.draw(screen)  # рисуем всё
         hero.draw(screen)
