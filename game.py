@@ -66,7 +66,7 @@ if __name__ == '__main__':
         if key[pygame.K_LEFT]:
             p_x = -5
 
-        hero.update(p_x, p_y)
+        player.move(p_x, p_y)
         p_x, p_y = 0, 0
 
         camera.update(player)
@@ -74,6 +74,7 @@ if __name__ == '__main__':
             camera.apply(sprite)
 
         all_sprites.draw(screen)  # рисуем всё
+
         hero.draw(screen)
 
         time.tick(FPS)

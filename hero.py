@@ -15,10 +15,12 @@ class Hero(pygame.sprite.Sprite):
         self.speed = 7  # сила прыжка
         self.gravity = 0.3
 
+        self.anim = AnimatedSprite(pygame.image.load("data/image/hero/idle_anim.png"), 3, 1, 42, 60, group[0])
+
         self.xvel, self.yvel = 0, 0
 
     # передвижение персонажа
-    def update(self, x, y):
+    def move(self, x, y):
         self.xvel = x
 
         if not self.isGround:
@@ -47,3 +49,40 @@ class Hero(pygame.sprite.Sprite):
             if self.isGround:
                 self.yvel = -self.speed
                 self.isGround = False
+
+        self.image = self.anim.update()
+
+
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y, group):
+        super().__init__(group)
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(x, y)
+
+        self.upd = 0
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def update(self):
+        if self.upd == 0:
+            self.upd += 1
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            self.image = self.frames[self.cur_frame]
+            self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
+            return self.image
+        else:
+            self.upd += 1
+
+        if self.upd == 10:
+            self.upd = 0
+        return self.image
