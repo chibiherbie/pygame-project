@@ -1,4 +1,5 @@
 import pygame
+import os
 
 
 class Hero(pygame.sprite.Sprite):
@@ -14,7 +15,7 @@ class Hero(pygame.sprite.Sprite):
         self.speed = 7  # сила прыжка
         self.gravity = 0.3
 
-        self.anim = AnimatedSprite(pygame.image.load(os_name + '/idle_anim2.png'), 3, 1, pos_x, pos_y)
+        self.anim = AnimatedSprite(os_name, 3, 1, pos_x, pos_y)
         self.image = self.anim.image
         self.rect = self.anim.rect
 
@@ -22,6 +23,8 @@ class Hero(pygame.sprite.Sprite):
 
     # передвижение персонажа
     def move(self, x, y):
+        self.image = self.anim.update((x, y))
+
         self.xvel = x
 
         if not self.isGround:
@@ -51,34 +54,51 @@ class Hero(pygame.sprite.Sprite):
                 self.yvel = -self.speed
                 self.isGround = False
 
-        self.image = self.anim.update()
-
 
 class AnimatedSprite:
-    def __init__(self, sheet, columns, rows, x, y):
+    def __init__(self, folder, columns, rows, x, y):
         self.frames = []
-        self.cut_sheet(sheet, columns, rows)
+        self.anim = []
+
+        # os.listdir(folder) - получаем название всех файлов в папке
+        self.cut_sheet(folder, os.listdir(folder), columns, rows)
+
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
 
         self.upd = 0
+        self.move = 0
 
     # режим заготовку на кадры
-    def cut_sheet(self, sheet, columns, rows):
-        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
-                                sheet.get_height() // rows)
-        for j in range(rows):
-            for i in range(columns):
-                frame_location = (self.rect.w * i, self.rect.h * j)
-                cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
-                self.frames.append(pygame.transform.scale(cut, (35, 60)))
+    def cut_sheet(self, folder, sheets, columns, rows):
+        for count in range(len(sheets)):
+            sheet = pygame.image.load(folder + '/' + sheets[count])  # загружаем файл
 
-    def update(self):
+            self.rect = pygame.Rect(0, 0, sheet.get_width() // columns, sheet.get_height() // rows)
+            self.frames = []
+            for j in range(rows):
+                for i in range(columns):
+                    frame_location = (self.rect.w * i, self.rect.h * j)
+                    cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
+                    self.frames.append(pygame.transform.scale(cut, (35, 60)))
+            self.anim.append(self.frames)
+
+    def update(self, action):
+        # определяем направление
+        move = action[0]
+        if move != 0:
+            move = -(move // abs(move))
+
+        # прерываем прошлую анимацию, если началась новая
+        if self.move != move:
+            self.upd = 0
+        self.move = move
+
         if self.upd == 0:
             self.upd += 1
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.frames[self.cur_frame]
+            self.image = self.anim[move][self.cur_frame]
             return self.image
 
         self.upd += 1
