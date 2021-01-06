@@ -43,7 +43,7 @@ if __name__ == '__main__':
     wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
 
-    player = Hero('data/image/hero/example.png', 100, 400, wall, all_sprites, hero)
+    player = Hero('data/image/hero', 100, 400, wall, all_sprites, hero)
     Level('data/maps/map1.txt', level, all_sprites, wall)
     camera = Camera()
 
