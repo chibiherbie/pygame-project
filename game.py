@@ -42,9 +42,10 @@ if __name__ == '__main__':
     level = pygame.sprite.Group()
     wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
+    background = pygame.sprite.Group()
 
     player = Hero('data/image/hero', 100, 400, wall, all_sprites, hero)
-    Level('data/maps/map1.txt', level, all_sprites, wall)
+    Level('data/maps/map1.txt', level, all_sprites, wall, background)
     camera = Camera()
 
     # основной цикл
@@ -73,12 +74,13 @@ if __name__ == '__main__':
         for sprite in all_sprites:
             camera.apply(sprite)
 
+        background.draw(screen)
         all_sprites.draw(screen)  # рисуем всё
 
         hero.draw(screen)
 
-        time.tick(FPS)
-
+        a = time.tick(FPS)
+        print(a)
         pygame.display.flip()
 
     pygame.quit()

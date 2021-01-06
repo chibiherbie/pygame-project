@@ -10,11 +10,13 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, name_level, lvl, sprite, wall):
+    def __init__(self, name_level, lvl, sprite, wall, back):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
         self.generate_level(self.load_level(name_level))
+
+        Background(back)
 
     def load_level(self, filename):
         filename = filename
@@ -26,8 +28,8 @@ class Level:
         max_width = max(map(len, level_map))
 
         # дополняем каждую строку пустыми клетками ('.')
-        return list(map(lambda x: x.ljust(max_width, '.'), level_map))
-    
+        return level_map  # list(map(lambda x: x.ljust(max_width, '.'), level_map))
+
     def generate_level(self, level):
         for y in range(len(level)):
             for x in range(len(level[y])):
@@ -47,3 +49,13 @@ class Tile(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (50, 50))  # размер изображения
 
         self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
+
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = pygame.image.load('data/image/graphics/back.png')
+
+        # self.image = pygame.transform.scale(self.image, (50, 50))  # размер изображения
+
+        self.rect = self.image.get_rect()
