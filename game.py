@@ -98,6 +98,7 @@ if __name__ == '__main__':
         player.move(p_x, p_y)
         p_x, p_y = 0, 0
 
+
         # двигаем объекты за персонажем
         camera.update(player)
         for sprite in all_sprites:
@@ -124,6 +125,8 @@ if __name__ == '__main__':
         draw_sprite.draw(screen)
         hero.draw(screen)
         pygame.draw.rect(screen, (0, 0, 0), (0, 0, 200, 200))
+
+        all_sprites.update()
 
         # очищаем спарйты
         draw_sprite.empty()

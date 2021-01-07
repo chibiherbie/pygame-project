@@ -7,6 +7,8 @@ class Hero(pygame.sprite.Sprite):
     def __init__(self, os_name, pos_x, pos_y, wall, *group):
         super().__init__(*group)  # вызываем конструктор родительского класса Sprite
 
+        self.all_sprites = group[-1]
+
         # self.image = pygame.image.load(os_name)
         # self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
         # self.rect = self.image.get_rect().move(pos_x, pos_y)
@@ -50,18 +52,25 @@ class Hero(pygame.sprite.Sprite):
                     self.rect.top = spr.rect.bottom
                     self.yvel = 0
 
+        if self.isGround and self.xvel:
+            self.create_particles((self.rect.x - self.rect.w // 2, self.rect.bottom - self.rect.h // 5))
+
         if y:  # прыжок
             if self.isGround:
                 self.yvel = -self.speed
                 self.isGround = False
 
-    def create_particles(self, group):
+    def create_particles(self, position):
         # количество создаваемых частиц
-        particle_count = 20
+        particle_count = 10
         # возможные скорости
-        numbers = range(-5, 6)
+        numbers = 0
         for _ in range(particle_count):
-            Particle(position, random.choice(numbers), random.choice(numbers), self.speed, group)
+
+            Particle(position, self.all_sprites)
+            numbers += 1
+            continue
+
 
 
 class AnimatedSprite:
@@ -120,30 +129,36 @@ class AnimatedSprite:
 
 class Particle(pygame.sprite.Sprite):
     # сгенерируем частицы разного размера
-    fire = []
-    for scale in range(10):
-        fire.append(pygame.Rect())
+    fire = [pygame.image.load("D:\Program Files (x86)\проект игра pygame\pygame-project\data\image\graphics\circle.png")]
+    for scale in (10, 15):
+        print(scale)
+        fire.append(pygame.transform.scale(fire[0], (scale, scale)))
+    del fire[0]
 
-    def __init__(self, pos, dx, dy, gravity, group):
+    def __init__(self, pos, all_sprites):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
 
-        # у каждой частицы своя скорость — это вектор
-        self.velocity = [dx, dy]
+        # у каждой частицы своя скорость - это вектор
+        self.x, self.y = random.choice(range(1, 5)), random.choice([-0.2, -0.1, 0])
         # и свои координаты
         self.rect.x, self.rect.y = pos
+        self.posx = pos[0]
 
-        # гравитация будет одинаковой (значение константы)
-        self.gravity = gravity
+        # гравитация будет одинаковой
+        self.gravity = 7
+        self.time = 0
 
     def update(self):
         # применяем гравитационный эффект:
         # движение с ускорением под действием гравитации
-        self.velocity[1] += self.gravity
         # перемещаем частицу
-        self.rect.x += self.velocity[0]
-        self.rect.y += self.velocity[1]
+        self.rect.x += self.x
+        self.rect.y += self.y
+        self.image.set_alpha(random.randrange(10, 100, 10))
+
+        self.time += 1
         # убиваем, если частица ушла за экран
-        if not self.rect.colliderect(screen_rect):
+        if self.time == 10:
             self.kill()

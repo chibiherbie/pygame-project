@@ -59,6 +59,7 @@ class Particle(pygame.sprite.Sprite):
 
         # гравитация будет одинаковой
         self.gravity = gravity
+        self.time = 0
 
     def update(self):
         # применяем гравитационный эффект:
@@ -70,8 +71,9 @@ class Particle(pygame.sprite.Sprite):
             self.image.set_alpha(100)
         else:
             self.image.set_alpha(0)
+        self.time += 1
         # убиваем, если частица ушла за экран
-        if not self.rect.colliderect(screen_rect):
+        if self.time == 10:
             self.kill()
 
 
