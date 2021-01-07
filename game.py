@@ -22,6 +22,8 @@ class Camera:
             obj.rect.x += self.parallax_x(120)
         elif layer == -1:
             obj.rect.x += self.parallax_x(60)
+        elif layer == 1:
+            obj.rect.x += self.parallax_x(40)
         else:
             obj.rect.x += self.dx * 0.4
             obj.rect.y += self.dy * 0.4
@@ -64,9 +66,10 @@ if __name__ == '__main__':
     background = pygame.sprite.Group()
     layer_2 = pygame.sprite.Group()
     layer_1 = pygame.sprite.Group()
+    layer_front = pygame.sprite.Group()
 
     player = Hero('data/image/hero', 100, 400, wall, all_sprites, hero)
-    Level('data/maps/map1.txt', level, all_sprites, wall, background, layer_2, layer_1)
+    Level('data/maps/map1.txt', level, all_sprites, wall, background, layer_2, layer_1, layer_front)
     camera = Camera()
 
     # основной цикл
@@ -102,14 +105,18 @@ if __name__ == '__main__':
         for sprite in layer_1:
             camera.apply(sprite, -1)
 
+        for sprite in layer_front:
+            camera.apply(sprite, 1)
+
         camera.apply(background.sprites()[0], -3)
 
+        # всё рисуем
         background.draw(screen)
         layer_2.draw(screen)
         layer_1.draw(screen)
-        all_sprites.draw(screen)  # рисуем всё
-
+        all_sprites.draw(screen)
         hero.draw(screen)
+        layer_front.draw(screen)
 
         time.tick(FPS)
         # pygame.display.flip()

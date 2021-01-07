@@ -10,7 +10,7 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, name_level, lvl, sprite, wall, back, layer_2, layer_1):
+    def __init__(self, name_level, lvl, sprite, wall, back, layer_2, layer_1, layer_front):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
@@ -18,9 +18,10 @@ class Level:
 
         # генирация планов (в будущем при загрузке будут исп карты)
         Background('data/image/graphics/back.png', back)
-        Layer2('data/image/graphics/tree2.png', 0, layer_2)
-        Layer2('data/image/graphics/tree2.png', 400, layer_2)
-        Layer1('data/image/graphics/tree.png', layer_1)
+        Layers('data/image/graphics/tree2.png', (0, 400), 2, layer_2)
+        Layers('data/image/graphics/tree2.png', (400, 400), 2, layer_2)
+        Layers('data/image/graphics/tree.png', (100, 200), 1, layer_1)
+        Layers('data/image/graphics/tree2.png', (500, 700), 0.5, layer_front)
 
     def load_level(self, filename):
         filename = filename
@@ -63,18 +64,10 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(-150, 0)
 
 
-class Layer1(pygame.sprite.Sprite):
-    def __init__(self, os_name, *group):
+class Layers(pygame.sprite.Sprite):
+    def __init__(self, os_name, pos, scale, *group):
         super().__init__(*group)
         self.image = pygame.image.load(os_name).convert_alpha()
-        # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
-        self.rect = self.image.get_rect().move(100, 200)
-
-
-class Layer2(pygame.sprite.Sprite):
-    def __init__(self, os_name, pos, *group):
-        super().__init__(*group)
-        self.image = pygame.image.load(os_name).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.image.get_width() // 2,
-                                                         self.image.get_height() // 2))
-        self.rect = self.image.get_rect().move(pos, 400)
+        self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
+                                                         int(self.image.get_height() / scale)))
+        self.rect = self.image.get_rect().move(pos)
