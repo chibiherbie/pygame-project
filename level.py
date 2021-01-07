@@ -19,19 +19,12 @@ class Level:
 
         dir = 'data/levels/' + folder
 
-        files = os.listdir(dir)
-        for file in files:
-            if 'map' in file:
-                self.generate_level(self.load_level('/'.join([dir, file])))
-            elif 'back' in file:
-                Background('/'.join([dir, file]), back)
-            else:
-                if file.split('.')[0] == 'layer_2':
-                    self.layer_generation('/'.join([dir, file]), layer_2)
-                elif file.split('.')[0] == 'layer_1':
-                    self.layer_generation('/'.join([dir, file]), layer_1)
-                else:
-                    self.layer_generation('/'.join([dir, file]), layer_front)
+        # загружаем спрайты в порядке иерархии по слоям (фон, 2 слой, 1 слой, плафтформа, передний план)
+        Background('/'.join([dir, 'background.png']), back)
+        self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
+        self.layer_generation('/'.join([dir, 'layer_1.txt']), layer_1, sprite)
+        self.generate_level(self.load_level('/'.join([dir, 'map.txt'])))
+        self.layer_generation('/'.join([dir, 'layer_front.txt']), layer_front, sprite)
 
     def load_level(self, filename):
         filename = filename
@@ -55,13 +48,12 @@ class Level:
                 else:
                     pass
 
-    def layer_generation(self, file, layer):
+    def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
             data = f.readlines()
 
         for propertys in data:
             property = propertys.split()
-            print(property, layer)
             Layers('data/image/graphics/' + property[0], (int(property[1]), int(property[2])),
                    float(property[3]), layer)
 

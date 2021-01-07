@@ -59,6 +59,7 @@ if __name__ == '__main__':
     time = pygame.time.Clock()
 
     # группы спрайтов
+    draw_sprite = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
     level = pygame.sprite.Group()
     wall = pygame.sprite.Group()
@@ -111,13 +112,19 @@ if __name__ == '__main__':
 
         camera.apply(background.sprites()[0], -3)
 
-        # всё рисуем
+        # если спрайт не в зоне нашего зрения, он не рисуется
+        for obj in all_sprites:
+            if -obj.rect.width <= obj.rect.x <= width and -obj.rect.height <= obj.rect.y <= height:
+                draw_sprite.add(obj)
+
+        # рисуем все объекты
         background.draw(screen)
-        layer_2.draw(screen)
-        layer_1.draw(screen)
-        all_sprites.draw(screen)
+        draw_sprite.draw(screen)
         hero.draw(screen)
-        layer_front.draw(screen)
+
+
+        # очищаем спарйты
+        draw_sprite.empty()
 
         time.tick(FPS)
         # pygame.display.flip()
