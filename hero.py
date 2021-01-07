@@ -53,24 +53,20 @@ class Hero(pygame.sprite.Sprite):
                     self.yvel = 0
 
         if self.isGround and self.xvel:
-            self.create_particles((self.rect.x - self.rect.w // 2, self.rect.bottom - self.rect.h // 5))
+            self.create_particles((self.rect.x + self.rect.w // 2,
+                                   self.rect.bottom - self.rect.h // 5), self.xvel)
 
         if y:  # прыжок
             if self.isGround:
                 self.yvel = -self.speed
                 self.isGround = False
 
-    def create_particles(self, position):
+    def create_particles(self, position, x):
         # количество создаваемых частиц
         particle_count = 10
-        # возможные скорости
-        numbers = 0
+
         for _ in range(particle_count):
-
-            Particle(position, self.all_sprites)
-            numbers += 1
-            continue
-
+            Particle(position, self.all_sprites, x)
 
 
 class AnimatedSprite:
@@ -135,7 +131,7 @@ class Particle(pygame.sprite.Sprite):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
     del fire[0]
 
-    def __init__(self, pos, all_sprites):
+    def __init__(self, pos, all_sprites, direction):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
@@ -145,20 +141,17 @@ class Particle(pygame.sprite.Sprite):
         # и свои координаты
         self.rect.x, self.rect.y = pos
         self.posx = pos[0]
+        self.direction = -direction // abs(direction)
 
-        # гравитация будет одинаковой
-        self.gravity = 7
         self.time = 0
 
     def update(self):
-        # применяем гравитационный эффект:
-        # движение с ускорением под действием гравитации
         # перемещаем частицу
-        self.rect.x += self.x
+        self.rect.x += self.x * self.direction
         self.rect.y += self.y
-        self.image.set_alpha(random.randrange(10, 100, 10))
+        self.image.set_alpha(random.randrange(50, 100, 10))
 
         self.time += 1
-        # убиваем, если частица ушла за экран
+        # убиваем через 10 интераций
         if self.time == 10:
             self.kill()

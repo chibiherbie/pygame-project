@@ -46,7 +46,7 @@ class Particle(pygame.sprite.Sprite):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
     del fire[0]
 
-    def __init__(self, pos):
+    def __init__(self, pos, direction):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
@@ -56,6 +56,7 @@ class Particle(pygame.sprite.Sprite):
         # и свои координаты
         self.rect.x, self.rect.y = pos
         self.posx = pos[0]
+        self.direction = direction // abs(direction)
 
         # гравитация будет одинаковой
         self.gravity = gravity
@@ -65,7 +66,7 @@ class Particle(pygame.sprite.Sprite):
         # применяем гравитационный эффект:
         # движение с ускорением под действием гравитации
         # перемещаем частицу
-        self.rect.x += self.x
+        self.rect.x += self.x * self.direction
         self.rect.y += self.y
         if self.rect.x - self.posx < 20:
             self.image.set_alpha(100)
@@ -84,7 +85,7 @@ def create_particles(position):
     numbers = 0
     for _ in range(particle_count):
         if numbers == 0:
-            Particle(position)
+            Particle(position, -5)
             numbers += 1
             continue
         numbers = 0 if numbers == 3 else numbers + 1
