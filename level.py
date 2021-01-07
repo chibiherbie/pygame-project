@@ -58,7 +58,7 @@ class Tile(pygame.sprite.Sprite):
 class Background(pygame.sprite.Sprite):
     def __init__(self, os_name, *group):
         super().__init__(*group)
-        self.image = pygame.image.load(os_name)
+        self.image = pygame.image.load(os_name).convert_alpha()
         # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
         self.rect = self.image.get_rect().move(-150, 0)
 
@@ -66,7 +66,7 @@ class Background(pygame.sprite.Sprite):
 class Layer1(pygame.sprite.Sprite):
     def __init__(self, os_name, *group):
         super().__init__(*group)
-        self.image = pygame.image.load(os_name)
+        self.image = pygame.image.load(os_name).convert_alpha()
         # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
         self.rect = self.image.get_rect().move(100, 200)
 
@@ -74,6 +74,6 @@ class Layer1(pygame.sprite.Sprite):
 class Layer2(pygame.sprite.Sprite):
     def __init__(self, os_name, pos, *group):
         super().__init__(*group)
-        self.image = pygame.image.load(os_name)
+        self.image = pygame.image.load(os_name).convert_alpha()
         # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
         self.rect = self.image.get_rect().move(pos, 200)

@@ -73,7 +73,7 @@ class AnimatedSprite:
     # режим заготовку на кадры
     def cut_sheet(self, folder, sheets, columns, rows):
         for count in range(len(sheets)):
-            sheet = pygame.image.load(folder + '/' + sheets[count])  # загружаем файл
+            sheet = pygame.image.load(folder + '/' + sheets[count]).convert_alpha()  # загружаем файл
 
             self.rect = pygame.Rect(0, 0, sheet.get_width() // columns, sheet.get_height() // rows)
             self.frames = []

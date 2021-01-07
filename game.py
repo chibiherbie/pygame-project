@@ -11,6 +11,7 @@ class Camera:
 
     # сдвинуть объект obj на смещение камеры
     def apply(self, obj, layer):
+        # рисуем в зависимоти от плана
         if layer == 0:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
@@ -82,6 +83,7 @@ if __name__ == '__main__':
         player.move(p_x, p_y)
         p_x, p_y = 0, 0
 
+        # двигаем объекты за персонажем
         camera.update(player)
         for sprite in all_sprites:
             camera.apply(sprite, 0)
@@ -94,8 +96,6 @@ if __name__ == '__main__':
 
         camera.apply(background.sprites()[0], -3)
 
-        # print(background.sprites()[0] == 0)
-
         background.draw(screen)
         layer_2.draw(screen)
         layer_1.draw(screen)
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         hero.draw(screen)
 
         time.tick(FPS)
-
         pygame.display.flip()
+        # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
 
     pygame.quit()
