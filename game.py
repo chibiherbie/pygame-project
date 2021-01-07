@@ -120,10 +120,9 @@ if __name__ == '__main__':
                 draw_sprite.add(obj)
 
         # рисуем все объекты
-        # background.draw(screen)
+        background.draw(screen)
         draw_sprite.draw(screen)
         hero.draw(screen)
-        pygame.draw.rect(screen, (0, 0, 0), (0, 0, 200, 200))
 
         all_sprites.update()
 

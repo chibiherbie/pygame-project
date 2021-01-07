@@ -62,9 +62,7 @@ class Hero(pygame.sprite.Sprite):
                 self.isGround = False
 
     def create_particles(self, position, x):
-        # количество создаваемых частиц
-        particle_count = 10
-
+        particle_count = 40  # количество создаваемых частиц
         for _ in range(particle_count):
             Particle(position, self.all_sprites, x)
 
@@ -124,34 +122,33 @@ class AnimatedSprite:
 
 
 class Particle(pygame.sprite.Sprite):
-    # сгенерируем частицы разного размера
-    fire = [pygame.image.load("D:\Program Files (x86)\проект игра pygame\pygame-project\data\image\graphics\circle.png")]
-    for scale in (10, 15):
+    # генерируем частицы разного размера
+    smoke = [pygame.image.load("data\image\graphics\circle.png")]
+    for scale in (10, 12, 14):
         print(scale)
-        fire.append(pygame.transform.scale(fire[0], (scale, scale)))
-    del fire[0]
+        smoke.append(pygame.transform.scale(smoke[0], (scale, scale)))
+    del smoke[0]  # удаляем изначально загруженое изображение
 
     def __init__(self, pos, all_sprites, direction):
         super().__init__(all_sprites)
-        self.image = random.choice(self.fire)
+        self.image = random.choice(self.smoke)
+        self.image.set_alpha(10)  # устанавливаем прозрачность
         self.rect = self.image.get_rect()
 
-        # у каждой частицы своя скорость - это вектор
+        # у каждой частицы своя скорость
         self.x, self.y = random.choice(range(1, 5)), random.choice([-0.2, -0.1, 0])
-        # и свои координаты
         self.rect.x, self.rect.y = pos
-        self.posx = pos[0]
-        self.direction = -direction // abs(direction)
 
-        self.time = 0
+        self.direction = -direction // abs(direction)  # направление частиц
+
+        self.time = 0  # для подчёта итераций
 
     def update(self):
         # перемещаем частицу
         self.rect.x += self.x * self.direction
         self.rect.y += self.y
-        self.image.set_alpha(random.randrange(50, 100, 10))
 
         self.time += 1
-        # убиваем через 10 интераций
-        if self.time == 10:
+
+        if self.time == 10:  # удаляем частицу через 10 интераций
             self.kill()
