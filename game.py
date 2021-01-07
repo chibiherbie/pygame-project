@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 from hero import Hero
 from level import Level
 
@@ -19,7 +20,8 @@ class Camera:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
         elif layer == -2:
-            obj.rect.x += self.parallax_x(120)
+            obj.rect.x += self.dx * 0.2
+            # obj.rect.y += self.dy * 0.2
         elif layer == -1:
             obj.rect.x += self.parallax_x(60)
         elif layer == 1:
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     pygame.display.set_caption('GAME')
 
     size = width, height = 1000, 1000
-    screen = pygame.display.set_mode(size)
+    screen = pygame.display.set_mode(size, HWSURFACE | DOUBLEBUF)
     # screen.set_alpha(None)
 
     running = True
@@ -122,12 +124,11 @@ if __name__ == '__main__':
         draw_sprite.draw(screen)
         hero.draw(screen)
 
-
         # очищаем спарйты
         draw_sprite.empty()
 
         time.tick(FPS)
-        # pygame.display.flip()
-        pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
+        pygame.display.flip()
+        # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
 
     pygame.quit()
