@@ -10,13 +10,17 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, name_level, lvl, sprite, wall, back):
+    def __init__(self, name_level, lvl, sprite, wall, back, layer_2, layer_1):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
         self.generate_level(self.load_level(name_level))
 
-        Background(back)
+        # генирация планов (в будущем при загрузке будут исп карты)
+        Background('data/image/graphics/back.png', back)
+        Layer2('data/image/graphics/tree2.png', 0, layer_2)
+        Layer2('data/image/graphics/tree2.png', 400, layer_2)
+        Layer1('data/image/graphics/tree.png', layer_1)
 
     def load_level(self, filename):
         filename = filename
@@ -52,10 +56,24 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, *group):
+    def __init__(self, os_name, *group):
         super().__init__(*group)
-        self.image = pygame.image.load('data/image/graphics/back.png')
+        self.image = pygame.image.load(os_name)
+        # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
+        self.rect = self.image.get_rect().move(-150, 0)
 
-        # self.image = pygame.transform.scale(self.image, (50, 50))  # размер изображения
 
-        self.rect = self.image.get_rect()
+class Layer1(pygame.sprite.Sprite):
+    def __init__(self, os_name, *group):
+        super().__init__(*group)
+        self.image = pygame.image.load(os_name)
+        # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
+        self.rect = self.image.get_rect().move(100, 200)
+
+
+class Layer2(pygame.sprite.Sprite):
+    def __init__(self, os_name, pos, *group):
+        super().__init__(*group)
+        self.image = pygame.image.load(os_name)
+        # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
+        self.rect = self.image.get_rect().move(pos, 200)

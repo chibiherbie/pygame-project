@@ -10,14 +10,24 @@ class Camera:
         self.dy = player.rect.y
 
     # сдвинуть объект obj на смещение камеры
-    def apply(self, obj):
-        obj.rect.x += self.dx
-        obj.rect.y += self.dy
+    def apply(self, obj, layer):
+        if layer == 0:
+            obj.rect.x += self.dx
+            obj.rect.y += self.dy
+        elif layer == -2:
+            obj.rect.x += self.dx * 0.6
+            # obj.rect.y += self.dy * 0.6
+        elif layer == -1:
+            obj.rect.x += self.dx * 0.8
+            obj.rect.y += self.dy * 0.001
+        else:
+            obj.rect.x += self.dx * 0.4
+            obj.rect.y += self.dy * 0.4
 
     # позиционировать камеру на объекте target
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2) // 50
-        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2) // 50
+        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2) // 40
+        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2) // 40
 
 
 FPS = 60
@@ -43,9 +53,11 @@ if __name__ == '__main__':
     wall = pygame.sprite.Group()
     hero = pygame.sprite.Group()
     background = pygame.sprite.Group()
+    layer_2 = pygame.sprite.Group()
+    layer_1 = pygame.sprite.Group()
 
     player = Hero('data/image/hero', 100, 400, wall, all_sprites, hero)
-    Level('data/maps/map1.txt', level, all_sprites, wall, background)
+    Level('data/maps/map1.txt', level, all_sprites, wall, background, layer_2, layer_1)
     camera = Camera()
 
     # основной цикл
@@ -72,15 +84,27 @@ if __name__ == '__main__':
 
         camera.update(player)
         for sprite in all_sprites:
-            camera.apply(sprite)
+            camera.apply(sprite, 0)
+
+        for sprite in layer_2:
+            camera.apply(sprite, -2)
+
+        for sprite in layer_1:
+            camera.apply(sprite, -1)
+
+        camera.apply(background.sprites()[0], -3)
+
+        # print(background.sprites()[0] == 0)
 
         background.draw(screen)
+        layer_2.draw(screen)
+        layer_1.draw(screen)
         all_sprites.draw(screen)  # рисуем всё
 
         hero.draw(screen)
 
-        a = time.tick(FPS)
-        print(a)
+        time.tick(FPS)
+
         pygame.display.flip()
 
     pygame.quit()
