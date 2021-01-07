@@ -75,5 +75,6 @@ class Layer2(pygame.sprite.Sprite):
     def __init__(self, os_name, pos, *group):
         super().__init__(*group)
         self.image = pygame.image.load(os_name).convert_alpha()
-        # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
-        self.rect = self.image.get_rect().move(pos, 200)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() // 2,
+                                                         self.image.get_height() // 2))
+        self.rect = self.image.get_rect().move(pos, 400)

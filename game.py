@@ -9,6 +9,9 @@ class Camera:
         self.dx = player.rect.x
         self.dy = player.rect.y
 
+        self.parx = player.rect.x
+        self.pary = player.rect.y
+
     # сдвинуть объект obj на смещение камеры
     def apply(self, obj, layer):
         # рисуем в зависимоти от плана
@@ -16,11 +19,9 @@ class Camera:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
         elif layer == -2:
-            obj.rect.x += self.dx * 0.6
-            # obj.rect.y += self.dy * 0.6
+            obj.rect.x += self.parallax_x(120)
         elif layer == -1:
-            obj.rect.x += self.dx * 0.8
-            obj.rect.y += self.dy * 0.001
+            obj.rect.x += self.parallax_x(60)
         else:
             obj.rect.x += self.dx * 0.4
             obj.rect.y += self.dy * 0.4
@@ -29,6 +30,12 @@ class Camera:
     def update(self, target):
         self.dx = -(target.rect.x + target.rect.w // 2 - width // 2) // 40
         self.dy = -(target.rect.y + target.rect.h // 2 - height // 2) // 40
+
+    def parallax_x(self, num):
+        return -(player.rect.x + player.rect.w // 2 - width // 2) // num
+
+    def parallax_y(self, num):
+        return -(player.rect.y + player.rect.h // 2 - height // 2) // num
 
 
 FPS = 60
@@ -39,6 +46,7 @@ if __name__ == '__main__':
 
     size = width, height = 1000, 1000
     screen = pygame.display.set_mode(size)
+    # screen.set_alpha(None)
 
     running = True
 
@@ -104,7 +112,7 @@ if __name__ == '__main__':
         hero.draw(screen)
 
         time.tick(FPS)
-        pygame.display.flip()
-        # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
+        # pygame.display.flip()
+        pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
 
     pygame.quit()
