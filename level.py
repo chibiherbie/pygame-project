@@ -1,4 +1,6 @@
 import pygame
+import os
+
 
 tile_images = {
         'floor': pygame.image.load('data/image/graphics/example.jpg'),
@@ -10,18 +12,26 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, name_level, lvl, sprite, wall, back, layer_2, layer_1, layer_front):
+    def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1, layer_front):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
-        self.generate_level(self.load_level(name_level))
 
-        # генирация планов (в будущем при загрузке будут исп карты)
-        Background('data/image/graphics/back.png', back)
-        Layers('data/image/graphics/tree2.png', (0, 400), 2, layer_2)
-        Layers('data/image/graphics/tree2.png', (400, 400), 2, layer_2)
-        Layers('data/image/graphics/tree.png', (100, 200), 1, layer_1)
-        Layers('data/image/graphics/tree2.png', (500, 700), 0.5, layer_front)
+        dir = 'data/levels/' + folder
+
+        files = os.listdir(dir)
+        for file in files:
+            if 'map' in file:
+                self.generate_level(self.load_level('/'.join([dir, file])))
+            elif 'back' in file:
+                Background('/'.join([dir, file]), back)
+            else:
+                if file.split('.')[0] == 'layer_2':
+                    self.layer_generation('/'.join([dir, file]), layer_2)
+                elif file.split('.')[0] == 'layer_1':
+                    self.layer_generation('/'.join([dir, file]), layer_1)
+                else:
+                    self.layer_generation('/'.join([dir, file]), layer_front)
 
     def load_level(self, filename):
         filename = filename
@@ -44,6 +54,16 @@ class Level:
                     Tile('floor', x, y, self.wall, self.all_sprite)
                 else:
                     pass
+
+    def layer_generation(self, file, layer):
+        with open(file, mode='r', encoding='utf8') as f:
+            data = f.readlines()
+
+        for propertys in data:
+            property = propertys.split()
+            print(property, layer)
+            Layers('data/image/graphics/' + property[0], (int(property[1]), int(property[2])),
+                   float(property[3]), layer)
 
 
 class Tile(pygame.sprite.Sprite):

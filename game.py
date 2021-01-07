@@ -69,7 +69,8 @@ if __name__ == '__main__':
     layer_front = pygame.sprite.Group()
 
     player = Hero('data/image/hero', 100, 400, wall, all_sprites, hero)
-    Level('data/maps/map1.txt', level, all_sprites, wall, background, layer_2, layer_1, layer_front)
+    # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
+    Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front)
     camera = Camera()
 
     # основной цикл
