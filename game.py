@@ -71,7 +71,7 @@ if __name__ == '__main__':
     layer_1 = pygame.sprite.Group()
     layer_front = pygame.sprite.Group()
 
-    player = Hero('data/image/hero', 100, 400, wall, all_sprites, hero)
+    player = Hero('data/image/hero', 100, 400, wall, hero, all_sprites)
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front)
     camera = Camera()
@@ -123,6 +123,7 @@ if __name__ == '__main__':
         background.draw(screen)
         draw_sprite.draw(screen)
         hero.draw(screen)
+        pygame.draw.rect(screen, (0, 0, 0), (0, 0, 200, 200))
 
         # очищаем спарйты
         draw_sprite.empty()

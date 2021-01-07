@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 
 
 class Hero(pygame.sprite.Sprite):
@@ -54,6 +55,14 @@ class Hero(pygame.sprite.Sprite):
                 self.yvel = -self.speed
                 self.isGround = False
 
+    def create_particles(self, group):
+        # количество создаваемых частиц
+        particle_count = 20
+        # возможные скорости
+        numbers = range(-5, 6)
+        for _ in range(particle_count):
+            Particle(position, random.choice(numbers), random.choice(numbers), self.speed, group)
+
 
 class AnimatedSprite:
     def __init__(self, folder, columns, rows, x, y):
@@ -107,3 +116,34 @@ class AnimatedSprite:
             self.upd = 0
 
         return self.image
+
+
+class Particle(pygame.sprite.Sprite):
+    # сгенерируем частицы разного размера
+    fire = []
+    for scale in range(10):
+        fire.append(pygame.Rect())
+
+    def __init__(self, pos, dx, dy, gravity, group):
+        super().__init__(all_sprites)
+        self.image = random.choice(self.fire)
+        self.rect = self.image.get_rect()
+
+        # у каждой частицы своя скорость — это вектор
+        self.velocity = [dx, dy]
+        # и свои координаты
+        self.rect.x, self.rect.y = pos
+
+        # гравитация будет одинаковой (значение константы)
+        self.gravity = gravity
+
+    def update(self):
+        # применяем гравитационный эффект:
+        # движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        # убиваем, если частица ушла за экран
+        if not self.rect.colliderect(screen_rect):
+            self.kill()
