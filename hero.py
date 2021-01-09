@@ -125,7 +125,6 @@ class Particle(pygame.sprite.Sprite):
     # генерируем частицы разного размера
     smoke = [pygame.image.load("data\image\graphics\circle.png")]
     for scale in (10, 12, 14):
-        print(scale)
         smoke.append(pygame.transform.scale(smoke[0], (scale, scale)))
     del smoke[0]  # удаляем изначально загруженое изображение
 

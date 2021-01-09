@@ -90,14 +90,18 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    print('manager')
+                if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
+                    game_menu.settings_show = False
             if show_manager:
                 answer = game_menu.update_manager(event)
-                if answer:
+                # если были нажаты кнопки
+                if answer == 'res':
                     show_manager = False
-
+                elif answer == 'exit':
+                    running = False
+                elif answer == 'menu':
+                    print('ВЫХОД В МЕНЮ')
         # перемещение персонажа
 
         key = pygame.key.get_pressed()
