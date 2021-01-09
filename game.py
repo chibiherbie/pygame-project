@@ -4,6 +4,7 @@ from pygame.locals import *
 from hero import Hero
 from level import Level
 from game_menu import GameMenu
+from objects import check_objects
 
 
 class Camera:
@@ -93,6 +94,8 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
                     game_menu.settings_show = False
+                if event.key == pygame.K_f:
+                    check
             if show_manager:
                 answer = game_menu.update_manager(event)
                 # если были нажаты кнопки

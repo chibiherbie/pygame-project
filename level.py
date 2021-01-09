@@ -1,11 +1,11 @@
 import pygame
 import os
+from objects import Lever
 
 
 tile_images = {
         'floor': pygame.image.load('data/image/graphics/example.jpg'),
         'empty': pygame.image.load('data/image/graphics/grass.png'),
-        'lever': pygame.image.load('data/image/graphics/lever.png')
     }
 
 tile_height = 50
@@ -48,7 +48,7 @@ class Level:
                     Tile('floor', x, y, self.wall, self.all_sprite)
                 elif level[y][x] == '/':
                     Tile('floor', x, y, self.wall, self.all_sprite)
-                    Tile('lever', x, y - 1, self.all_sprite)
+                    Lever(x, y - 1, tile_width, tile_height, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
