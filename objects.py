@@ -47,10 +47,7 @@ class Lever(pygame.sprite.Sprite):
 class Door(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y, tile_width, tile_height, num, *group):
         super().__init__(*group)
-
-        self.frames = []
-
-        self.image = pygame.image.load('data/image/graphics/door.png')
+        self.image = pygame.image.load('data/image/graphics/door.png').convert_alpha()
         self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
                                                tile_height * pos_y)
         self.y = self.rect.y
@@ -74,10 +71,7 @@ class Spikes(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y, tile_width, tile_height, *group):
         super().__init__(*group)
 
-        self.frames = []
-
-        self.image = pygame.image.load('data/image/graphics/spikes.png')
+        self.image = pygame.image.load('data/image/graphics/spikes.png').convert_alpha()
         self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
                                                tile_height * pos_y)
-        self.y = self.rect.y
-        self.upd, self.count = 0, 0
+        self.rect[1] += 10

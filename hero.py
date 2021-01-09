@@ -4,12 +4,12 @@ import random
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, os_name, pos_x, pos_y, wall, *group):
+    def __init__(self, os_name, pos_x, pos_y, wall, death, *group):
         super().__init__(*group)  # вызываем конструктор родительского класса Sprite
 
         self.all_sprites = group[-1]
         self.wall = wall
-        self.death = group[-2]
+        self.death = death
 
         # self.image = pygame.image.load(os_name)
         # self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
@@ -27,6 +27,10 @@ class Hero(pygame.sprite.Sprite):
 
     # передвижение персонажа
     def move(self, x, y):
+        # если наткнулись на шипы, останавливаем игрока
+        if pygame.sprite.spritecollideany(self, self.death): # в дальнейшем игра будет перезапускаться
+            return
+
         self.image = self.anim.update((x, y))
 
         self.xvel = x

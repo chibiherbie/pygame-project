@@ -57,7 +57,7 @@ class Level:
                     Door(x, y - 1, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
                          self.wall, self.door, self.all_sprite)
                 elif level[y][x] == '"':
-                    Spikes(x, y, tile_width, tile_height, self.door, self.all_sprite)
+                    Spikes(x, y, tile_width, tile_height, self.death, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
