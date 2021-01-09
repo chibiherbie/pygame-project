@@ -97,7 +97,15 @@ if __name__ == '__main__':
                     show_manager = not show_manager
                     game_menu.settings_show = False
                 if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
-                    player.check_objects(lever, door)
+                    check = player.check_objects(lever)
+                    if check:
+                        if check[1] == 'door':
+                            for i in door.sprites():
+                                if i.value == check[2]:
+                                    if not check[0]:
+                                        i.upd = 1
+                                    else:
+                                        i.upd = -1
 
             if show_manager:
                 answer = game_menu.update_manager(event)

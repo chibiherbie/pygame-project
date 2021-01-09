@@ -72,6 +72,7 @@ class Hero(pygame.sprite.Sprite):
             wall = pygame.sprite.spritecollide(self, i, False)  # касаемся ли мы объектов
             if wall:
                 wall[0].animation()  # запускаем анимацию
+                return (wall[0].close, 'door', wall[0].value)
 
 
 class AnimatedSprite:

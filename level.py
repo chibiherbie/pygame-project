@@ -20,8 +20,6 @@ class Level:
         self.lever = lever
         self.door = door
 
-        self.lever_num = 0
-
         dir = 'data/levels/' + folder
 
         # загружаем спрайты в порядке иерархии по слоям (фон, 2 слой, 1 слой, плафтформа, передний план)
@@ -51,12 +49,11 @@ class Level:
                 elif level[y][x] == '#':
                     Tile('floor', x, y, self.wall, self.all_sprite)
                 elif level[y][x] == '/':
-                    Tile('floor', x, y, self.wall, self.all_sprite)
-                    Lever(x, y - 1, tile_width, tile_height, self.lever_num, self.lever, self.all_sprite)
-                    self.lever_num += 1
+                    Lever(x, y, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
+                          self.lever, self.all_sprite)
                 elif level[y][x] == '|':
-                    Door(x, y - 1, tile_width, tile_height, self.wall, self.door, self.all_sprite)
-                    self.lever_num += 1
+                    Door(x, y - 1, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
+                         self.wall, self.door, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:

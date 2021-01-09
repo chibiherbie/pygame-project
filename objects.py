@@ -15,7 +15,7 @@ class Lever(pygame.sprite.Sprite):
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(tile_width * pos_x, tile_height * pos_y)
 
-        self.side_l = True
+        self.close = True
         self.value = num  # индес рычага, для открытия определённой двери
 
     # режим заготовку на кадры
@@ -30,12 +30,12 @@ class Lever(pygame.sprite.Sprite):
                 self.frames.append(cut)
 
     def animation(self):
-        if self.side_l:
+        if self.close:
             self.image = self.frames[-1]
-            self.side_l = False
+            self.close = False
         else:
             self.image = self.frames[0]
-            self.side_l = True
+            self.close = True
         # if self.upd % 4 == 0:  # раз в 4 инетраций меняется кадр
         #     self.upd += 1
         #     self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -45,7 +45,7 @@ class Lever(pygame.sprite.Sprite):
 
 
 class Door(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, tile_width, tile_height, *group):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, num, *group):
         super().__init__(*group)
 
         self.frames = []
@@ -53,7 +53,18 @@ class Door(pygame.sprite.Sprite):
         self.image = pygame.image.load('data/image/graphics/door2.png')
         self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
                                                tile_height * pos_y)
-
+        self.y = self.rect.y
         self.upd = 0
+        self.speed = 1
+        self.value = num
+        print(self.y, self.y - self.rect.h)
 
-        self.side_l = True
+    def update(self):
+        if self.upd == 1:
+            self.rect.y += self.upd
+            if self.rect.y == self.y:
+                self.upd = 0
+        elif self.upd == -1:
+            self.rect.y += self.upd
+            if self.rect.y == self.y - self.rect.h:
+                self.upd = 0
