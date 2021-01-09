@@ -4,7 +4,8 @@ import os
 
 tile_images = {
         'floor': pygame.image.load('data/image/graphics/example.jpg'),
-        'empty': pygame.image.load('data/image/graphics/grass.png')
+        'empty': pygame.image.load('data/image/graphics/grass.png'),
+        'lever': pygame.image.load('data/image/graphics/lever.png')
     }
 
 tile_height = 50
@@ -45,8 +46,9 @@ class Level:
                     Tile('empty', x, y, self.lvl, self.all_sprite)
                 elif level[y][x] == '#':
                     Tile('floor', x, y, self.wall, self.all_sprite)
-                else:
-                    pass
+                elif level[y][x] == '/':
+                    Tile('floor', x, y, self.wall, self.all_sprite)
+                    Tile('lever', x, y - 1, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
