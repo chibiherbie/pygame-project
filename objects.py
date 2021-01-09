@@ -54,17 +54,17 @@ class Door(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
                                                tile_height * pos_y)
         self.y = self.rect.y
-        self.upd = 0
-        self.speed = 1
+        self.upd, self.count = 0, 0
         self.value = num
-        print(self.y, self.y - self.rect.h)
 
     def update(self):
         if self.upd == 1:
             self.rect.y += self.upd
-            if self.rect.y == self.y:
+            self.count += self.upd
+            if self.count == self.rect.h:  # если достигнут предел, то останавливаем
                 self.upd = 0
         elif self.upd == -1:
             self.rect.y += self.upd
-            if self.rect.y == self.y - self.rect.h:
+            self.count += self.upd
+            if self.count == 0:
                 self.upd = 0

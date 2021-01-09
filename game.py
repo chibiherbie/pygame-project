@@ -99,9 +99,10 @@ if __name__ == '__main__':
                 if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
                     check = player.check_objects(lever)
                     if check:
-                        if check[1] == 'door':
+                        if check[1] == 'door':  # исп объект дверь
                             for i in door.sprites():
-                                if i.value == check[2]:
+                                if i.value == check[2]:  # ищем дверь приявзаную к нажатому рычагу
+                                    # взаимодействуем с дверью
                                     if not check[0]:
                                         i.upd = 1
                                     else:
