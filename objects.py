@@ -1,12 +1,8 @@
 import pygame
 
 
-def check_objects():
-    pass
-
-
 class Lever(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, tile_width, tile_height, *group):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, num, *group):
         super().__init__(*group)
 
         self.frames = []
@@ -20,7 +16,7 @@ class Lever(pygame.sprite.Sprite):
         self.rect = self.rect.move(tile_width * pos_x, tile_height * pos_y)
 
         self.side_l = True
-        self.value = 0  # индес рычага, для открытия определённой двери
+        self.value = num  # индес рычага, для открытия определённой двери
 
     # режим заготовку на кадры
     def cut_sheet(self, sheet, columns, rows):
@@ -34,4 +30,15 @@ class Lever(pygame.sprite.Sprite):
                 self.frames.append(cut)
 
     def anim(self):
-        pass
+
+        # прерываем прошлую анимацию, если началась новая
+        if self.upd == 0:
+            self.upd += 1
+            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+            self.image = self.anim[self.cur_frame]
+
+
+        self.upd += 1
+
+        if self.upd == 4:  # раз в 10 инетраций меняется кадр
+            self.upd = 0

@@ -66,6 +66,12 @@ class Hero(pygame.sprite.Sprite):
         for _ in range(particle_count):
             Particle(position, self.all_sprites, x)
 
+    def check_objects(self, *group):
+        for i in group:
+            wall = pygame.sprite.spritecollide(self, i, False)  # касаемся ли мы объектов
+            if wall:
+                print('АНИМ')
+
 
 class AnimatedSprite:
     def __init__(self, folder, columns, rows, x, y):

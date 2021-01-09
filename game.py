@@ -4,7 +4,6 @@ from pygame.locals import *
 from hero import Hero
 from level import Level
 from game_menu import GameMenu
-from objects import check_objects
 
 
 class Camera:
@@ -77,10 +76,11 @@ if __name__ == '__main__':
     layer_2 = pygame.sprite.Group()
     layer_1 = pygame.sprite.Group()
     layer_front = pygame.sprite.Group()
+    lever = pygame.sprite.Group()
 
     player = Hero('data/image/hero', 100, 400, wall, hero, all_sprites)
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
-    Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front)
+    lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever)
     camera = Camera()
 
     # основной цикл
@@ -94,8 +94,8 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
                     game_menu.settings_show = False
-                if event.key == pygame.K_f:
-                    check
+                if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
+                    player.check_objects(lever)
             if show_manager:
                 answer = game_menu.update_manager(event)
                 # если были нажаты кнопки

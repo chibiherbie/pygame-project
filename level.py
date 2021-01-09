@@ -13,10 +13,13 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1, layer_front):
+    def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1, layer_front, lever):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
+        self.lever = lever
+
+        self.lever_num = 0
 
         dir = 'data/levels/' + folder
 
@@ -48,7 +51,8 @@ class Level:
                     Tile('floor', x, y, self.wall, self.all_sprite)
                 elif level[y][x] == '/':
                     Tile('floor', x, y, self.wall, self.all_sprite)
-                    Lever(x, y - 1, tile_width, tile_height, self.all_sprite)
+                    Lever(x, y - 1, tile_width, tile_height, self.lever_num, self.lever, self.all_sprite)
+                    self.lever_num += 1
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
