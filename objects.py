@@ -42,3 +42,18 @@ class Lever(pygame.sprite.Sprite):
         #     self.image = self.frames[self.cur_frame]
         #
         # self.upd += 1
+
+
+class Door(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, *group):
+        super().__init__(*group)
+
+        self.frames = []
+
+        self.image = pygame.image.load('data/image/graphics/door2.png')
+        self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
+                                               tile_height * pos_y)
+
+        self.upd = 0
+
+        self.side_l = True

@@ -1,6 +1,6 @@
 import pygame
 import os
-from objects import Lever
+from objects import Lever, Door
 
 
 tile_images = {
@@ -13,11 +13,12 @@ tile_width = 50
 
 
 class Level:
-    def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1, layer_front, lever):
+    def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1, layer_front, lever, door):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
         self.lever = lever
+        self.door = door
 
         self.lever_num = 0
 
@@ -53,6 +54,9 @@ class Level:
                     Tile('floor', x, y, self.wall, self.all_sprite)
                     Lever(x, y - 1, tile_width, tile_height, self.lever_num, self.lever, self.all_sprite)
                     self.lever_num += 1
+                elif level[y][x] == '|':
+                    Door(x, y - 1, tile_width, tile_height, self.wall, self.door, self.all_sprite)
+                    self.lever_num += 1
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
@@ -69,7 +73,7 @@ class Tile(pygame.sprite.Sprite):
         super().__init__(*group)
         self.image = tile_images[tile_type]
 
-        self.image = pygame.transform.scale(self.image, (50, 50))  # размер изображения
+        self.image = pygame.transform.scale(self.image, (tile_width, tile_height))  # размер изображения
 
         self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
 

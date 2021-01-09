@@ -66,11 +66,12 @@ class Hero(pygame.sprite.Sprite):
         for _ in range(particle_count):
             Particle(position, self.all_sprites, x)
 
+    # проверяем на пересечение с объектами
     def check_objects(self, *group):
         for i in group:
             wall = pygame.sprite.spritecollide(self, i, False)  # касаемся ли мы объектов
             if wall:
-                wall[0].animation()
+                wall[0].animation()  # запускаем анимацию
 
 
 class AnimatedSprite:

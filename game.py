@@ -77,10 +77,12 @@ if __name__ == '__main__':
     layer_1 = pygame.sprite.Group()
     layer_front = pygame.sprite.Group()
     lever = pygame.sprite.Group()
+    door = pygame.sprite.Group()
 
     player = Hero('data/image/hero', 100, 400, wall, hero, all_sprites)
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
-    lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever)
+    lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
+                door)
     camera = Camera()
 
     # основной цикл
@@ -95,9 +97,7 @@ if __name__ == '__main__':
                     show_manager = not show_manager
                     game_menu.settings_show = False
                 if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
-                    player.check_objects(lever)
-
-
+                    player.check_objects(lever, door)
 
             if show_manager:
                 answer = game_menu.update_manager(event)
@@ -108,8 +108,8 @@ if __name__ == '__main__':
                     running = False
                 elif answer == 'menu':
                     print('ВЫХОД В МЕНЮ')
-        # перемещение персонажа
 
+        # перемещение персонажа
         key = pygame.key.get_pressed()
         # if key[pygame.K_DOWN]:
         #     hero.update(0, 1)
