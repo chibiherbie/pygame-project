@@ -8,12 +8,13 @@ class Hero(pygame.sprite.Sprite):
         super().__init__(*group)  # вызываем конструктор родительского класса Sprite
 
         self.all_sprites = group[-1]
+        self.wall = wall
+        self.death = group[-2]
 
         # self.image = pygame.image.load(os_name)
         # self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
         # self.rect = self.image.get_rect().move(pos_x, pos_y)
 
-        self.wall = wall
         self.isGround = False  # на змеле ли пресонаж?
         self.speed = 7  # сила прыжка
         self.gravity = 0.3

@@ -50,7 +50,7 @@ class Door(pygame.sprite.Sprite):
 
         self.frames = []
 
-        self.image = pygame.image.load('data/image/graphics/door2.png')
+        self.image = pygame.image.load('data/image/graphics/door.png')
         self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
                                                tile_height * pos_y)
         self.y = self.rect.y
@@ -68,3 +68,16 @@ class Door(pygame.sprite.Sprite):
             self.count += self.upd
             if self.count == 0:
                 self.upd = 0
+
+
+class Spikes(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, *group):
+        super().__init__(*group)
+
+        self.frames = []
+
+        self.image = pygame.image.load('data/image/graphics/spikes.png')
+        self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
+                                               tile_height * pos_y)
+        self.y = self.rect.y
+        self.upd, self.count = 0, 0
