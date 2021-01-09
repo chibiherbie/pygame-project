@@ -1,7 +1,9 @@
 import pygame
+import pygame_gui
 from pygame.locals import *
 from hero import Hero
 from level import Level
+from game_menu import GameMenu
 
 
 class Camera:
@@ -54,6 +56,10 @@ if __name__ == '__main__':
 
     running = True
 
+    # внутриигровое меню
+    show_manager = False
+    game_menu = GameMenu(screen, size, FPS)
+
     # перемещение
     p_x = 0
     p_y = 0
@@ -83,8 +89,17 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    print('manager')
+                    show_manager = not show_manager
+            if show_manager:
+                answer = game_menu.update_manager(event)
+                if answer:
+                    show_manager = False
 
         # перемещение персонажа
+
         key = pygame.key.get_pressed()
         # if key[pygame.K_DOWN]:
         #     hero.update(0, 1)
@@ -95,6 +110,10 @@ if __name__ == '__main__':
         if key[pygame.K_LEFT]:
             p_x = -5
 
+        # если включено внетриигровое меню, то двигать персонажем нельзя, но всё окружение работает
+        if show_manager:
+            p_x, p_y = 0, 0
+        # двигаем игрока
         player.move(p_x, p_y)
         p_x, p_y = 0, 0
 
@@ -128,6 +147,9 @@ if __name__ == '__main__':
 
         # очищаем спарйты
         draw_sprite.empty()
+
+        if show_manager:
+            game_menu.draw()  # рисуем внутриигровое меню
 
         time.tick(FPS)
         pygame.display.flip()
