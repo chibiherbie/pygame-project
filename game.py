@@ -96,6 +96,9 @@ if __name__ == '__main__':
                     game_menu.settings_show = False
                 if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
                     player.check_objects(lever)
+
+
+
             if show_manager:
                 answer = game_menu.update_manager(event)
                 # если были нажаты кнопки

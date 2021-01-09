@@ -70,7 +70,7 @@ class Hero(pygame.sprite.Sprite):
         for i in group:
             wall = pygame.sprite.spritecollide(self, i, False)  # касаемся ли мы объектов
             if wall:
-                print('АНИМ')
+                wall[0].animation()
 
 
 class AnimatedSprite:

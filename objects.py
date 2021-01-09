@@ -29,16 +29,16 @@ class Lever(pygame.sprite.Sprite):
                 cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
                 self.frames.append(cut)
 
-    def anim(self):
-
-        # прерываем прошлую анимацию, если началась новая
-        if self.upd == 0:
-            self.upd += 1
-            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.anim[self.cur_frame]
-
-
-        self.upd += 1
-
-        if self.upd == 4:  # раз в 10 инетраций меняется кадр
-            self.upd = 0
+    def animation(self):
+        if self.side_l:
+            self.image = self.frames[-1]
+            self.side_l = False
+        else:
+            self.image = self.frames[0]
+            self.side_l = True
+        # if self.upd % 4 == 0:  # раз в 4 инетраций меняется кадр
+        #     self.upd += 1
+        #     self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        #     self.image = self.frames[self.cur_frame]
+        #
+        # self.upd += 1
