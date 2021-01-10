@@ -4,8 +4,10 @@ from objects import Lever, Door, Spikes
 
 
 tile_images = {
-        'floor': pygame.image.load('data/image/graphics/example.jpg'),
-        'empty': pygame.image.load('data/image/graphics/grass.png'),
+        'floor': pygame.image.load('data/image/graphics/platform-top.png'),
+        'under': pygame.image.load('data/image/graphics/platform-bottom.png'),
+        'left': pygame.image.load('data/image/graphics/platform-left.png'),
+        'right': pygame.image.load('data/image/graphics/platform-right.png'),
     }
 
 tile_height = 50
@@ -47,9 +49,13 @@ class Level:
         for y in range(len(level)):
             for x in range(len(level[y])):
                 if level[y][x] == '.':
-                    Tile('empty', x, y, self.lvl, self.all_sprite)
+                    Tile('under', x, y, self.lvl, self.all_sprite)
                 elif level[y][x] == '#':
                     Tile('floor', x, y, self.wall, self.all_sprite)
+                elif level[y][x] == '-':
+                    Tile('left', x, y, self.wall, self.all_sprite)
+                elif level[y][x] == '+':
+                    Tile('right', x, y, self.wall, self.all_sprite)
                 elif level[y][x] == '/':
                     Lever(x, y, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
                           self.lever, self.all_sprite)
@@ -72,7 +78,7 @@ class Level:
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y, *group):
         super().__init__(*group)
-        self.image = tile_images[tile_type]
+        self.image = tile_images[tile_type].convert_alpha()
 
         self.image = pygame.transform.scale(self.image, (tile_width, tile_height))  # размер изображения
 
