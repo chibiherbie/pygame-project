@@ -80,7 +80,7 @@ if __name__ == '__main__':
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
 
-    player = Hero('data/image/hero', 100, 400, wall, death, hero, all_sprites)
+    player = Hero('data/image/hero1', 100, 400, wall, death, hero, all_sprites)
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death)

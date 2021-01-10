@@ -49,7 +49,7 @@ class Level:
         for y in range(len(level)):
             for x in range(len(level[y])):
                 if level[y][x] == '.':
-                    Tile('under', x, y, self.lvl, self.all_sprite)
+                    Tile('under', x, y, self.wall, self.all_sprite)
                 elif level[y][x] == '#':
                     Tile('floor', x, y, self.wall, self.all_sprite)
                 elif level[y][x] == '-':
