@@ -4,6 +4,7 @@ from pygame.locals import *
 from hero import Hero
 from level import Level
 from game_menu import GameMenu
+from network import Network
 
 
 class Camera:
@@ -80,7 +81,17 @@ if __name__ == '__main__':
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
 
-    player = Hero('data/image/hero1', 100, 400, wall, death, hero, all_sprites)
+    n = Network()
+
+    player = n.getP()
+    player.add_group(wall, death, hero, all_sprites)
+
+    if player.os_name == 'data/image/hero1':
+        player2 = Hero('data/image/hero2', 150, 400)
+    else:
+        player2 = Hero('data/image/hero1', 100, 400)
+    player2.add_group(wall, death, hero, all_sprites)
+
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death)
@@ -133,6 +144,12 @@ if __name__ == '__main__':
         # если включено внетриигровое меню, то двигать персонажем нельзя, но всё окружение работает
         if show_manager:
             p_x, p_y = 0, 0
+
+        pos2 = n.send(str(p_x) + ',' + str(p_y)).split(',')
+        print(pos2)
+        if pos2:
+            player2.move(int(pos2[0]), int(pos2[1]))
+
         # двигаем игрока
         player.move(p_x, p_y)
         p_x, p_y = 0, 0

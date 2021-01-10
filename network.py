@@ -1,5 +1,6 @@
 import socket
 import pickle
+import json
 
 
 class Network:
@@ -22,7 +23,18 @@ class Network:
 
     def send(self, data):
         try:
-            self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048))
+            self.client.send(str.encode(data))
+            return self.client.recv(2048).decode()
         except Exception as e:
             print(e)
+
+    # def save(self, sprite):
+    #     with open('save_game1.json', 'w') as file:
+    #         print('Saving')
+    #         # Create a list of the top left positions and the
+    #         # image names.
+    #         data = [(sprite.rect.topleft)]
+    #         json.dump(data, file)
+    #     with open('save_game1.json', 'w') as file:
+    #         return json.load(file)
+

@@ -4,12 +4,12 @@ import random
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, os_name, pos_x, pos_y, wall, death, *group):
-        super().__init__(*group)  # вызываем конструктор родительского класса Sprite
-
-        self.all_sprites = group[-1]
-        self.wall = wall
-        self.death = death
+    def __init__(self, os_name, pos_x, pos_y):
+        super().__init__()
+         # вызываем конструктор родительского класса Sprite
+        self.os_name = os_name
+        self.pos_x = pos_x
+        self.pos_y = pos_y
 
         # self.image = pygame.image.load(os_name)
         # self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
@@ -19,11 +19,18 @@ class Hero(pygame.sprite.Sprite):
         self.speed = 7  # сила прыжка
         self.gravity = 0.3
 
-        self.anim = AnimatedSprite(os_name, 3, 1, pos_x, pos_y)
-        self.image = self.anim.image
-        self.rect = self.anim.rect
+
 
         self.xvel, self.yvel = 0, 0
+
+    def add_group(self, wall, death, *group):
+        super().__init__(*group)
+        self.all_sprites = group[-1]
+        self.wall = wall
+        self.death = death
+        self.anim = AnimatedSprite(self.os_name, 3, 1, self.pos_x, self.pos_y)
+        self.image = self.anim.image
+        self.rect = self.anim.rect
 
     # передвижение персонажа
     def move(self, x, y):
