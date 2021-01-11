@@ -45,9 +45,6 @@ class Hero(pygame.sprite.Sprite):
                 self.isGround = True
                 break
 
-        print(self.isGround)
-
-
         self.rect.y += self.yvel
         self.rect.x += self.xvel
 
@@ -60,12 +57,17 @@ class Hero(pygame.sprite.Sprite):
                     self.rect.bottom = spr.rect.top
                     self.isGround = True
                     self.yvel = 0
+                    # припадении создаются партиклы с двух сторон
+                    self.create_particles((self.rect.x + self.rect.w // 2,
+                                           self.rect.bottom - self.rect.h // 5), 5)
+                    self.create_particles((self.rect.x + self.rect.w // 2,
+                                           self.rect.bottom - self.rect.h // 5), -5)
 
                 if self.yvel < 0:  # если столкнулись с блоком сверху нас
                     self.rect.top = spr.rect.bottom
                     self.yvel = 0
 
-        if self.isGround and self.xvel:
+        if self.isGround and self.xvel:  # если на земле и бежим, то из под ног создаются партиклы
             self.create_particles((self.rect.x + self.rect.w // 2,
                                    self.rect.bottom - self.rect.h // 5), self.xvel)
 
@@ -75,7 +77,7 @@ class Hero(pygame.sprite.Sprite):
                 self.isGround = False
 
     def create_particles(self, position, x):
-        particle_count = 40  # количество создаваемых частиц
+        particle_count = 20  # количество создаваемых частиц
         for _ in range(particle_count):
             Particle(position, self.all_sprites, x)
 
@@ -170,5 +172,5 @@ class Particle(pygame.sprite.Sprite):
 
         self.time += 1
 
-        if self.time == 10:  # удаляем частицу через 10 интераций
+        if self.time == 7:  # удаляем частицу через 10 интераций
             self.kill()
