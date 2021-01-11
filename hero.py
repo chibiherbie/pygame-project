@@ -39,6 +39,14 @@ class Hero(pygame.sprite.Sprite):
             self.yvel += self.gravity
 
         self.isGround = False
+        for i in self.wall:
+            if (i.rect.collidepoint(self.rect.bottomleft[0] + 10, self.rect.bottomleft[1] + 1) or
+                        i.rect.collidepoint(self.rect.bottomright[0] - 10, self.rect.bottomright[1] + 1)):
+                self.isGround = True
+                break
+
+        print(self.isGround)
+
 
         self.rect.y += self.yvel
         self.rect.x += self.xvel
