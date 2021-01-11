@@ -27,7 +27,6 @@ def threaded_client(conn, player, gameId):
     global currentPlayer
     game = games[gameId]
 
-    conn.send(pickle.dumps(game.players[player]))
 
     reply = (0, 0, 0)
 
@@ -65,17 +64,31 @@ def threaded_client(conn, player, gameId):
 
 currentPlayer = 0
 
+
 while True:
     conn, addr = s.accept()
-    print("Connected to:", addr)
+    print("Connected to:", addr[0])
 
+    while True:
+        data = pickle.loads(conn.recv(2048))
+        if data:
+            break
+
+    print(data)
     currentPlayer += 1
     p = 0
+
     gameId = (currentPlayer - 1) // 2
-    if currentPlayer % 2 == 1:
+    if data == 'new':
         games[gameId] = Game(gameId)
         print("Creating a new game...")
     else:
         p = 1
+    print('количество игр:', len(games.values()), games)
 
+    game = games[gameId]
+    conn.send(pickle.dumps((game.players[p], game.code)))
     start_new_thread(threaded_client, (conn, p, gameId))
+
+
+

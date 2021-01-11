@@ -92,7 +92,7 @@ if __name__ == '__main__':
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
 
-    n = Network()
+    n = Network('ohuv')
 
     player = n.getP()
     player.add_group(wall, death, hero, all_sprites)
