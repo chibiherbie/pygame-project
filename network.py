@@ -22,9 +22,13 @@ class Network:
             pass
 
     def send(self, data):
+        """
+        :return p_x, p_y, bool(pygame.K_f)
+        """
+
         try:
-            self.client.send(str.encode(data))
-            return self.client.recv(2048).decode()
+            self.client.send(pickle.dumps(data))
+            return pickle.loads(self.client.recv(2048))
         except Exception as e:
             print(e)
 

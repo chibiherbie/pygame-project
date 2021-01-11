@@ -21,16 +21,6 @@ print("Waiting for a connection, Server Started")
 players = [Hero('data/image/hero1', 100, 400),
            Hero('data/image/hero2', 150, 400)]
 
-revel = [(False, '', 1), (False, '', 1)]
-
-
-def read_pos(d):
-    d = d.split(',')
-    return d[0], d[1], d[2]
-
-
-def make_pos(tup):
-    return f'{tup[0]},{tup[1]},{tup[2]}'
 
 
 def threaded_client(conn, player):
@@ -40,31 +30,24 @@ def threaded_client(conn, player):
     reply = '00,00,00,00'
     while True:
         try:
-            data = read_pos(conn.recv(2048).decode())
-            if data[0] != 'player':
-                revel[player] = data
-                if player == 1:
-                    conn.sendall(str.encode(make_pos(revel[0])))
-                else:
-                    conn.sendall(str.encode(make_pos(revel[1])))
-                continue
+            data = pickle.loads(conn.recv(2048))
+            players[player] = data
 
             if not data:
                 print('Disconnected')
                 break
             else:
-                players[player] = data
-                reply = (0, 0, 0)
+
                 if player == 1:
                     if type(players[1]) == tuple:
                         reply = players[0]
                 else:
                     if type(players[1]) == tuple:
                         reply = players[1]
-                # print('Recived: ', data)
-                # print('Sendig: ',  reply)
+                print('Recived: ', data)
+                print('Sendig: ',  reply)
 
-            conn.sendall(str.encode(make_pos(reply)))
+            conn.sendall(pickle.dumps(reply))
         except:
             break
 

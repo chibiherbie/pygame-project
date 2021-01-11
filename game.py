@@ -45,6 +45,17 @@ class Camera:
         return -(player.rect.y + player.rect.h // 2 - height // 2) // num
 
 
+def player_with_obj(action, type, value):
+    if type == 'door':  # исп объект дверь
+        for i in door.sprites():
+            if i.value == value:  # ищем дверь приявзаную к нажатому рычагу
+                # взаимодействуем с дверью
+                if not action:
+                    i.upd = 1
+                else:
+                    i.upd = -1
+
+
 FPS = 60
 
 if __name__ == '__main__':
@@ -100,7 +111,7 @@ if __name__ == '__main__':
     # основной цикл
     while running:
         screen.fill(pygame.Color('white'))
-        check = (False, '', 1)
+        check = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -112,15 +123,7 @@ if __name__ == '__main__':
                 if event.key == pygame.K_f:
                     check = player.check_objects(lever)   # проверка на пересечение с объектами, в случаи успеха отклик
                     if check:
-                        print(check)
-                        if check[1] == 'door':  # исп объект дверь
-                            for i in door.sprites():
-                                if i.value == check[2]:  # ищем дверь приявзаную к нажатому рычагу
-                                    # взаимодействуем с дверью
-                                    if not check[0]:
-                                        i.upd = 1
-                                    else:
-                                        i.upd = -1
+                        player_with_obj(check[0], check[1], check[2])
 
             if show_manager:
                 answer = game_menu.update_manager(event)
@@ -147,24 +150,17 @@ if __name__ == '__main__':
         if show_manager:
             p_x, p_y = 0, 0
 
-        pos2 = n.send(f'player,{p_x},{p_y}').split(',')
-        # print(pos2)
-        if pos2[0] == 'player':
-            player2.move(int(pos2[1]), int(pos2[2]))
+        if check:
+            check = True
 
-        check = n.send(f'{check[0]},{check[1]},{check[2]}').split(',')
-        if check[1] != '':
-            print('открываем дверь')
-            check[0] = True if check[0] == 'True' else False
-            if check[1] == 'door':  # исп объект дверь
-                for i in door.sprites():
-                    if i.value == int(check[2]):  # ищем дверь приявзаную к нажатому рычагу
-                        # взаимодействуем с дверью
-                        if not check[0]:
-                            i.upd = 1
-                        else:
-                            i.upd = -1
+        pl2 = n.send((p_x, p_y, check))
 
+        player2.move(int(pl2[0]), int(pl2[1]))
+
+        if pl2[2]:
+            check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
+            if check:
+                player_with_obj(check[0], check[1], check[2])
 
         # двигаем игрока
         player.move(p_x, p_y)
