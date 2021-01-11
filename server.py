@@ -14,20 +14,14 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen(4)  # лимит подключения
+s.listen(4)  # лимит подключений
 print("Waiting for a connection, Server Started")
-
-# players = [Hero('data/image/hero1', 100, 400),
-#            Hero('data/image/hero2', 150, 400)]
 
 games = {}
 
 
 def threaded_client(conn, player, gameId):
     global currentPlayer
-    game = games[gameId]
-
-
     reply = (0, 0, 0)
 
     while True:
@@ -51,14 +45,16 @@ def threaded_client(conn, player, gameId):
         except:
             break
 
-    # try:
-    #     del games[gameId]
-    #     print("Closing Game", gameId)
-    # except:
-    #     pass
+    games[gameId].count_player -= 1
+    currentPlayer -= 1
+
+    if games[gameId].count_player == 0:
+        del games[gameId]
+        print("Closing Game", gameId)
+
 
     print('Lost connection')
-    currentPlayer -= 1
+
     conn.close()
 
 
@@ -74,21 +70,34 @@ while True:
         if data:
             break
 
-    print(data)
     currentPlayer += 1
-    p = 0
+    gameId = 0
 
-    gameId = (currentPlayer - 1) // 2
     if data == 'new':
+        gameId = len(games.values()) + 1
         games[gameId] = Game(gameId)
+        p = 0
         print("Creating a new game...")
     else:
-        p = 1
-    print('количество игр:', len(games.values()), games)
+        for i in range(1, len(games.values()) + 1):
+            if games[i].code == data:
+                gameId = i
+                p = 1
 
-    game = games[gameId]
-    conn.send(pickle.dumps((game.players[p], game.code)))
-    start_new_thread(threaded_client, (conn, p, gameId))
+    if gameId:
+        conn.send(pickle.dumps('yes'))
+        game = games[gameId]
+        game.count_player += 1
+    else:
+        conn.send(pickle.dumps('no'))
+
+    print('Количество лобби:', len(games.values()))
+
+    try:
+        conn.send(pickle.dumps((game.players[p], game.code)))
+        start_new_thread(threaded_client, (conn, p, gameId))
+    except Exception as e:
+        print(e)
 
 
 

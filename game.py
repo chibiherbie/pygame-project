@@ -9,7 +9,9 @@ from network import Network
 
 class Camera:
     # зададим начальный сдвиг камеры
-    def __init__(self):
+    def __init__(self, player):
+        self.player = player
+
         self.dx = player.rect.x
         self.dy = player.rect.y
 
@@ -35,17 +37,17 @@ class Camera:
 
     # позиционировать камеру на объекте target
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2) // 40
-        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2) // 40
+        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2) // 40
+        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2) // 40
 
     def parallax_x(self, num):
-        return -(player.rect.x + player.rect.w // 2 - width // 2) // num
+        return -(self.player.rect.x + self.player.rect.w // 2 - WIDTH // 2) // num
 
     def parallax_y(self, num):
-        return -(player.rect.y + player.rect.h // 2 - height // 2) // num
+        return -(self.player.rect.y + self.player.rect.h // 2 - HEIGHT // 2) // num
 
 
-def player_with_obj(action, type, value):
+def player_with_obj(action, type, value, door):
     if type == 'door':  # исп объект дверь
         for i in door.sprites():
             if i.value == value:  # ищем дверь приявзаную к нажатому рычагу
@@ -57,12 +59,14 @@ def player_with_obj(action, type, value):
 
 
 FPS = 60
+WIDTH, HEIGHT = 1000, 1000
 
-if __name__ == '__main__':
+
+def main_loop():
     pygame.init()
     pygame.display.set_caption('GAME')
 
-    size = width, height = 1000, 1000
+    size = WIDTH, HEIGHT
     screen = pygame.display.set_mode(size, HWSURFACE | DOUBLEBUF)
     # screen.set_alpha(None)
 
@@ -92,7 +96,7 @@ if __name__ == '__main__':
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
 
-    n = Network('ohuv')
+
 
     player = n.getP()
     player.add_group(wall, death, hero, all_sprites)
@@ -106,7 +110,7 @@ if __name__ == '__main__':
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death)
-    camera = Camera()
+    camera = Camera(player)
 
     # основной цикл
     while running:
@@ -123,7 +127,7 @@ if __name__ == '__main__':
                 if event.key == pygame.K_f:
                     check = player.check_objects(lever)   # проверка на пересечение с объектами, в случаи успеха отклик
                     if check:
-                        player_with_obj(check[0], check[1], check[2])
+                        player_with_obj(check[0], check[1], check[2], door)
 
             if show_manager:
                 answer = game_menu.update_manager(event)
@@ -161,7 +165,7 @@ if __name__ == '__main__':
         if pl2[2]:
             check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
             if check:
-                player_with_obj(check[0], check[1], check[2])
+                player_with_obj(check[0], check[1], check[2], door)
 
         # двигаем игрока
         player.move(p_x, p_y)
@@ -185,7 +189,7 @@ if __name__ == '__main__':
 
         # если спрайт не в зоне нашего зрения, он не рисуется
         for obj in all_sprites:
-            if -obj.rect.width <= obj.rect.x <= width and -obj.rect.height <= obj.rect.y <= height:
+            if -obj.rect.width <= obj.rect.x <= WIDTH and -obj.rect.height <= obj.rect.y <= HEIGHT:
                 draw_sprite.add(obj)
 
         # рисуем все объекты
@@ -206,3 +210,9 @@ if __name__ == '__main__':
         # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
 
     pygame.quit()
+
+
+if __name__ == '__main__':
+    # подключаемся к серверу
+    n = Network()
+    main_loop()

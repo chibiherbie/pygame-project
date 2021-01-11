@@ -8,18 +8,19 @@ class Network:
         self.server = "192.168.0.163"
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.p, self.open = '', ''
         self.connect()
 
         if password:
-            self.client.send(pickle.dumps('pas'))
-            self.p, self.open = self.get_server()
-            if self.open != password:
-                print('не верный пароль для лобби')
+            self.client.send(pickle.dumps(password))
+            next = self.get_server()
+            if next == 'no':
+                print('НЕ правильный пароль или нет такого лобби')
                 quit()
         else:
             self.client.send(pickle.dumps('new'))
-            self.p, self.open = self.get_server()
+            next = self.get_server()
+
+        self.p, self.open = self.get_server()
 
     def getP(self):
         return self.p

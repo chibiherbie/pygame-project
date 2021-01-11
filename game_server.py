@@ -10,4 +10,5 @@ class Game:
 
         self.p_ypd = [(0, 0, 0), (0, 0, 0)]
         self.code = ''.join([choice('qwertasdyhjozovbu') for i in range(4)])
-        print(self.code)
+        self.count_player = 0
+        print('КОД ЛОББИ:', self.code)
