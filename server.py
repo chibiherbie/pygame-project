@@ -1,8 +1,7 @@
 import pickle
 import socket
 from _thread import *
-from hero import Hero
-import pygame
+from game_server import Game
 import sys
 
 server = "192.168.0.163"
@@ -15,41 +14,49 @@ try:
 except socket.error as e:
     str(e)
 
-s.listen(2)  # лимит подключения
+s.listen(4)  # лимит подключения
 print("Waiting for a connection, Server Started")
 
-players = [Hero('data/image/hero1', 100, 400),
-           Hero('data/image/hero2', 150, 400)]
+# players = [Hero('data/image/hero1', 100, 400),
+#            Hero('data/image/hero2', 150, 400)]
+
+games = {}
 
 
-
-def threaded_client(conn, player):
+def threaded_client(conn, player, gameId):
     global currentPlayer
-    conn.send(pickle.dumps(players[player]))
-    players[player] = '00,00,00,00'
-    reply = '00,00,00,00'
+    game = games[gameId]
+
+    conn.send(pickle.dumps(game.players[player]))
+
+    reply = (0, 0, 0)
+
     while True:
         try:
             data = pickle.loads(conn.recv(2048))
-            players[player] = data
 
-            if not data:
-                print('Disconnected')
-                break
-            else:
-
-                if player == 1:
-                    if type(players[1]) == tuple:
-                        reply = players[0]
+            if gameId in games:
+                game = games[gameId]
+                game.p_ypd[player] = data
+                if not data:
+                    print('Disconnected')
+                    break
                 else:
-                    if type(players[1]) == tuple:
-                        reply = players[1]
-                print('Recived: ', data)
-                print('Sendig: ',  reply)
-
-            conn.sendall(pickle.dumps(reply))
+                    if player == 1:
+                        reply = game.p_ypd[0]
+                    else:
+                        reply = game.p_ypd[1]
+                    # print('Recived: ', data)
+                    # print('Sendig: ',  reply)
+                conn.sendall(pickle.dumps(reply))
         except:
             break
+
+    # try:
+    #     del games[gameId]
+    #     print("Closing Game", gameId)
+    # except:
+    #     pass
 
     print('Lost connection')
     currentPlayer -= 1
@@ -57,9 +64,18 @@ def threaded_client(conn, player):
 
 
 currentPlayer = 0
+
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
 
-    start_new_thread(threaded_client, (conn, currentPlayer))
     currentPlayer += 1
+    p = 0
+    gameId = (currentPlayer - 1) // 2
+    if currentPlayer % 2 == 1:
+        games[gameId] = Game(gameId)
+        print("Creating a new game...")
+    else:
+        p = 1
+
+    start_new_thread(threaded_client, (conn, p, gameId))

@@ -1,6 +1,5 @@
 import socket
 import pickle
-import json
 
 
 class Network:
@@ -28,7 +27,7 @@ class Network:
 
         try:
             self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048))
+            return pickle.loads(self.client.recv(2048*2))
         except Exception as e:
             print(e)
 

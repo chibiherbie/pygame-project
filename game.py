@@ -145,6 +145,8 @@ if __name__ == '__main__':
             p_x = 5
         if key[pygame.K_LEFT]:
             p_x = -5
+        if key[pygame.K_UP]:
+            p_y = 1
 
         # если включено внетриигровое меню, то двигать персонажем нельзя, но всё окружение работает
         if show_manager:
@@ -154,7 +156,6 @@ if __name__ == '__main__':
             check = True
 
         pl2 = n.send((p_x, p_y, check))
-
         player2.move(int(pl2[0]), int(pl2[1]))
 
         if pl2[2]:
