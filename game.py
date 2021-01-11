@@ -100,6 +100,7 @@ if __name__ == '__main__':
     # основной цикл
     while running:
         screen.fill(pygame.Color('white'))
+        check = (False, '', 1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -108,9 +109,10 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
                     game_menu.settings_show = False
-                if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
-                    check = player.check_objects(lever)
+                if event.key == pygame.K_f:
+                    check = player.check_objects(lever)   # проверка на пересечение с объектами, в случаи успеха отклик
                     if check:
+                        print(check)
                         if check[1] == 'door':  # исп объект дверь
                             for i in door.sprites():
                                 if i.value == check[2]:  # ищем дверь приявзаную к нажатому рычагу
@@ -145,10 +147,24 @@ if __name__ == '__main__':
         if show_manager:
             p_x, p_y = 0, 0
 
-        pos2 = n.send(str(p_x) + ',' + str(p_y)).split(',')
-        print(pos2)
-        if pos2:
-            player2.move(int(pos2[0]), int(pos2[1]))
+        pos2 = n.send(f'player,{p_x},{p_y}').split(',')
+        # print(pos2)
+        if pos2[0] == 'player':
+            player2.move(int(pos2[1]), int(pos2[2]))
+
+        check = n.send(f'{check[0]},{check[1]},{check[2]}').split(',')
+        if check[1] != '':
+            print('открываем дверь')
+            check[0] = True if check[0] == 'True' else False
+            if check[1] == 'door':  # исп объект дверь
+                for i in door.sprites():
+                    if i.value == int(check[2]):  # ищем дверь приявзаную к нажатому рычагу
+                        # взаимодействуем с дверью
+                        if not check[0]:
+                            i.upd = 1
+                        else:
+                            i.upd = -1
+
 
         # двигаем игрока
         player.move(p_x, p_y)

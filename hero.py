@@ -19,8 +19,6 @@ class Hero(pygame.sprite.Sprite):
         self.speed = 7  # сила прыжка
         self.gravity = 0.3
 
-
-
         self.xvel, self.yvel = 0, 0
 
     def add_group(self, wall, death, *group):
@@ -35,7 +33,7 @@ class Hero(pygame.sprite.Sprite):
     # передвижение персонажа
     def move(self, x, y):
         # если наткнулись на шипы, останавливаем игрока
-        if pygame.sprite.spritecollideany(self, self.death): # в дальнейшем игра будет перезапускаться
+        if pygame.sprite.spritecollideany(self, self.death):  # в дальнейшем игра будет перезапускаться
             return
 
         self.image = self.anim.update((x, y))
@@ -46,6 +44,11 @@ class Hero(pygame.sprite.Sprite):
             self.yvel += self.gravity
 
         self.isGround = False
+        for i in self.wall:
+            if (i.rect.collidepoint(self.rect.bottomleft[0] + 10, self.rect.bottomleft[1] + 1) or
+                    i.rect.collidepoint(self.rect.bottomright[0] - 10, self.rect.bottomright[1] + 1)):
+                self.isGround = True
+                break
 
         self.rect.y += self.yvel
         self.rect.x += self.xvel
