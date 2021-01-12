@@ -21,8 +21,6 @@ class Hero(pygame.sprite.Sprite):
 
         self.xvel, self.yvel = 0, 0
 
-
-
     def add_group(self, wall, death, *group):
         super().__init__(*group)
         self.all_sprites = group[-1]
@@ -31,13 +29,22 @@ class Hero(pygame.sprite.Sprite):
         self.anim = AnimatedSprite(self.os_name, 3, 1, self.pos_x, self.pos_y)
         self.image = self.anim.image
         self.rect = self.anim.rect
+
         self.death_colide = False
+        self.stop_death = 0
 
     # передвижение персонажа
     def move(self, x, y):
         # если наткнулись на шипы, останавливаем игрока
         if pygame.sprite.spritecollideany(self, self.death):
-            self.death_colide = True
+            # self.death_colide = True
+            if self.stop_death <= 8:
+                self.create_particles((self.rect.x + self.rect.w // 2,
+                                       self.rect.bottom - self.rect.h // 5), -5, 'death')
+            elif self.stop_death == 20:  # перезапускаем игру
+                self.death_colide = True
+
+            self.stop_death += 1
             # в дальнейшем игра будет перезапускаться
             return
 
@@ -69,9 +76,9 @@ class Hero(pygame.sprite.Sprite):
                     self.yvel = 0
                     # припадении создаются партиклы с двух сторон
                     self.create_particles((self.rect.x + self.rect.w // 2,
-                                           self.rect.bottom - self.rect.h // 5), 5)
+                                           self.rect.bottom - self.rect.h // 5), 5, 'walk')
                     self.create_particles((self.rect.x + self.rect.w // 2,
-                                           self.rect.bottom - self.rect.h // 5), -5)
+                                           self.rect.bottom - self.rect.h // 5), -5, 'walk')
 
                 if self.yvel < 0:  # если столкнулись с блоком сверху нас
                     self.rect.top = spr.rect.bottom
@@ -79,17 +86,21 @@ class Hero(pygame.sprite.Sprite):
 
         if self.isGround and self.xvel:  # если на земле и бежим, то из под ног создаются партиклы
             self.create_particles((self.rect.x + self.rect.w // 2,
-                                   self.rect.bottom - self.rect.h // 5), self.xvel)
+                                   self.rect.bottom - self.rect.h // 5), self.xvel, 'walk')
 
         if y:  # прыжок
             if self.isGround:
                 self.yvel = -self.speed
                 self.isGround = False
 
-    def create_particles(self, position, x):
+    def create_particles(self, position, x, type):
         particle_count = 20  # количество создаваемых частиц
-        for _ in range(particle_count):
-            Particle(position, self.all_sprites, x)
+        if type == 'walk':
+            for _ in range(particle_count):
+                Particle(position, self.all_sprites, x)
+        else:
+            for _ in range(particle_count):
+                ParticleDeath(position, self.all_sprites, x)
 
     # проверяем на пересечение с объектами
     def check_objects(self, *group):
@@ -163,7 +174,7 @@ class Particle(pygame.sprite.Sprite):
 
     def __init__(self, pos, all_sprites, direction):
         super().__init__(all_sprites)
-        self.image = random.choice(self.smoke)
+        self.image = random.choice(self.smoke).convert_alpha()
         self.image.set_alpha(10)  # устанавливаем прозрачность
         self.rect = self.image.get_rect()
 
@@ -184,3 +195,64 @@ class Particle(pygame.sprite.Sprite):
 
         if self.time == 7:  # удаляем частицу через 10 интераций
             self.kill()
+
+
+class ParticleDeath(pygame.sprite.Sprite):
+    # генерируем частицы разного размера
+    blood = [pygame.image.load("data\image\graphics\circle_death.png")]
+    for scale in (10, 12, 14):
+        blood.append(pygame.transform.scale(blood[0], (scale, scale)))
+    del blood[0]  # удаляем изначально загруженое изображение
+
+    def __init__(self, pos, all_sprites, direction):
+        super().__init__(all_sprites)
+        self.image = random.choice(self.blood).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.image.set_alpha(30)
+
+        # у каждой частицы своя скорость - это вектор
+        self.velocity = [random.choice(range(-5, 6)), random.choice(range(-5, 6))]
+        # и свои координаты
+        self.rect.x, self.rect.y = pos
+
+        # гравитация будет одинаковой
+        self.gravity = 0.4
+        self.time = 0
+
+    def update(self):
+        # применяем гравитационный эффект:
+        # движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        # убиваем, если частица ушла за экран
+        self.time += 1
+
+        if self.time == 15:  # удаляем частицу через 10 интераций
+            self.kill()
+
+    # def __init__(self, pos, all_sprites, direction):
+    #     super().__init__(all_sprites)
+    #     self.image = random.choice(self.smoke)
+    #     self.image.set_alpha(10)  # устанавливаем прозрачность
+    #     self.rect = self.image.get_rect()
+    #
+    #     # у каждой частицы своя скорость
+    #     self.x, self.y = random.choice(range(1, 5)), random.choice([-0.2, -0.1, 0])
+    #     self.rect.x, self.rect.y = pos
+    #
+    #     self.direction = -direction // abs(direction)  # направление частиц
+    #
+    #     self.time = 0  # для подчёта итераций
+    #
+    # def update(self):
+    #     # перемещаем частицу
+    #     self.rect.x += self.x * self.direction
+    #     self.rect.y += self.y
+    #
+    #     self.time += 1
+    #
+    #     if self.time == 7:  # удаляем частицу через 10 интераций
+    #         self.kill()
+    #

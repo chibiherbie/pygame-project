@@ -110,8 +110,7 @@ def main_loop(name_level):
     player.add_group(wall, death, hero, all_sprites)
 
     pos_new = save_pos.split(',')
-    print(player.rect)
-    print(pos_new)
+
     if player.os_name == 'data/image/hero1':
         player2 = Hero('data/image/hero2', int(pos_new[1]), int(pos_new[2]))
         player.rect = player.rect.move(int(pos_new[0]), int(pos_new[2]))
@@ -119,7 +118,6 @@ def main_loop(name_level):
         player2 = Hero('data/image/hero1', int(pos_new[0]), int(pos_new[2]))
         player.rect = player.rect.move(int(pos_new[1]), int(pos_new[2]))
     player2.add_group(wall, death, hero, all_sprites)
-    print(player.rect)
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
