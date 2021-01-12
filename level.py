@@ -1,6 +1,6 @@
 import pygame
 import os
-from objects import Lever, Door, Spikes
+from objects import Lever, Door, Spikes, SavePoint
 
 
 tile_images = {
@@ -16,13 +16,14 @@ tile_width = 50
 
 class Level:
     def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1,
-                 layer_front, lever, door, death):
+                 layer_front, lever, door, death, save_point):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
         self.lever = lever
         self.door = door
         self.death = death
+        self.save_point = save_point
 
         dir = 'data/levels/' + folder
 
@@ -64,6 +65,8 @@ class Level:
                          self.wall, self.door, self.all_sprite)
                 elif level[y][x] == '"':
                     Spikes(x, y, tile_width, tile_height, self.death, self.all_sprite)
+                elif level[y][x] == '!':
+                    SavePoint(x, y, tile_width, tile_height, self.save_point, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
