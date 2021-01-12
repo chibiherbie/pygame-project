@@ -156,15 +156,15 @@ def main_loop(name_level):
                     print('ВЫХОД В МЕНЮ')
 
         for i in save_point.sprites():
-            if i.rect.x <= player.rect.x and not i.active:
+            if i.rect.x <= player.rect.x and not i.active:  # если пересекаем точку сохранения
                 i.active = True
+                # записываем координаты точек для персонажей в файл
                 save_pos = f'{i.pos_player[0]}, {i.pos_player[1]}, {i.pos_player[2]}'
 
         if player.death_colide or player2.death_colide:
             player.death_colide, player2.death_colide = False, False
             # load_save_point(player, player2, save_pos)
             return 'reset'
-            print(save_pos)
 
         # перемещение персонажа
         key = pygame.key.get_pressed()

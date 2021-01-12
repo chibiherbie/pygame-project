@@ -62,13 +62,10 @@ currentPlayer = 0
 
 
 while True:
-    conn, addr = s.accept()
+    conn, addr = s.accept()  # подклчюается user
     print("Connected to:", addr[0])
 
-    while True:
-        data = pickle.loads(conn.recv(2048))
-        if data:
-            break
+    data = pickle.loads(conn.recv(2048))  # ждём команды, делать игру или подключаться к существующей
 
     currentPlayer += 1
     gameId = 0
@@ -84,7 +81,7 @@ while True:
                 gameId = i
                 p = 1
 
-    if gameId:
+    if gameId:  # если прошло всё успешно, отправляем это, иначе сообщаем об ошибке
         conn.send(pickle.dumps('yes'))
         game = games[gameId]
         game.count_player += 1
@@ -94,8 +91,8 @@ while True:
     print('Количество лобби:', len(games.values()))
 
     try:
-        conn.send(pickle.dumps((game.players[p], game.code)))
-        start_new_thread(threaded_client, (conn, p, gameId))
+        conn.send(pickle.dumps((game.players[p], game.code)))  # отправляем код команты и игроков
+        start_new_thread(threaded_client, (conn, p, gameId))  # запускаем игру
     except Exception as e:
         print(e)
 
