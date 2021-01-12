@@ -4,12 +4,12 @@ import random
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, os_name, pos_x, pos_y, wall, death, *group):
-        super().__init__(*group)  # вызываем конструктор родительского класса Sprite
-
-        self.all_sprites = group[-1]
-        self.wall = wall
-        self.death = death
+    def __init__(self, os_name, pos_x, pos_y):
+        super().__init__()
+         # вызываем конструктор родительского класса Sprite
+        self.os_name = os_name
+        self.pos_x = pos_x
+        self.pos_y = pos_y
 
         # self.image = pygame.image.load(os_name)
         # self.image = pygame.transform.scale(self.image, (35, 60))  # размер изображения
@@ -19,16 +19,26 @@ class Hero(pygame.sprite.Sprite):
         self.speed = 7  # сила прыжка
         self.gravity = 0.3
 
-        self.anim = AnimatedSprite(os_name, 3, 1, pos_x, pos_y)
+        self.xvel, self.yvel = 0, 0
+
+
+
+    def add_group(self, wall, death, *group):
+        super().__init__(*group)
+        self.all_sprites = group[-1]
+        self.wall = wall
+        self.death = death
+        self.anim = AnimatedSprite(self.os_name, 3, 1, self.pos_x, self.pos_y)
         self.image = self.anim.image
         self.rect = self.anim.rect
-
-        self.xvel, self.yvel = 0, 0
+        self.death_colide = False
 
     # передвижение персонажа
     def move(self, x, y):
         # если наткнулись на шипы, останавливаем игрока
-        if pygame.sprite.spritecollideany(self, self.death): # в дальнейшем игра будет перезапускаться
+        if pygame.sprite.spritecollideany(self, self.death):
+            self.death_colide = True
+            # в дальнейшем игра будет перезапускаться
             return
 
         self.image = self.anim.update((x, y))
@@ -39,6 +49,11 @@ class Hero(pygame.sprite.Sprite):
             self.yvel += self.gravity
 
         self.isGround = False
+        for i in self.wall:
+            if (i.rect.collidepoint(self.rect.bottomleft[0] + 10, self.rect.bottomleft[1] + 1) or
+                        i.rect.collidepoint(self.rect.bottomright[0] - 10, self.rect.bottomright[1] + 1)):
+                self.isGround = True
+                break
 
         self.rect.y += self.yvel
         self.rect.x += self.xvel
@@ -52,12 +67,17 @@ class Hero(pygame.sprite.Sprite):
                     self.rect.bottom = spr.rect.top
                     self.isGround = True
                     self.yvel = 0
+                    # припадении создаются партиклы с двух сторон
+                    self.create_particles((self.rect.x + self.rect.w // 2,
+                                           self.rect.bottom - self.rect.h // 5), 5)
+                    self.create_particles((self.rect.x + self.rect.w // 2,
+                                           self.rect.bottom - self.rect.h // 5), -5)
 
                 if self.yvel < 0:  # если столкнулись с блоком сверху нас
                     self.rect.top = spr.rect.bottom
                     self.yvel = 0
 
-        if self.isGround and self.xvel:
+        if self.isGround and self.xvel:  # если на земле и бежим, то из под ног создаются партиклы
             self.create_particles((self.rect.x + self.rect.w // 2,
                                    self.rect.bottom - self.rect.h // 5), self.xvel)
 
@@ -67,7 +87,7 @@ class Hero(pygame.sprite.Sprite):
                 self.isGround = False
 
     def create_particles(self, position, x):
-        particle_count = 40  # количество создаваемых частиц
+        particle_count = 20  # количество создаваемых частиц
         for _ in range(particle_count):
             Particle(position, self.all_sprites, x)
 
@@ -162,5 +182,5 @@ class Particle(pygame.sprite.Sprite):
 
         self.time += 1
 
-        if self.time == 10:  # удаляем частицу через 10 интераций
+        if self.time == 7:  # удаляем частицу через 10 интераций
             self.kill()

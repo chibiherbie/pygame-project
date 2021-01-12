@@ -4,11 +4,15 @@ from pygame.locals import *
 from hero import Hero
 from level import Level
 from game_menu import GameMenu
+from network import Network
+import pickle
 
 
 class Camera:
     # зададим начальный сдвиг камеры
-    def __init__(self):
+    def __init__(self, player):
+        self.player = player
+
         self.dx = player.rect.x
         self.dy = player.rect.y
 
@@ -34,23 +38,41 @@ class Camera:
 
     # позиционировать камеру на объекте target
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2) // 40
-        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2) // 40
+        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2) // 40
+        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2) // 40
 
     def parallax_x(self, num):
-        return -(player.rect.x + player.rect.w // 2 - width // 2) // num
+        return -(self.player.rect.x + self.player.rect.w // 2 - WIDTH // 2) // num
 
     def parallax_y(self, num):
-        return -(player.rect.y + player.rect.h // 2 - height // 2) // num
+        return -(self.player.rect.y + self.player.rect.h // 2 - HEIGHT // 2) // num
+
+
+def player_with_obj(action, type, value, door):
+    if type == 'door':  # исп объект дверь
+        for i in door.sprites():
+            if i.value == value:  # ищем дверь приявзаную к нажатому рычагу
+                # взаимодействуем с дверью
+                if not action:
+                    i.upd = 1
+                else:
+                    i.upd = -1
+
+
+def load_save_point(player, player2, pos_new):
+    pass
 
 
 FPS = 60
+WIDTH, HEIGHT = 1000, 1000
+RECT_HERO = (32, 58)
 
-if __name__ == '__main__':
+
+def main_loop(name_level):
     pygame.init()
     pygame.display.set_caption('GAME')
 
-    size = width, height = 1000, 1000
+    size = WIDTH, HEIGHT
     screen = pygame.display.set_mode(size, HWSURFACE | DOUBLEBUF)
     # screen.set_alpha(None)
 
@@ -79,16 +101,38 @@ if __name__ == '__main__':
     layer_front = pygame.sprite.Group()
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
+    save_point = pygame.sprite.Group()
 
-    player = Hero('data/image/hero1', 100, 400, wall, death, hero, all_sprites)
+    with open('data/save/1_save.txt') as f:
+        save_pos = f.read()
+
+    player = n.getP()
+    player.add_group(wall, death, hero, all_sprites)
+
+    pos_new = save_pos.split(',')
+    print(player.rect)
+    print(pos_new)
+    if player.os_name == 'data/image/hero1':
+        player2 = Hero('data/image/hero2', int(pos_new[1]), int(pos_new[2]))
+        player.rect = player.rect.move(int(pos_new[0]), int(pos_new[2]))
+    else:
+        player2 = Hero('data/image/hero1', int(pos_new[0]), int(pos_new[2]))
+        player.rect = player.rect.move(int(pos_new[1]), int(pos_new[2]))
+    player2.add_group(wall, death, hero, all_sprites)
+    print(player.rect)
+
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
-    lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
-                door, death)
-    camera = Camera()
+    lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
+                door, death, save_point)
+    camera = Camera(player)
 
     # основной цикл
     while running:
         screen.fill(pygame.Color('white'))
+        check = False
+
+        with open('data/save/1_save.txt', mode='w') as f:
+            f.write(save_pos)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -97,18 +141,10 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
                     game_menu.settings_show = False
-                if event.key == pygame.K_f:  # проверка на пересечение с объектами, в случаи успеха отклик
-                    check = player.check_objects(lever)
+                if event.key == pygame.K_f:
+                    check = player.check_objects(lever)   # проверка на пересечение с объектами, в случаи успеха отклик
                     if check:
-                        if check[1] == 'door':  # исп объект дверь
-                            for i in door.sprites():
-                                if i.value == check[2]:  # ищем дверь приявзаную к нажатому рычагу
-                                    # взаимодействуем с дверью
-                                    if not check[0]:
-                                        i.upd = 1
-                                    else:
-                                        i.upd = -1
-
+                        player_with_obj(check[0], check[1], check[2], door)
             if show_manager:
                 answer = game_menu.update_manager(event)
                 # если были нажаты кнопки
@@ -118,6 +154,17 @@ if __name__ == '__main__':
                     running = False
                 elif answer == 'menu':
                     print('ВЫХОД В МЕНЮ')
+
+        for i in save_point.sprites():
+            if i.rect.x <= player.rect.x and not i.active:  # если пересекаем точку сохранения
+                i.active = True
+                # записываем координаты точек для персонажей в файл
+                save_pos = f'{i.pos_player[0]}, {i.pos_player[1]}, {i.pos_player[2]}'
+
+        if player.death_colide or player2.death_colide:
+            player.death_colide, player2.death_colide = False, False
+            # load_save_point(player, player2, save_pos)
+            return 'reset'
 
         # перемещение персонажа
         key = pygame.key.get_pressed()
@@ -129,10 +176,23 @@ if __name__ == '__main__':
             p_x = 5
         if key[pygame.K_LEFT]:
             p_x = -5
+        if key[pygame.K_UP]:
+            p_y = 1
 
         # если включено внетриигровое меню, то двигать персонажем нельзя, но всё окружение работает
         if show_manager:
             p_x, p_y = 0, 0
+
+        if check:
+            check = True
+
+        pl2 = n.send((p_x, p_y, check))
+        player2.move(int(pl2[0]), int(pl2[1]))
+        if pl2[2]:
+            check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
+            if check:
+                player_with_obj(check[0], check[1], check[2], door)
+
         # двигаем игрока
         player.move(p_x, p_y)
         p_x, p_y = 0, 0
@@ -155,7 +215,7 @@ if __name__ == '__main__':
 
         # если спрайт не в зоне нашего зрения, он не рисуется
         for obj in all_sprites:
-            if -obj.rect.width <= obj.rect.x <= width and -obj.rect.height <= obj.rect.y <= height:
+            if -obj.rect.width <= obj.rect.x <= WIDTH and -obj.rect.height <= obj.rect.y <= HEIGHT:
                 draw_sprite.add(obj)
 
         # рисуем все объекты
@@ -176,3 +236,13 @@ if __name__ == '__main__':
         # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
 
     pygame.quit()
+
+
+if __name__ == '__main__':
+    # подключаемся к серверу
+    n = Network('')
+
+    while True:
+        a = main_loop('1_level')
+        if a != 'reset':
+            break
