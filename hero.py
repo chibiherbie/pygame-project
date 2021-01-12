@@ -37,12 +37,11 @@ class Hero(pygame.sprite.Sprite):
     def move(self, x, y):
         # если наткнулись на шипы, останавливаем игрока
         if pygame.sprite.spritecollideany(self, self.death):
-            # self.death_colide = True
             if self.stop_death <= 8:
                 self.create_particles((self.rect.x + self.rect.w // 2,
                                        self.rect.bottom - self.rect.h // 5), -5, 'death')
-            elif self.stop_death == 20:  # перезапускаем игру
-                self.death_colide = True
+            elif self.stop_death == 30:  # перезапускаем игру
+                self.stop_death = 29
 
             self.stop_death += 1
             # в дальнейшем игра будет перезапускаться

@@ -48,6 +48,30 @@ class Camera:
         return -(self.player.rect.y + self.player.rect.h // 2 - HEIGHT // 2) // num
 
 
+class Transition:
+    def __init__(self, screen):
+        self.time_count = 0
+        self.max_time = 60
+        self.type = 'start and go!!!'
+        self.screen = screen
+
+    def start(self):
+        self.time_count = 60
+        self.max_time = self.time_count
+        self.frame = self.screen
+
+    def update(self):
+
+        mask = pygame.Surface(SIZE)
+        pygame.draw.circle(mask, (255, 255, 255), (WIDTH // 2, HEIGHT // 2), (self.time_count / self.max_time) ** 4 * WIDTH)
+        mask.set_colorkey((255, 255, 255))
+        self.screen.blit(mask, (0, 0))
+        if 't' in self.type:
+            self.type = self.type[:-1]
+            return
+        self.time_count -= 1
+
+
 def player_with_obj(action, type, value, door):
     if type == 'door':  # исп объект дверь
         for i in door.sprites():
@@ -64,7 +88,7 @@ def load_save_point(player, player2, pos_new):
 
 
 FPS = 60
-WIDTH, HEIGHT = 1000, 1000
+SIZE = WIDTH, HEIGHT = 1000, 1000
 RECT_HERO = (32, 58)
 
 
@@ -72,15 +96,14 @@ def main_loop(name_level):
     pygame.init()
     pygame.display.set_caption('GAME')
 
-    size = WIDTH, HEIGHT
-    screen = pygame.display.set_mode(size, HWSURFACE | DOUBLEBUF)
+    screen = pygame.display.set_mode(SIZE, HWSURFACE | DOUBLEBUF)
     # screen.set_alpha(None)
 
     running = True
 
     # внутриигровое меню
     show_manager = False
-    game_menu = GameMenu(screen, size, FPS)
+    game_menu = GameMenu(screen, SIZE, FPS)
 
     # перемещение
     p_x = 0
@@ -122,7 +145,10 @@ def main_loop(name_level):
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death, save_point)
+
     camera = Camera(player)
+
+    transition = Transition(screen)
 
     # основной цикл
     while running:
@@ -228,6 +254,17 @@ def main_loop(name_level):
 
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню
+
+        if transition.type:
+            transition.update()
+            if transition.time_count == -transition.max_time:
+                transition.type = ''
+                transition.start()
+
+        if player.stop_death == 30 or player2.stop_death == 30:
+            transition.update()
+            if transition.time_count == 0:
+                player.death_colide = True
 
         time.tick(FPS)
         pygame.display.flip()
