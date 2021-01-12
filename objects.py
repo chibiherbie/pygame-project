@@ -75,3 +75,15 @@ class Spikes(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
                                                tile_height * pos_y)
         self.rect[1] += 10
+
+
+class SavePoint(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, *group):
+        super().__init__(*group)
+
+        self.image = pygame.image.load('data/image/graphics/save_point.png').convert_alpha()
+        self.rect = self.image.get_rect().move(tile_width * pos_x + tile_width // 2 - self.image.get_rect().w // 2,
+                                               tile_height * pos_y)
+
+        self.pos_player = [tile_width * pos_x + 100, tile_width * pos_x + 150, tile_height * pos_y - 10]
+        self.active = False

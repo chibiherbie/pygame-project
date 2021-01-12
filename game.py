@@ -5,6 +5,7 @@ from hero import Hero
 from level import Level
 from game_menu import GameMenu
 from network import Network
+import pickle
 
 
 class Camera:
@@ -58,11 +59,16 @@ def player_with_obj(action, type, value, door):
                     i.upd = -1
 
 
+def load_save_point(player, player2, pos_new):
+    pass
+
+
 FPS = 60
 WIDTH, HEIGHT = 1000, 1000
+RECT_HERO = (32, 58)
 
 
-def main_loop():
+def main_loop(name_level):
     pygame.init()
     pygame.display.set_caption('GAME')
 
@@ -95,27 +101,38 @@ def main_loop():
     layer_front = pygame.sprite.Group()
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
+    save_point = pygame.sprite.Group()
 
-
+    with open('data/save/1_save.txt') as f:
+        save_pos = f.read()
 
     player = n.getP()
     player.add_group(wall, death, hero, all_sprites)
 
+    pos_new = save_pos.split(',')
+    print(player.rect)
+    print(pos_new)
     if player.os_name == 'data/image/hero1':
-        player2 = Hero('data/image/hero2', 150, 400)
+        player2 = Hero('data/image/hero2', int(pos_new[1]), int(pos_new[2]))
+        player.rect = player.rect.move(int(pos_new[0]), int(pos_new[2]))
     else:
-        player2 = Hero('data/image/hero1', 100, 400)
+        player2 = Hero('data/image/hero1', int(pos_new[0]), int(pos_new[2]))
+        player.rect = player.rect.move(int(pos_new[1]), int(pos_new[2]))
     player2.add_group(wall, death, hero, all_sprites)
+    print(player.rect)
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
-    lvl = Level('1_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
-                door, death)
+    lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
+                door, death, save_point)
     camera = Camera(player)
 
     # основной цикл
     while running:
         screen.fill(pygame.Color('white'))
         check = False
+
+        with open('data/save/1_save.txt', mode='w') as f:
+            f.write(save_pos)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -128,7 +145,6 @@ def main_loop():
                     check = player.check_objects(lever)   # проверка на пересечение с объектами, в случаи успеха отклик
                     if check:
                         player_with_obj(check[0], check[1], check[2], door)
-
             if show_manager:
                 answer = game_menu.update_manager(event)
                 # если были нажаты кнопки
@@ -138,6 +154,17 @@ def main_loop():
                     running = False
                 elif answer == 'menu':
                     print('ВЫХОД В МЕНЮ')
+
+        for i in save_point.sprites():
+            if i.rect.x <= player.rect.x and not i.active:
+                i.active = True
+                save_pos = f'{i.pos_player[0]}, {i.pos_player[1]}, {i.pos_player[2]}'
+
+        if player.death_colide or player2.death_colide:
+            player.death_colide, player2.death_colide = False, False
+            # load_save_point(player, player2, save_pos)
+            return 'reset'
+            print(save_pos)
 
         # перемещение персонажа
         key = pygame.key.get_pressed()
@@ -161,7 +188,6 @@ def main_loop():
 
         pl2 = n.send((p_x, p_y, check))
         player2.move(int(pl2[0]), int(pl2[1]))
-
         if pl2[2]:
             check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
             if check:
@@ -214,5 +240,9 @@ def main_loop():
 
 if __name__ == '__main__':
     # подключаемся к серверу
-    n = Network()
-    main_loop()
+    n = Network('')
+
+    while True:
+        a = main_loop('1_level')
+        if a != 'reset':
+            break

@@ -21,6 +21,8 @@ class Hero(pygame.sprite.Sprite):
 
         self.xvel, self.yvel = 0, 0
 
+
+
     def add_group(self, wall, death, *group):
         super().__init__(*group)
         self.all_sprites = group[-1]
@@ -29,11 +31,14 @@ class Hero(pygame.sprite.Sprite):
         self.anim = AnimatedSprite(self.os_name, 3, 1, self.pos_x, self.pos_y)
         self.image = self.anim.image
         self.rect = self.anim.rect
+        self.death_colide = False
 
     # передвижение персонажа
     def move(self, x, y):
         # если наткнулись на шипы, останавливаем игрока
-        if pygame.sprite.spritecollideany(self, self.death):  # в дальнейшем игра будет перезапускаться
+        if pygame.sprite.spritecollideany(self, self.death):
+            self.death_colide = True
+            # в дальнейшем игра будет перезапускаться
             return
 
         self.image = self.anim.update((x, y))
