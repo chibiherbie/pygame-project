@@ -33,12 +33,14 @@ class Hero(pygame.sprite.Sprite):
         self.death_colide = False
         self.stop_death = 0
 
+        self.sound_spike = pygame.mixer.Sound('data/sound/sound_spike.mp3')
         self.sound_grass = [pygame.mixer.Sound('data/sound/sound_walk1.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk2.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk3.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk4.mp3')]
         for i in self.sound_grass:
             i.set_volume(0.1)
+        self.sound_spike.set_volume(0.06)
         self.sound_timer = 0
 
     # передвижение персонажа
@@ -46,6 +48,8 @@ class Hero(pygame.sprite.Sprite):
         # если наткнулись на шипы, останавливаем игрока
         if pygame.sprite.spritecollideany(self, self.death):
             if self.stop_death <= 8:
+                if self.stop_death == 0:
+                    self.sound_spike.play()
                 self.create_particles((self.rect.x + self.rect.w // 2,
                                        self.rect.bottom - self.rect.h // 5), -5, 'death')
             elif self.stop_death == 30:  # перезапускаем игру
