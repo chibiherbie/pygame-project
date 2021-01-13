@@ -1,6 +1,7 @@
 import pygame
 import os
 from objects import Lever, Door, Spikes, SavePoint
+from random import choice, shuffle
 
 
 tile_images = {
@@ -27,6 +28,15 @@ class Level:
 
         dir = 'data/levels/' + folder
 
+        self.time_sound = 0  # таймер доп звуков
+        self.sound_around = []  # доп звуки
+
+        for sound in os.listdir(dir + '/sound_environment'):
+            self.sound_around.append(pygame.mixer.Sound(dir + '/sound_environment/' + sound))
+            self.sound_around[-1].set_volume(0.03)
+            self.sound_around.append(pygame.mixer.Sound(dir + '/sound_environment/empty.mp3'))
+        shuffle(self.sound_around)  # мешаем  звуки
+
         # загружаем спрайты в порядке иерархии по слоям (фон, 2 слой, 1 слой, плафтформа, передний план)
         Background('/'.join([dir, 'background.png']), back)
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
@@ -45,6 +55,12 @@ class Level:
 
         # дополняем каждую строку пустыми клетками ('.')
         return level_map  # list(map(lambda x: x.ljust(max_width, '.'), level_map))
+
+    def update(self):
+        self.time_sound += 1
+        if self.time_sound == 1500:
+            self.time_sound = 0
+            choice(self.sound_around).play()
 
     def generate_level(self, level):
         for y in range(len(level)):

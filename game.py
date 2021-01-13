@@ -155,6 +155,8 @@ def main_loop(name_level):
         screen.fill(pygame.Color('white'))
         check = False
 
+        lvl.update()
+
         with open('data/save/1_save.txt', mode='w') as f:
             f.write(save_pos)
 
