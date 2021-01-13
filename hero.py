@@ -33,6 +33,8 @@ class Hero(pygame.sprite.Sprite):
         self.death_colide = False
         self.stop_death = 0
 
+
+        self.sound_drop = pygame.mixer.Sound('data/sound/sound_drop.mp3')
         self.sound_spike = pygame.mixer.Sound('data/sound/sound_spike.mp3')
         self.sound_grass = [pygame.mixer.Sound('data/sound/sound_walk1.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk2.mp3'),
@@ -41,6 +43,7 @@ class Hero(pygame.sprite.Sprite):
         for i in self.sound_grass:
             i.set_volume(0.1)
         self.sound_spike.set_volume(0.06)
+        self.sound_drop.set_volume(0)
         self.sound_timer = 0
 
     # передвижение персонажа
@@ -90,6 +93,7 @@ class Hero(pygame.sprite.Sprite):
                                            self.rect.bottom - self.rect.h // 5), 5, 'walk')
                     self.create_particles((self.rect.x + self.rect.w // 2,
                                            self.rect.bottom - self.rect.h // 5), -5, 'walk')
+                    self.sound_drop.play()
 
                 if self.yvel < 0:  # если столкнулись с блоком сверху нас
                     self.rect.top = spr.rect.bottom
@@ -102,6 +106,7 @@ class Hero(pygame.sprite.Sprite):
         if self.xvel and self.isGround and self.sound_timer <= 0:
             random.choice(self.sound_grass).play()
             self.sound_timer = 20
+            self.sound_drop.set_volume(0.03)
         self.sound_timer -= 1
 
         if y:  # прыжок

@@ -180,7 +180,7 @@ def main_loop(name_level):
                     print('ВЫХОД В МЕНЮ')
 
         for i in save_point.sprites():
-            if i.rect.x <= player.rect.x and not i.active:  # если пересекаем точку сохранения
+            if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
                 i.active = True
                 # записываем координаты точек для персонажей в файл
                 save_pos = f'{i.pos_player[0]}, {i.pos_player[1]}, {i.pos_player[2]}'

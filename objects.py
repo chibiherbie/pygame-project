@@ -18,6 +18,11 @@ class Lever(pygame.sprite.Sprite):
         self.close = True
         self.value = num  # индес рычага, для открытия определённой двери
 
+        self.sound_lever = [pygame.mixer.Sound('data/sound/sound_lever_on.mp3'),
+                            pygame.mixer.Sound('data/sound/sound_lever_off.mp3')]
+        for i in self.sound_lever:
+            i.set_volume(0.1)
+
     # режим заготовку на кадры
     def cut_sheet(self, sheet, columns, rows):
         sheet = pygame.image.load(sheet).convert_alpha()  # загружаем файл
@@ -33,9 +38,11 @@ class Lever(pygame.sprite.Sprite):
         if self.close:
             self.image = self.frames[-1]
             self.close = False
+            self.sound_lever[1].play()
         else:
             self.image = self.frames[0]
             self.close = True
+            self.sound_lever[0].play()
         # if self.upd % 4 == 0:  # раз в 4 инетраций меняется кадр
         #     self.upd += 1
         #     self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -54,17 +61,27 @@ class Door(pygame.sprite.Sprite):
         self.upd, self.count = 0, 0
         self.value = num
 
+        self.sound_door = pygame.mixer.Sound('data/sound/sound_door.mp3')
+        self.sound_door.set_volume(0.5)
+
     def update(self):
         if self.upd == 1:
+            if self.count == 0:
+                self.sound_door.play()
             self.rect.y += self.upd
             self.count += self.upd
+
             if self.count == self.rect.h:  # если достигнут предел, то останавливаем
                 self.upd = 0
+                self.sound_door.stop()
         elif self.upd == -1:
+            if self.count == self.rect.h:
+                self.sound_door.play()
             self.rect.y += self.upd
             self.count += self.upd
             if self.count == 0:
                 self.upd = 0
+                self.sound_door.stop()
 
 
 class Spikes(pygame.sprite.Sprite):
