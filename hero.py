@@ -33,6 +33,14 @@ class Hero(pygame.sprite.Sprite):
         self.death_colide = False
         self.stop_death = 0
 
+        self.sound_grass = [pygame.mixer.Sound('data/sound/sound_walk1.mp3'),
+                            pygame.mixer.Sound('data/sound/sound_walk2.mp3'),
+                            pygame.mixer.Sound('data/sound/sound_walk3.mp3'),
+                            pygame.mixer.Sound('data/sound/sound_walk4.mp3')]
+        for i in self.sound_grass:
+            i.set_volume(0.1)
+        self.sound_timer = 0
+
     # передвижение персонажа
     def move(self, x, y):
         # если наткнулись на шипы, останавливаем игрока
@@ -86,6 +94,11 @@ class Hero(pygame.sprite.Sprite):
         if self.isGround and self.xvel:  # если на земле и бежим, то из под ног создаются партиклы
             self.create_particles((self.rect.x + self.rect.w // 2,
                                    self.rect.bottom - self.rect.h // 5), self.xvel, 'walk')
+
+        if self.xvel and self.isGround and self.sound_timer <= 0:
+            random.choice(self.sound_grass).play()
+            self.sound_timer = 20
+        self.sound_timer -= 1
 
         if y:  # прыжок
             if self.isGround:
@@ -230,28 +243,3 @@ class ParticleDeath(pygame.sprite.Sprite):
 
         if self.time == 15:  # удаляем частицу через 10 интераций
             self.kill()
-
-    # def __init__(self, pos, all_sprites, direction):
-    #     super().__init__(all_sprites)
-    #     self.image = random.choice(self.smoke)
-    #     self.image.set_alpha(10)  # устанавливаем прозрачность
-    #     self.rect = self.image.get_rect()
-    #
-    #     # у каждой частицы своя скорость
-    #     self.x, self.y = random.choice(range(1, 5)), random.choice([-0.2, -0.1, 0])
-    #     self.rect.x, self.rect.y = pos
-    #
-    #     self.direction = -direction // abs(direction)  # направление частиц
-    #
-    #     self.time = 0  # для подчёта итераций
-    #
-    # def update(self):
-    #     # перемещаем частицу
-    #     self.rect.x += self.x * self.direction
-    #     self.rect.y += self.y
-    #
-    #     self.time += 1
-    #
-    #     if self.time == 7:  # удаляем частицу через 10 интераций
-    #         self.kill()
-    #

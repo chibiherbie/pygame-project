@@ -90,10 +90,10 @@ def load_save_point(player, player2, pos_new):
 FPS = 60
 SIZE = WIDTH, HEIGHT = 1000, 1000
 RECT_HERO = (32, 58)
+NETWORK = None
 
 
 def main_loop(name_level):
-    pygame.init()
     pygame.display.set_caption('GAME')
 
     screen = pygame.display.set_mode(SIZE, HWSURFACE | DOUBLEBUF)
@@ -129,7 +129,7 @@ def main_loop(name_level):
     with open('data/save/1_save.txt') as f:
         save_pos = f.read()
 
-    player = n.getP()
+    player = NETWORK.getP()
     player.add_group(wall, death, hero, all_sprites)
 
     pos_new = save_pos.split(',')
@@ -210,7 +210,9 @@ def main_loop(name_level):
         if check:
             check = True
 
-        pl2 = n.send((p_x, p_y, check))
+        pl2 = NETWORK.send((p_x, p_y, check))
+        if pl2[0] == 'stop':
+            running = False
         player2.move(int(pl2[0]), int(pl2[1]))
         if pl2[2]:
             check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
@@ -273,11 +275,23 @@ def main_loop(name_level):
     pygame.quit()
 
 
-if __name__ == '__main__':
+def start_game():
+    global NETWORK
+    # инициализируем
+    pygame.init()
+
     # подключаемся к серверу
-    n = Network('')
+    NETWORK = Network('')
+
+    pygame.mixer.music.load('data/music/1.mp3')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.1)
 
     while True:
         a = main_loop('1_level')
         if a != 'reset':
             break
+
+
+if __name__ == '__main__':
+    start_game()

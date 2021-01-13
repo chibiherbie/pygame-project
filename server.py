@@ -47,11 +47,10 @@ def threaded_client(conn, player, gameId):
 
     games[gameId].count_player -= 1
     currentPlayer -= 1
-
-    if games[gameId].count_player == 0:
+    print(games[gameId])
+    if games[gameId].count_player == 0 or player == 0:
         del games[gameId]
         print("Closing Game", gameId)
-
 
     print('Lost connection')
 
