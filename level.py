@@ -58,7 +58,7 @@ class Level:
 
     def update(self):
         self.time_sound += 1
-        if self.time_sound == 1500:
+        if self.time_sound == 1100:
             self.time_sound = 0
             choice(self.sound_around).play()
 
