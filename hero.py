@@ -59,7 +59,9 @@ class Hero(pygame.sprite.Sprite):
                 self.stop_death = 29
 
             self.stop_death += 1
-            # в дальнейшем игра будет перезапускаться
+            # погружаемся вниз
+            if self.stop_death % 6 == 0:
+                self.rect.y += 1
             return
 
         self.image = self.anim.update((x, y))

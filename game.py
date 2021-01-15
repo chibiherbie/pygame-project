@@ -270,6 +270,10 @@ def main_loop(name_level):
             if transition.time_count == 0:
                 player.death_colide = True
 
+        # выводим фпс
+        fps_text = pygame.font.Font(None, 40).render(str(int(time.get_fps())), True, (100, 255, 100))
+        screen.blit(fps_text, (0, 0))
+
         time.tick(FPS)
         pygame.display.flip()
         # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
