@@ -30,6 +30,8 @@ class Hero(pygame.sprite.Sprite):
         self.image = self.anim.image
         self.rect = self.anim.rect
 
+        print(self.rect)
+
         self.death_colide = False
         self.stop_death = 0
 

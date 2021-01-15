@@ -3,8 +3,6 @@
 # a=-k/m x-dv
 
 import pygame
-import random
-import math as m
 from pygame import *
 
 
@@ -88,7 +86,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
 
-    water = Water(0, 100, w, h - 100, 4)
+    water = Water(0, 100, w, 300, 4)
 
     run = True
     while run:

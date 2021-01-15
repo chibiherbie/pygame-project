@@ -25,6 +25,9 @@ class Level:
         self.door = door
         self.death = death
         self.save_point = save_point
+        self.water_pos = {}
+
+        self.water = []
 
         dir = 'data/levels/' + folder
 
@@ -83,6 +86,16 @@ class Level:
                     Spikes(x, y, tile_width, tile_height, self.death, self.all_sprite)
                 elif level[y][x] == '!':
                     SavePoint(x, y, tile_width, tile_height, self.save_point, self.all_sprite)
+                elif level[y][x] == '_':
+                    if int(level[y][x + 1] + level[y][x + 2]) not in self.water_pos:
+                        self.water_pos[int(level[y][x + 1] + level[y][x + 2])] = [x * tile_width,
+                                                                                  y * tile_height]
+                        print(y * tile_height)
+                    else:
+                        pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
+
+                        self.water.append(Water(pos[0], pos[1], (x + 2) * tile_width,
+                                                (y + 2) * tile_height, 3))
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
@@ -119,3 +132,82 @@ class Layers(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
                                                          int(self.image.get_height() / scale)))
         self.rect = self.image.get_rect().move(pos)
+
+
+class Spring:
+    k = 0.02  # коэф пружины
+    d = 0.025  # коэф "влажности"
+
+    def __init__(self, x, y):
+        self.x_pos = x
+        self.y_pos = y
+        self.max_y = y  # естественное положение верхней части пружины
+        self.velocity = 0
+
+    def update(self):
+        x = self.y_pos - self.max_y  # смещение пружины от начала
+
+        a = -self.k * x - self.d * self.velocity  # ускорение
+
+        self.y_pos += self.velocity
+        self.velocity += a
+
+
+class Water:
+    def __init__(self, x_s, y_s, x_e, y_e, spring_segment):
+        self.springs = []
+        self.x_s = x_s
+        self.y_s = y_s
+        self.x_e = x_e
+        self.y_e = y_e
+
+        self.rect = pygame.Rect(self.x_s, self.y_s, self.x_e, self.y_e)
+        print(x_s, x_e, y_e)
+        print(self.rect)
+
+
+        self.passes = 20
+        self.spread = 0.06  # скорость распространения волн
+
+        for i in range(abs(x_e - x_s) // spring_segment):
+            self.springs.append(Spring(i * spring_segment + x_s, y_e))
+        self.springs.append(Spring(x_e, y_e))
+
+    def update(self):
+        for i in self.springs:
+            i.update()
+
+        left_d = [0.0] * len(self.springs)
+        right_d = [0.0] * len(self.springs)
+
+        for _ in range(self.passes):
+            for num in range(len(self.springs) - 1):
+                if num > 0:
+                    left_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num - 1].y_pos)
+                    self.springs[num - 1].velocity += left_d[num]
+                if num < len(self.springs) - 1:
+                    right_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num + 1].y_pos)
+                    self.springs[num + 1].velocity += right_d[num]
+
+            # обновляем скорость
+            for num in range(len(self.springs) - 1):
+                if num > 0:
+                    self.springs[num - 1].y_pos += left_d[num]
+                if num < len(self.springs) - 1:
+                    self.springs[num + 1].y_pos += right_d[num]
+
+    def draw(self):
+        sur = pygame.Surface((self.x_e - self.x_s, self.y_e - self.y_s)).convert_alpha()
+        sur.fill((255, 255, 255))
+        sur.set_alpha(100)
+        for i in range(len(self.springs) - 1):
+            pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i].x_pos, self.springs[i].y_pos),
+                                                   (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
+                                                   (self.springs[i].x_pos, self.y_e)])
+            pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
+                                                   (self.springs[i + 1].x_pos, self.y_e),
+                                                   (self.springs[i].x_pos, self.y_e)])
+        return sur
+
+    def force(self, place, speed):
+        self.springs[place].velocity = speed

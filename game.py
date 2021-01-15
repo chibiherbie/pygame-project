@@ -180,6 +180,9 @@ def main_loop(name_level):
                     running = False
                 elif answer == 'menu':
                     print('ВЫХОД В МЕНЮ')
+            if event.type == MOUSEBUTTONDOWN:
+                print(lvl.water[0])
+                lvl.water[0].force(30, 400)
 
         for i in save_point.sprites():
             if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
@@ -255,6 +258,11 @@ def main_loop(name_level):
 
         # очищаем спарйты
         draw_sprite.empty()
+
+        for i in lvl.water:
+            screen.blit(i.draw(), (100, 100))
+            i.update()
+            camera.apply(i, 0)
 
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню
