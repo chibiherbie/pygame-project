@@ -8,9 +8,9 @@ import math as m
 from pygame import *
 
 
-class SurfaceWater:
+class Spring:
     k = 0.02  # коэф пружины
-    d = 0.025  # коэф
+    d = 0.025  # коэф "влажности"
 
     def __init__(self, x, y):
         self.x_pos = x
@@ -39,8 +39,8 @@ class Water:
         self.spread = 0.06  # скорость распространения волн
 
         for i in range(abs(x_e - x_s) // spring_segment):
-            self.springs.append(SurfaceWater(i * spring_segment + x_s, y_e))
-        self.springs.append(SurfaceWater(x_e, y_e))
+            self.springs.append(Spring(i * spring_segment + x_s, y_e))
+        self.springs.append(Spring(x_e, y_e))
 
     def update(self):
         for i in self.springs:
@@ -58,16 +58,25 @@ class Water:
                     right_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num + 1].y_pos)
                     self.springs[num + 1].velocity += right_d[num]
 
+            # обновляем скорость
             for num in range(len(self.springs) - 1):
                 if num > 0:
-                    self.springs[num - 1].y_pos += left_d[num]  # you were updating velocity here!
+                    self.springs[num - 1].y_pos += left_d[num]
                 if num < len(self.springs) - 1:
                     self.springs[num + 1].y_pos += right_d[num]
 
     def draw(self):
+        sur = pygame.Surface(size).convert_alpha()
+        sur.fill((255, 255, 255))
+        sur.set_alpha(50)
         for i in range(len(self.springs) - 1):
-            pygame.draw.line(screen, (0, 0, 255), (self.springs[i].x_pos, self.springs[i].y_pos),
-                             (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos), 2)
+            pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i].x_pos, self.springs[i].y_pos),
+                                                   (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
+                                                   (self.springs[i].x_pos, h)])
+            pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
+                                                   (self.springs[i + 1].x_pos, h),
+                                                   (self.springs[i].x_pos, h)])
+        screen.blit(sur, (0, 0))
 
     def force(self, place, speed):
         self.springs[place].velocity = speed
@@ -79,7 +88,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
 
-    water = Water(0, 150, w, 150, 4)
+    water = Water(0, 100, w, h - 100, 4)
 
     run = True
     while run:
@@ -90,8 +99,7 @@ if __name__ == '__main__':
             if event.type == QUIT:
                 run = False
             if event.type == MOUSEBUTTONDOWN:
-                print(event.pos, event.pos[0])
-                water.force(event.pos[0], 100)
+                water.force(30, 100)
 
         pygame.display.flip()
 
