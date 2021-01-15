@@ -90,12 +90,10 @@ class Level:
                     if int(level[y][x + 1] + level[y][x + 2]) not in self.water_pos:
                         self.water_pos[int(level[y][x + 1] + level[y][x + 2])] = [x * tile_width,
                                                                                   y * tile_height]
-                        print(y * tile_height)
                     else:
                         pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
-
                         self.water.append(Water(pos[0], pos[1], (x + 2) * tile_width,
-                                                (y + 2) * tile_height, 3))
+                                                (y + 2) * tile_height, 5))
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
@@ -165,18 +163,17 @@ class Water:
         print(x_s, x_e, y_e)
         print(self.rect)
 
-
         self.passes = 20
         self.spread = 0.06  # скорость распространения волн
 
         for i in range(abs(x_e - x_s) // spring_segment):
-            self.springs.append(Spring(i * spring_segment + x_s, y_e))
-        self.springs.append(Spring(x_e, y_e))
+            self.springs.append(Spring(i * spring_segment + (self.x_e - self.x_s), self.y_e - self.y_s))
+        self.springs.append(Spring(self.x_e - self.x_s, self.y_e - self.y_s))
 
     def update(self):
         for i in self.springs:
             i.update()
-
+            print(i.velocity)
         left_d = [0.0] * len(self.springs)
         right_d = [0.0] * len(self.springs)
 

@@ -65,7 +65,7 @@ class Water:
 
     def draw(self):
         sur = pygame.Surface(size).convert_alpha()
-        sur.fill((255, 255, 255))
+        sur.fill((0, 255, 255))
         sur.set_alpha(50)
         for i in range(len(self.springs) - 1):
             pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i].x_pos, self.springs[i].y_pos),
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
 
-    water = Water(0, 100, w, 300, 4)
+    water = Water(0, 100, w, 300, 5)
 
     run = True
     while run:
