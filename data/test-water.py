@@ -26,20 +26,19 @@ class Water:
         self.y_s = y_s
         self.x_e = x_e
         self.y_e = y_e
+
         for i in range(abs(x_e - x_s) // spring_segment):
             self.springs.append(SurfaceWater(i * spring_segment + x_s, y_e))
+        self.springs.append(SurfaceWater(x_e, y_e))
 
     def update(self):
         left_d = []
         right_d = []
 
     def draw(self):
-        surface = pygame.Surface((abs(self.x_e - self.x_s), abs(self.y_e - self.y_s))).convert_alpha()
-        surface.fill((0, 0, 0))
-        points = [(self.x_s, self.y_s)]
-        for i in self.springs:
-            points.append((i.x_pos, i.y_pos))
-        return surface
+        for i in range(len(self.springs) - 1):
+            pygame.draw.line(screen, (0, 0, 255), (self.springs[i].x_pos, self.springs[i].y_pos),
+                             (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos), 2)
 
 
 if __name__ == '__main__':
@@ -52,12 +51,12 @@ if __name__ == '__main__':
     x = 250  # естественное положение верхней части пружины
     d = 0.025  # коэф увлажнения
 
-    water = Water(0, 150, w, h, 3)
+    water = Water(0, 150, w, 150, 3)
 
     run = True
     while run:
         screen.fill((255, 255, 255))
-        screen.blit(water.draw(), (0, 0))
+        water.draw()
         for event in pygame.event.get():
             if event.type == QUIT:
                 run = False
