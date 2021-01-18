@@ -146,6 +146,10 @@ def main_loop(name_level):
     lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death, save_point)
 
+    # размещаем воду
+    for i in lvl.water:
+        screen.blit(i.draw(), (i.rect[0], i.rect[2]))
+
     camera = Camera(player)
 
     transition = Transition(screen)
@@ -260,7 +264,9 @@ def main_loop(name_level):
         draw_sprite.empty()
 
         for i in lvl.water:
-            screen.blit(i.draw(), (100, 100))
+            i.rect[0] += camera.dx
+            i.rect[2] += camera.dy
+            screen.blit(i.draw(), (i.rect[0], i.rect[2]))
             i.update()
             camera.apply(i, 0)
 

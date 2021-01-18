@@ -91,9 +91,8 @@ class Level:
                         self.water_pos[int(level[y][x + 1] + level[y][x + 2])] = [x * tile_width,
                                                                                   y * tile_height]
                     else:
-                        pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
-                        self.water.append(Water(pos[0], pos[1], (x + 2) * tile_width,
-                                                (y + 2) * tile_height, 5))
+                        pos = [0, 100]
+                        self.water.append(Water(pos[0], pos[1], 500, 500, 5))
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
@@ -158,22 +157,22 @@ class Water:
         self.y_s = y_s
         self.x_e = x_e
         self.y_e = y_e
+        self.spring_segment = spring_segment
 
         self.rect = pygame.Rect(self.x_s, self.y_s, self.x_e, self.y_e)
-        print(x_s, x_e, y_e)
+
+        print(x_s, y_s, x_e, y_e)
+        print('SURFACE:', (self.x_e - self.x_s, self.y_e - self.y_s))
         print(self.rect)
 
         self.passes = 20
         self.spread = 0.06  # скорость распространения волн
 
-        for i in range(abs(x_e - x_s) // spring_segment):
-            self.springs.append(Spring(i * spring_segment + (self.x_e - self.x_s), self.y_e - self.y_s))
-        self.springs.append(Spring(self.x_e - self.x_s, self.y_e - self.y_s))
+        self.upd_camera()
 
     def update(self):
         for i in self.springs:
             i.update()
-            print(i.velocity)
         left_d = [0.0] * len(self.springs)
         right_d = [0.0] * len(self.springs)
 
@@ -194,17 +193,22 @@ class Water:
                     self.springs[num + 1].y_pos += right_d[num]
 
     def draw(self):
-        sur = pygame.Surface((self.x_e - self.x_s, self.y_e - self.y_s)).convert_alpha()
+        sur = pygame.Surface((self.x_e - self.x_s, self.y_e - self.y_s)).convert_alpha()  # self.x_e - self.x_s, self.y_e - self.y_s
         sur.fill((255, 255, 255))
         sur.set_alpha(100)
         for i in range(len(self.springs) - 1):
-            pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i].x_pos, self.springs[i].y_pos),
+            pygame.draw.polygon(sur, (0, 255, 0), [(self.springs[i].x_pos, self.springs[i].y_pos),
                                                    (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
                                                    (self.springs[i].x_pos, self.y_e)])
-            pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
+            pygame.draw.polygon(sur, (0, 255, 0), [(self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
                                                    (self.springs[i + 1].x_pos, self.y_e),
                                                    (self.springs[i].x_pos, self.y_e)])
         return sur
+
+    def upd_camera(self):
+        for i in range(abs(self.rect[2] - self.rect[0]) // self.spring_segment):
+            self.springs.append(Spring(i * self.spring_segment + self.rect[0], self.rect[1]))
+        self.springs.append(Spring(self.rect[2], self.rect[3]))
 
     def force(self, place, speed):
         self.springs[place].velocity = speed
