@@ -148,7 +148,7 @@ def main_loop(name_level):
 
     # размещаем воду
     for i in lvl.water:
-        screen.blit(i.draw(), (i.rect[0], i.rect[2]))
+        screen.blit(i.draw(), (i.rect[0], i.rect[1]))
 
     camera = Camera(player)
 
@@ -184,9 +184,6 @@ def main_loop(name_level):
                     running = False
                 elif answer == 'menu':
                     print('ВЫХОД В МЕНЮ')
-            if event.type == MOUSEBUTTONDOWN:
-                print(lvl.water[0])
-                lvl.water[0].force(30, 400)
 
         for i in save_point.sprites():
             if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
@@ -263,12 +260,19 @@ def main_loop(name_level):
         # очищаем спарйты
         draw_sprite.empty()
 
+        # UPDATE WATER
         for i in lvl.water:
             i.rect[0] += camera.dx
-            i.rect[2] += camera.dy
-            screen.blit(i.draw(), (i.rect[0], i.rect[2]))
+            i.rect[1] += camera.dy
+            # не рисуется за границами экрана
+            if -i.w <= i.rect.x <= WIDTH and -i.h <= i.rect.y <= HEIGHT:
+                screen.blit(i.draw(), (i.rect[0], i.rect[1]))
             i.update()
-            camera.apply(i, 0)
+            # касание с водой
+            if i.rect.x < player.rect.x < i.rect.x + i.w and i.rect.y < player.rect.bottom < i.rect.y + i.h:
+                i.force(abs(player.rect.x - i.rect.x) // i.spring_segment, player.yvel)
+            if i.rect.x < player2.rect.x < i.rect.x + i.w and i.rect.y < player2.rect.bottom < i.rect.y + i.h:
+                i.force(abs(player2.rect.x - i.rect.x) // i.spring_segment, player2.yvel)
 
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню
