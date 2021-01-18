@@ -93,7 +93,7 @@ class Level:
                     else:
                         pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
                         self.water.append(Water(pos[0], pos[1], (x + 3) * tile_width,
-                                                (y + 1) * tile_height, 5))
+                                                (y + 1) * tile_height, 4))
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
@@ -213,3 +213,24 @@ class Water:
 
     def force(self, place, speed):
         self.springs[place].velocity = speed
+
+    def upd_camera(self, dx, dy, w, h, screen):
+        self.rect[0] += dx
+        self.rect[1] += dy
+        # не рисуется за границами экрана
+        if -self.w <= self.rect.x <= w and -self.h <= self.rect.y <= h:
+            screen.blit(self.draw(), (self.rect[0], self.rect[1]))
+        self.update()
+
+    def upd_player(self, player):
+        # касание с водой
+        print(player.isWater)
+        if self.rect.x < player.rect.midbottom[0] < self.rect.x + self.w and\
+                self.rect.y < player.rect.bottom < self.rect.y + self.h + 2:
+            self.force(abs(player.rect.midbottom[0] - self.rect.x) // self.spring_segment, player.yvel)
+            if not player.isWater:
+                player.sound_water_drop.play()
+            player.isWater = True
+        else:
+            player.isWater = False
+

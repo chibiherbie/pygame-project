@@ -33,9 +33,10 @@ class Hero(pygame.sprite.Sprite):
         print(self.rect)
 
         self.death_colide = False
+        self.isWater = False
         self.stop_death = 0
 
-
+        self.sound_water_drop = pygame.mixer.Sound('data/sound/sound_water.mp3')
         self.sound_drop = pygame.mixer.Sound('data/sound/sound_drop.mp3')
         self.sound_spike = pygame.mixer.Sound('data/sound/sound_spike.mp3')
         self.sound_grass = [pygame.mixer.Sound('data/sound/sound_walk1.mp3'),
@@ -47,6 +48,7 @@ class Hero(pygame.sprite.Sprite):
         self.sound_spike.set_volume(0.06)
         self.sound_drop.set_volume(0)
         self.sound_timer = 0
+        self.sound_water_drop.set_volume(0.04)
 
     # передвижение персонажа
     def move(self, x, y):
