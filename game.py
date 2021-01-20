@@ -5,6 +5,7 @@ from hero import Hero
 from level import Level
 from game_menu import GameMenu
 from network import Network
+from objects import upd_player_water
 import pickle
 
 
@@ -263,8 +264,9 @@ def main_loop(name_level):
         # UPDATE WATER
         for i in lvl.water:
             i.upd_camera(camera.dx, camera.dy, WIDTH, HEIGHT, screen)
-            i.upd_player(player)
-            i.upd_player(player2)
+
+        upd_player_water(player, lvl.water, all_sprites)
+        upd_player_water(player2, lvl.water, all_sprites)
 
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню

@@ -2,6 +2,36 @@ import pygame
 import random
 
 
+def upd_player_water(player, waters, all_sprites):
+    # касание с водой
+    for water in waters:
+        if water.upd:
+            if water.rect.x < player.rect.midbottom[0] < water.rect.x + water.w and \
+                    water.rect.y < player.rect.midbottom[1] < water.rect.y + water.h + 2:
+                water.force(abs(player.rect.midbottom[0] - water.rect.x) // water.spring_segment, player.yvel)
+                if not player.isWater and water.type != 'swamp':
+                    player.sound_water_drop.play()
+                    create_particles(player.rect.midbottom, 'water', all_sprites)
+                player.isWater = True
+
+                if water.type == 'swamp':
+                    if player.stop_death == 0:
+                        water.sound_drop.play()
+                    player.rect.y += 1.5
+                    player.death_anim('swamp')
+            else:
+                if player.isWater and water.type != 'swamp':
+                    player.sound_water_nodrop.play()
+                    create_particles(player.rect.midbottom, 'water', all_sprites)
+                player.isWater = False
+
+
+def create_particles(position, type, all_sprites):
+    particle_count = 20  # количество создаваемых частиц
+    for _ in range(particle_count):
+        ParticleWater(position, all_sprites, type)
+
+
 class Lever(pygame.sprite.Sprite):
     def __init__(self, pos_x, pos_y, tile_width, tile_height, num, *group):
         super().__init__(*group)
@@ -111,7 +141,9 @@ class Spring:
     k = 0.02  # коэф пружины
     d = 0.025  # коэф "влажности"
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, type):
+        if type == 'swamp':
+            self.d = 0.03  # коэф "влажности"
         self.x_pos = x
         self.y_pos = y
         self.max_y = y  # естественное положение верхней части пружины
@@ -134,11 +166,21 @@ class Water:
         self.x_e = x_e
         self.y_e = y_e
         self.spring_segment = spring_segment
+        self.upd = False
+        self.type = type
 
         if type == 'water':
             self.color = pygame.Color(0, 0, 255)
+            self.passes = 20
+            self.spread = 0.06  # скорость распространения волн
+            self.alpha = 100
         else:
-            self.color = pygame.Color(0, 255, 0)
+            self.color = pygame.Color(79,131,57)
+            self.spread = 0.09
+            self.passes = 10
+            self.sound_drop = pygame.mixer.Sound('data/sound/sound_swamp_drop.mp3')
+            self.sound_drop.set_volume(0.1)
+            self.alpha = 175
 
         self.all_sprites = all_sprite
 
@@ -150,40 +192,40 @@ class Water:
         # print('SURFACE:', (self.x_e - self.x_s, self.y_e - self.y_s))
         # print(self.rect)
 
-        self.passes = 20
-        self.spread = 0.06  # скорость распространения волн
+        # self.passes = 20
+        # self.spread = 0.06  # скорость распространения волн
 
         # даём позицию нашим пружинам
         for i in range(abs(self.rect[2] - self.rect[0]) // self.spring_segment):
-            self.springs.append(Spring(i * self.spring_segment, 20))
-        self.springs.append(Spring(self.x_e - self.x_s, 20))
+            self.springs.append(Spring(i * self.spring_segment, 20, type))
+        self.springs.append(Spring(self.x_e - self.x_s, 20, type))
 
     def update(self):
         for i in self.springs:
             i.update()
         left_d = [0.0] * len(self.springs)
         right_d = [0.0] * len(self.springs)
+        if self.upd:
+            for _ in range(self.passes):
+                for num in range(len(self.springs) - 1):
+                    if num > 0:
+                        left_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num - 1].y_pos)
+                        self.springs[num - 1].velocity += left_d[num]
+                    if num < len(self.springs) - 1:
+                        right_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num + 1].y_pos)
+                        self.springs[num + 1].velocity += right_d[num]
 
-        for _ in range(self.passes):
-            for num in range(len(self.springs) - 1):
-                if num > 0:
-                    left_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num - 1].y_pos)
-                    self.springs[num - 1].velocity += left_d[num]
-                if num < len(self.springs) - 1:
-                    right_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num + 1].y_pos)
-                    self.springs[num + 1].velocity += right_d[num]
-
-            # обновляем скорость
-            for num in range(len(self.springs) - 1):
-                if num > 0:
-                    self.springs[num - 1].y_pos += left_d[num]
-                if num < len(self.springs) - 1:
-                    self.springs[num + 1].y_pos += right_d[num]
+                # обновляем скорость
+                for num in range(len(self.springs) - 1):
+                    if num > 0:
+                        self.springs[num - 1].y_pos += left_d[num]
+                    if num < len(self.springs) - 1:
+                        self.springs[num + 1].y_pos += right_d[num]
 
     def draw(self):
         sur = pygame.Surface((self.x_e - self.x_s, self.y_e - self.y_s)).convert_alpha()  # self.x_e - self.x_s, self.y_e - self.y_s
         sur.fill((0, 0, 0, 0))
-        sur.set_alpha(100)
+        sur.set_alpha(self.alpha)
         for i in range(len(self.springs) - 1):
             pygame.draw.polygon(sur, self.color, [(self.springs[i].x_pos, self.springs[i].y_pos),
                                                    (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
@@ -202,24 +244,10 @@ class Water:
         # не рисуется за границами экрана
         if -self.w <= self.rect.x <= w and -self.h <= self.rect.y <= h:
             screen.blit(self.draw(), (self.rect[0], self.rect[1]))
-        self.update()
-
-    def upd_player(self, player):
-        # касание с водой
-        if self.rect.x < player.rect.midbottom[0] < self.rect.x + self.w and\
-                self.rect.y < player.rect.bottom < self.rect.y + self.h + 2:
-            self.force(abs(player.rect.midbottom[0] - self.rect.x) // self.spring_segment, player.yvel)
-            if not player.isWater:
-                player.sound_water_drop.play()
-                self.create_particles(player.rect.midbottom, 'water')
-            player.isWater = True
+            self.upd = True
         else:
-            player.isWater = False
-
-    def create_particles(self, position, type):
-        particle_count = 20  # количество создаваемых частиц
-        for _ in range(particle_count):
-            ParticleWater(position, self.all_sprites, type)
+            self.upd = False
+        self.update()
 
 
 class ParticleWater(pygame.sprite.Sprite):

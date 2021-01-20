@@ -99,6 +99,7 @@ class Level:
                         self.water_pos[int(level[y][x + 1] + level[y][x + 2])] = [x * tile_width,
                                                                                   y * tile_height]
                     else:
+
                         pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
                         self.water.append(Water(pos[0], pos[1], (x + 3) * tile_width,
                                                 (y + 1) * tile_height, 4, self.all_sprite, 'swamp'))

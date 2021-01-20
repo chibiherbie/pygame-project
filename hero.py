@@ -30,42 +30,39 @@ class Hero(pygame.sprite.Sprite):
         self.image = self.anim.image
         self.rect = self.anim.rect
 
-        print(self.rect)
-
         self.death_colide = False
         self.isWater = False
         self.stop_death = 0
 
         self.sound_water_drop = pygame.mixer.Sound('data/sound/sound_water.mp3')
+        self.sound_water_nodrop = pygame.mixer.Sound('data/sound/sound_not_water.mp3')
         self.sound_drop = pygame.mixer.Sound('data/sound/sound_drop.mp3')
-        self.sound_spike = pygame.mixer.Sound('data/sound/sound_spike.mp3')
+        self.sound_death = {
+            'spikes': pygame.mixer.Sound('data/sound/sound_spike.mp3'),
+            'swamp': pygame.mixer.Sound('data/sound/sound_swamp.mp3'),
+        }
         self.sound_grass = [pygame.mixer.Sound('data/sound/sound_walk1.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk2.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk3.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk4.mp3')]
+        for i in self.sound_death.values():
+            i.set_volume(0.06)
         for i in self.sound_grass:
             i.set_volume(0.1)
-        self.sound_spike.set_volume(0.06)
         self.sound_drop.set_volume(0)
-        self.sound_timer = 0
         self.sound_water_drop.set_volume(0.04)
+        self.sound_water_nodrop.set_volume(0.04)
+
+        self.sound_timer = 0
 
     # передвижение персонажа
     def move(self, x, y):
+
         # если наткнулись на шипы, останавливаем игрока
         if pygame.sprite.spritecollideany(self, self.death):
-            if self.stop_death <= 8:
-                if self.stop_death == 0:
-                    self.sound_spike.play()
-                self.create_particles((self.rect.x + self.rect.w // 2,
-                                       self.rect.bottom - self.rect.h // 5), -5, 'death')
-            elif self.stop_death == 30:  # перезапускаем игру
-                self.stop_death = 29
+            self.death_anim('spikes')
 
-            self.stop_death += 1
-            # погружаемся вниз
-            if self.stop_death % 6 == 0:
-                self.rect.y += 1
+        if self.stop_death:
             return
 
         self.image = self.anim.update((x, y))
@@ -125,7 +122,7 @@ class Hero(pygame.sprite.Sprite):
         if type == 'walk':
             for _ in range(particle_count):
                 Particle(position, self.all_sprites, x)
-        else:
+        elif type == 'spikes':
             for _ in range(particle_count):
                 ParticleDeath(position, self.all_sprites, x)
 
@@ -136,6 +133,20 @@ class Hero(pygame.sprite.Sprite):
             if wall:
                 wall[0].animation()  # запускаем анимацию
                 return (wall[0].close, 'door', wall[0].value)
+
+    def death_anim(self, type):
+        if self.stop_death <= 8:
+            if self.stop_death == 0:
+                self.sound_death[type].play()
+            self.create_particles((self.rect.x + self.rect.w // 2,
+                                   self.rect.bottom - self.rect.h // 5), -5, type)
+        elif self.stop_death == 30:  # перезапускаем игру
+            self.stop_death = 29
+
+        self.stop_death += 1
+        # погружаемся вниз
+        if self.stop_death % 6 == 0:
+            self.rect.y += 1
 
 
 class AnimatedSprite:
