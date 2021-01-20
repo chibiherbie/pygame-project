@@ -1,6 +1,6 @@
 import pygame
 import os
-from objects import Lever, Door, Spikes, SavePoint, Water
+from objects import Lever, Door, Spikes, SavePoint, Water, Button
 from random import choice, shuffle
 
 
@@ -17,11 +17,12 @@ tile_width = 50
 
 class Level:
     def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1,
-                 layer_front, lever, door, death, save_point):
+                 layer_front, lever, door, death, save_point, button):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
         self.lever = lever
+        self.button = button
         self.door = door
         self.death = death
         self.save_point = save_point
@@ -103,6 +104,9 @@ class Level:
                         pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
                         self.water.append(Water(pos[0], pos[1], (x + 3) * tile_width,
                                                 (y + 1) * tile_height, 4, self.all_sprite, 'swamp'))
+                elif level[y][x] == '?':
+                    Button(x -1, y - 1, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
+                          self.button, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:

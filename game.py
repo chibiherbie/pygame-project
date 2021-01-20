@@ -126,6 +126,7 @@ def main_loop(name_level):
     lever = pygame.sprite.Group()
     door = pygame.sprite.Group()
     save_point = pygame.sprite.Group()
+    button = pygame.sprite.Group()
 
     with open('data/save/1_save.txt') as f:
         save_pos = f.read()
@@ -145,7 +146,7 @@ def main_loop(name_level):
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
-                door, death, save_point)
+                door, death, save_point, button)
 
     # размещаем воду
     for i in lvl.water:
@@ -221,10 +222,7 @@ def main_loop(name_level):
         if pl2[0] == 'stop':
             running = False
         player2.move(int(pl2[0]), int(pl2[1]))
-        if pl2[2]:
-            check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
-            if check:
-                player_with_obj(check[0], check[1], check[2], door)
+
 
         # двигаем игрока
         player.move(p_x, p_y)
@@ -299,7 +297,7 @@ def start_game():
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network('')
+    NETWORK = Network('debo')
 
     pygame.mixer.music.load('data/music/1.mp3')
     pygame.mixer.music.play(-1)
