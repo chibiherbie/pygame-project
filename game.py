@@ -277,7 +277,7 @@ def main_loop(name_level):
                 transition.type = ''
                 transition.start()
 
-        if player.stop_death == 30 or player2.stop_death == 30:
+        if player.stop_death >= 30 or player2.stop_death >= 30:
             transition.update()
             if transition.time_count == 0:
                 player.death_colide = True

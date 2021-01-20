@@ -5,24 +5,23 @@ import random
 def upd_player_water(player, waters, all_sprites):
     # касание с водой
     for water in waters:
-        if water.upd:
-            if water.rect.x < player.rect.midbottom[0] < water.rect.x + water.w and \
-                    water.rect.y < player.rect.midbottom[1] < water.rect.y + water.h + 2:
-                water.force(abs(player.rect.midbottom[0] - water.rect.x) // water.spring_segment, player.yvel)
-                if not player.isWater and water.type != 'swamp':
-                    player.sound_water_drop.play()
-                    create_particles(player.rect.midbottom, 'water', all_sprites)
+        if water.rect.x < player.rect.midbottom[0] < water.rect.x + water.w and \
+                water.rect.y < player.rect.midbottom[1] < water.rect.y + water.h + 2:
+            water.force(abs(player.rect.midbottom[0] - water.rect.x) // water.spring_segment, player.yvel)
+            if not player.isWater and water.type != 'swamp' and water.upd:
+                player.sound_water_drop.play()
+                create_particles(player.rect.midbottom, 'water', all_sprites)
                 player.isWater = True
 
-                if water.type == 'swamp':
-                    if player.stop_death == 0:
-                        water.sound_drop.play()
-                    player.rect.y += 1.5
-                    player.death_anim('swamp')
-            else:
-                if player.isWater and water.type != 'swamp':
-                    player.sound_water_nodrop.play()
-                    create_particles(player.rect.midbottom, 'water', all_sprites)
+            if water.type == 'swamp':
+                if player.stop_death == 0:
+                    water.sound_drop.play()
+                player.rect.y += 1.5
+                player.death_anim('swamp')
+        else:
+            if player.isWater and water.type != 'swamp':
+                player.sound_water_nodrop.play()
+                create_particles(player.rect.midbottom, 'water', all_sprites)
                 player.isWater = False
 
 
