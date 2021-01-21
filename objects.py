@@ -92,11 +92,14 @@ class Door(pygame.sprite.Sprite):
         self.upd, self.count = 0, 0
         self.value = num
 
+        self.stat = True
+
         self.sound_door = pygame.mixer.Sound('data/sound/sound_door.mp3')
         self.sound_door.set_volume(0.5)
 
     def update(self):
         if self.upd == 1:
+            self.stat = False
             if self.count == 0:
                 self.sound_door.play()
             self.rect.y += self.upd
@@ -113,6 +116,7 @@ class Door(pygame.sprite.Sprite):
             if self.count == 0:
                 self.upd = 0
                 self.sound_door.stop()
+                self.stat = True
 
 
 class Spikes(pygame.sprite.Sprite):
@@ -323,12 +327,10 @@ class Button(pygame.sprite.Sprite):
                 cut = pygame.transform.scale(cut, (100, 100))
                 self.frames.append(cut)
 
-    def animation(self):
-        if self.close:
-            self.image = self.frames[-1]
-            self.close = False
-            self.sound_lever[1].play()
-        else:
-            self.image = self.frames[0]
-            self.close = True
-            self.sound_lever[0].play()
+    def update(self):
+        if not self.close:
+            print('АНИМАЦИЯ КНОПКИ')
+
+        self.close = True
+
+

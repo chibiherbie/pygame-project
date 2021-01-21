@@ -105,7 +105,7 @@ class Level:
                         self.water.append(Water(pos[0], pos[1], (x + 3) * tile_width,
                                                 (y + 1) * tile_height, 4, self.all_sprite, 'swamp'))
                 elif level[y][x] == '?':
-                    Button(x -1, y - 1, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
+                    Button(x, y - 1, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
                           self.button, self.all_sprite)
 
     def layer_generation(self, file, *layer):

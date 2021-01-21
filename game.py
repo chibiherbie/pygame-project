@@ -223,7 +223,6 @@ def main_loop(name_level):
             running = False
         player2.move(int(pl2[0]), int(pl2[1]))
 
-
         # двигаем игрока
         player.move(p_x, p_y)
         p_x, p_y = 0, 0
@@ -266,6 +265,9 @@ def main_loop(name_level):
         upd_player_water(player, lvl.water, all_sprites)
         upd_player_water(player2, lvl.water, all_sprites)
 
+        # стоим ли мы на объекте кнопка
+        player.player_stay_button(button, door)
+
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню
 
@@ -297,7 +299,7 @@ def start_game():
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network('debo')
+    NETWORK = Network('')
 
     pygame.mixer.music.load('data/music/1.mp3')
     pygame.mixer.music.play(-1)
