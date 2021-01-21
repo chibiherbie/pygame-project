@@ -47,8 +47,8 @@ class Level:
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
         self.layer_generation('/'.join([dir, 'layer_1.txt']), layer_1, sprite)
         self.generate_level(self.load_level('/'.join([dir, 'map.txt'])))
-        for i in range(50):
-            LeavesMain(leaves)
+        for i in range(20):
+            LeavesMain(screen, leaves)
         self.layer_generation('/'.join([dir, 'layer_front.txt']), layer_front, sprite)
 
     def load_level(self, filename):
@@ -153,19 +153,26 @@ class Wind:
 
 
 class LeavesMain(pygame.sprite.Sprite):
-    def __init__(self, *group):
+    def __init__(self, screen, *group):
         super().__init__(*group)
         dir = 'data/image/graphics/'
         name = ['leaves_1.png', 'leaves_2.png', 'leaves_3.png', 'leaves_4.png']
 
+        self.screen = screen
+
         self.image = pygame.image.load(dir + choice(name)).convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(randrange(0, 1000), randrange(-50, 0))
+        self.rect = self.rect.move(randrange(0, screen.get_size()[0] + 500), randrange(-100, 0))
 
-        self.speed = choice([0.3, 0.4, 0.5])
+        self.image = pygame.transform.rotate(self.image, randrange(1, 100))
+
+        self.speed = choice([1, 2, 3, 4])
         self.rotation = choice([0.3, 0.4, 0.5])
 
     def update(self):
-        self.rect.y += 1
-        self.rect.x += -1
+        self.rect.y += self.speed
+        self.rect.x += -self.speed
 
+        if not -self.rect.width - 100 <= self.rect.x <= self.screen.get_size()[0] + 500 and\
+            -self.rect.height - 100 <= self.rect.y <= self.screen.get_size()[1] + 100:
+            self.kill()

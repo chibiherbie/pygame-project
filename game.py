@@ -2,7 +2,7 @@ import pygame
 import pygame_gui
 from pygame.locals import *
 from hero import Hero
-from level import Level
+from level import Level, LeavesMain
 from game_menu import GameMenu
 from network import Network
 from objects import upd_player_water
@@ -248,6 +248,7 @@ def main_loop(name_level):
 
         camera.apply(background.sprites()[0], -3)
 
+
         # если спрайт не в зоне нашего зрения, он не рисуется
         for obj in all_sprites:
             if -obj.rect.width <= obj.rect.x <= WIDTH and -obj.rect.height <= obj.rect.y <= HEIGHT:
@@ -259,6 +260,12 @@ def main_loop(name_level):
         hero.draw(screen)
 
         all_sprites.update()
+        for i in leaves:
+            camera.apply(i, 0)
+        if len(leaves) < 40:
+            for i in range(40 - len(leaves)):
+                LeavesMain(screen, leaves)
+
         leaves.update()
         leaves.draw(screen)
 
@@ -277,7 +284,6 @@ def main_loop(name_level):
             player.player_stay_button(button, door)
         if not player.btn:
             player2.player_stay_button(button, door)
-
 
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню
