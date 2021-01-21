@@ -51,7 +51,7 @@ class Lever(pygame.sprite.Sprite):
         self.sound_lever = [pygame.mixer.Sound('data/sound/sound_lever_on.mp3'),
                             pygame.mixer.Sound('data/sound/sound_lever_off.mp3')]
         for i in self.sound_lever:
-            i.set_volume(0.1)
+            i.set_volume(0.001)
 
     # режим заготовку на кадры
     def cut_sheet(self, sheet, columns, rows):

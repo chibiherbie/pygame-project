@@ -1,7 +1,7 @@
 import pygame
 import os
 from objects import Lever, Door, Spikes, SavePoint, Water, Button
-from random import choice, shuffle
+from random import choice, shuffle, randrange
 
 
 tile_images = {
@@ -17,7 +17,7 @@ tile_width = 50
 
 class Level:
     def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1,
-                 layer_front, lever, door, death, save_point, button, screen):
+                 layer_front, lever, door, death, save_point, button, screen, leaves):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
@@ -47,6 +47,8 @@ class Level:
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
         self.layer_generation('/'.join([dir, 'layer_1.txt']), layer_1, sprite)
         self.generate_level(self.load_level('/'.join([dir, 'map.txt'])))
+        for i in range(50):
+            LeavesMain(leaves)
         self.layer_generation('/'.join([dir, 'layer_front.txt']), layer_front, sprite)
 
     def load_level(self, filename):
@@ -144,3 +146,26 @@ class Layers(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
                                                          int(self.image.get_height() / scale)))
         self.rect = self.image.get_rect().move(pos)
+
+
+class Wind:
+    pass
+
+
+class LeavesMain(pygame.sprite.Sprite):
+    def __init__(self, *group):
+        super().__init__(*group)
+        dir = 'data/image/graphics/'
+        name = ['leaves_1.png', 'leaves_2.png', 'leaves_3.png', 'leaves_4.png']
+
+        self.image = pygame.image.load(dir + choice(name)).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(randrange(0, 1000), randrange(-50, 0))
+
+        self.speed = choice([0.3, 0.4, 0.5])
+        self.rotation = choice([0.3, 0.4, 0.5])
+
+    def update(self):
+        self.rect.y += 1
+        self.rect.x += -1
+

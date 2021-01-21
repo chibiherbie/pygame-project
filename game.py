@@ -127,6 +127,7 @@ def main_loop(name_level):
     door = pygame.sprite.Group()
     save_point = pygame.sprite.Group()
     button = pygame.sprite.Group()
+    leaves = pygame.sprite.Group()
 
     with open('data/save/1_save.txt') as f:
         save_pos = f.read()
@@ -146,7 +147,7 @@ def main_loop(name_level):
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
-                door, death, save_point, button, screen)
+                door, death, save_point, button, screen, leaves)
 
     # размещаем воду
     for i in lvl.water:
@@ -258,6 +259,8 @@ def main_loop(name_level):
         hero.draw(screen)
 
         all_sprites.update()
+        leaves.update()
+        leaves.draw(screen)
 
         # очищаем спарйты
         draw_sprite.empty()
