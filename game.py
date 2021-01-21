@@ -222,6 +222,10 @@ def main_loop(name_level):
         if pl2[0] == 'stop':
             running = False
         player2.move(int(pl2[0]), int(pl2[1]))
+        if pl2[2]:
+            check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
+            if check:
+                player_with_obj(check[0], check[1], check[2], door)
 
         # двигаем игрока
         player.move(p_x, p_y)
@@ -303,7 +307,7 @@ def start_game():
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network('qavd ')
+    NETWORK = Network('')
 
     pygame.mixer.music.load('data/music/1.mp3')
     pygame.mixer.music.play(-1)
