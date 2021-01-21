@@ -266,7 +266,11 @@ def main_loop(name_level):
         upd_player_water(player2, lvl.water, all_sprites)
 
         # стоим ли мы на объекте кнопка
-        player.player_stay_button(button, door)
+        if not player2.btn:
+            player.player_stay_button(button, door)
+        if not player.btn:
+            player2.player_stay_button(button, door)
+
 
         if show_manager:
             game_menu.draw()  # рисуем внутриигровое меню
@@ -299,7 +303,7 @@ def start_game():
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network('')
+    NETWORK = Network('qavd ')
 
     pygame.mixer.music.load('data/music/1.mp3')
     pygame.mixer.music.play(-1)

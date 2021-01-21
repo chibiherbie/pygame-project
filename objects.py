@@ -334,7 +334,7 @@ class Button(pygame.sprite.Sprite):
             s = pygame.Surface(self.screen.get_size()).convert_alpha()
             s.fill((0, 0, 0, 0))
             s.set_alpha(255)
-            
+
             # рисуем свет от лампы
             pygame.draw.circle(s, pygame.Color(255, 207, 72, 50), (self.rect.x + 70, self.rect.y + 65), 60)
             pygame.draw.circle(s, pygame.Color(255, 180, 72, 80),

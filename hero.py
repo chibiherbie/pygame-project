@@ -33,6 +33,7 @@ class Hero(pygame.sprite.Sprite):
         self.death_colide = False
         self.isWater = False
         self.stop_death = 0
+        self.btn = False
 
         self.sound_water_drop = pygame.mixer.Sound('data/sound/sound_water.mp3')
         self.sound_water_nodrop = pygame.mixer.Sound('data/sound/sound_not_water.mp3')
@@ -139,7 +140,9 @@ class Hero(pygame.sprite.Sprite):
         wall = pygame.sprite.spritecollide(self, btn, False)  # касаемся ли мы объектов
         if wall:
             wall[0].close = False
-            print('на кнопке')
+            self.btn = True
+        else:
+            self.btn = False
 
         for i in btn.sprites():
             for j in door.sprites():
