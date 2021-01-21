@@ -91,11 +91,14 @@ class Door(pygame.sprite.Sprite):
         self.upd, self.count = 0, 0
         self.value = num
 
+        self.stat = True
+
         self.sound_door = pygame.mixer.Sound('data/sound/sound_door.mp3')
         self.sound_door.set_volume(0.5)
 
     def update(self):
         if self.upd == 1:
+            self.stat = False
             if self.count == 0:
                 self.sound_door.play()
             self.rect.y += self.upd
@@ -112,6 +115,7 @@ class Door(pygame.sprite.Sprite):
             if self.count == 0:
                 self.upd = 0
                 self.sound_door.stop()
+                self.stat = True
 
 
 class Spikes(pygame.sprite.Sprite):
@@ -286,3 +290,58 @@ class ParticleWater(pygame.sprite.Sprite):
 
         if self.time == 15:  # удаляем частицу через 10 интераций
             self.kill()
+
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, num, screen, *group):
+        super().__init__(*group)
+
+        self.frames = []
+
+        self.cut_sheet('data/image/graphics/button.png', 1, 1)
+
+        self.cur_frame = 0
+        self.upd = 0
+        self.screen = screen
+
+        self.image = self.frames[self.cur_frame]
+        self.rect.w += 50
+        self.rect = self.rect.move(tile_width * pos_x, tile_height * pos_y)
+
+        self.close = True
+        self.value = num  # индес рычага, для открытия определённой двери
+
+        self.sound_lever = [pygame.mixer.Sound('data/sound/sound_lever_on.mp3'),
+                            pygame.mixer.Sound('data/sound/sound_lever_off.mp3')]
+        for i in self.sound_lever:
+            i.set_volume(0.1)
+
+    # режим заготовку на кадры
+    def cut_sheet(self, sheet, columns, rows):
+        sheet = pygame.image.load(sheet).convert_alpha()  # загружаем файл
+
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns, sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
+                cut = pygame.transform.scale(cut, (100, 100))
+                self.frames.append(cut)
+
+    def update(self):
+        if not self.close:
+            s = pygame.Surface(self.screen.get_size()).convert_alpha()
+            s.fill((0, 0, 0, 0))
+            s.set_alpha(255)
+
+            # рисуем свет от лампы
+            pygame.draw.circle(s, pygame.Color(255, 207, 72, 50), (self.rect.x + 70, self.rect.y + 65), 60)
+            pygame.draw.circle(s, pygame.Color(255, 180, 72, 80),
+                               (self.rect.x + 70, self.rect.y + 65), random.randrange(29, 31))
+            pygame.draw.circle(s, pygame.Color(255, 130, 72, 80),
+                               (self.rect.x + 70, self.rect.y + 65), random.randrange(17, 19))
+
+            self.screen.blit(s, (0, 0))
+        self.close = True
+
+

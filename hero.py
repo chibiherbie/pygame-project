@@ -33,6 +33,7 @@ class Hero(pygame.sprite.Sprite):
         self.death_colide = False
         self.isWater = False
         self.stop_death = 0
+        self.btn = False
 
         self.sound_water_drop = pygame.mixer.Sound('data/sound/sound_water.mp3')
         self.sound_water_nodrop = pygame.mixer.Sound('data/sound/sound_not_water.mp3')
@@ -131,8 +132,27 @@ class Hero(pygame.sprite.Sprite):
         for i in group:
             wall = pygame.sprite.spritecollide(self, i, False)  # касаемся ли мы объектов
             if wall:
-                wall[0].animation()  # запускаем анимацию
-                return (wall[0].close, 'door', wall[0].value)
+                if wall[0].__class__.__name__ == 'Lever':
+                    wall[0].animation()  # запускаем анимацию
+                    return (wall[0].close, 'door', wall[0].value)
+
+    def player_stay_button(self, btn, door):
+        wall = pygame.sprite.spritecollide(self, btn, False)  # касаемся ли мы объектов
+        if wall:
+            wall[0].close = False
+            self.btn = True
+        else:
+            self.btn = False
+
+        for i in btn.sprites():
+            for j in door.sprites():
+                if i.value == j.value:
+                    # взаимодействуем с дверью
+                    if not j.stat and i.close:
+                        j.upd = -1
+                    if j.stat and not i.close:
+                        j.upd = 1
+
 
     def death_anim(self, type):
         if self.stop_death <= 8:
