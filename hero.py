@@ -147,7 +147,7 @@ class Hero(pygame.sprite.Sprite):
                     # взаимодействуем с дверью
                     if not j.stat and i.close:
                         j.upd = -1
-                    elif j.stat and not i.close:
+                    if j.stat and not i.close:
                         j.upd = 1
 
 

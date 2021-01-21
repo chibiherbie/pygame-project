@@ -89,7 +89,7 @@ def load_save_point(player, player2, pos_new):
 
 
 FPS = 60
-SIZE = WIDTH, HEIGHT = 1000, 1000
+SIZE = WIDTH, HEIGHT = 1000, 700
 RECT_HERO = (32, 58)
 NETWORK = None
 
@@ -146,7 +146,7 @@ def main_loop(name_level):
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
     lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
-                door, death, save_point, button)
+                door, death, save_point, button, screen)
 
     # размещаем воду
     for i in lvl.water:

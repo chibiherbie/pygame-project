@@ -294,7 +294,7 @@ class ParticleWater(pygame.sprite.Sprite):
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, tile_width, tile_height, num, *group):
+    def __init__(self, pos_x, pos_y, tile_width, tile_height, num, screen, *group):
         super().__init__(*group)
 
         self.frames = []
@@ -303,8 +303,10 @@ class Button(pygame.sprite.Sprite):
 
         self.cur_frame = 0
         self.upd = 0
+        self.screen = screen
 
         self.image = self.frames[self.cur_frame]
+        self.rect.w += 50
         self.rect = self.rect.move(tile_width * pos_x, tile_height * pos_y)
 
         self.close = True
@@ -329,8 +331,18 @@ class Button(pygame.sprite.Sprite):
 
     def update(self):
         if not self.close:
-            print('АНИМАЦИЯ КНОПКИ')
+            s = pygame.Surface(self.screen.get_size()).convert_alpha()
+            s.fill((0, 0, 0, 0))
+            s.set_alpha(255)
+            
+            # рисуем свет от лампы
+            pygame.draw.circle(s, pygame.Color(255, 207, 72, 50), (self.rect.x + 70, self.rect.y + 65), 60)
+            pygame.draw.circle(s, pygame.Color(255, 180, 72, 80),
+                               (self.rect.x + 70, self.rect.y + 65), random.randrange(29, 31))
+            pygame.draw.circle(s, pygame.Color(255, 130, 72, 80),
+                               (self.rect.x + 70, self.rect.y + 65), random.randrange(17, 19))
 
+            self.screen.blit(s, (0, 0))
         self.close = True
 
 
