@@ -51,7 +51,7 @@ class Lever(pygame.sprite.Sprite):
         self.sound_lever = [pygame.mixer.Sound('data/sound/sound_lever_on.mp3'),
                             pygame.mixer.Sound('data/sound/sound_lever_off.mp3')]
         for i in self.sound_lever:
-            i.set_volume(0.001)
+            i.set_volume(0.05)
 
     # режим заготовку на кадры
     def cut_sheet(self, sheet, columns, rows):
@@ -94,7 +94,7 @@ class Door(pygame.sprite.Sprite):
         self.stat = True
 
         self.sound_door = pygame.mixer.Sound('data/sound/sound_door.mp3')
-        self.sound_door.set_volume(0.5)
+        self.sound_door.set_volume(0.08)
 
     def update(self):
         if self.upd == 1:

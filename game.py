@@ -2,7 +2,7 @@ import pygame
 import pygame_gui
 from pygame.locals import *
 from hero import Hero
-from level import Level, LeavesMain
+from level import Level, LeavesMain, Wind
 from game_menu import GameMenu
 from network import Network
 from objects import upd_player_water
@@ -62,11 +62,11 @@ class Transition:
         self.frame = self.screen
 
     def update(self):
-
         mask = pygame.Surface(SIZE)
         pygame.draw.circle(mask, (255, 255, 255), (WIDTH // 2, HEIGHT // 2), (self.time_count / self.max_time) ** 4 * WIDTH)
         mask.set_colorkey((255, 255, 255))
         self.screen.blit(mask, (0, 0))
+
         if 't' in self.type:
             self.type = self.type[:-1]
             return
@@ -155,7 +155,11 @@ def main_loop(name_level):
 
     camera = Camera(player)
 
+    # переход при смерти. в будущем для перемещения в новое место
     transition = Transition(screen)
+
+    # ветер
+    wind = Wind('data/levels/' + name_level + '/sound_environment')
 
     # основной цикл
     while running:
@@ -248,7 +252,6 @@ def main_loop(name_level):
 
         camera.apply(background.sprites()[0], -3)
 
-
         # если спрайт не в зоне нашего зрения, он не рисуется
         for obj in all_sprites:
             if -obj.rect.width <= obj.rect.x <= WIDTH and -obj.rect.height <= obj.rect.y <= HEIGHT:
@@ -260,24 +263,29 @@ def main_loop(name_level):
         hero.draw(screen)
 
         all_sprites.update()
-        for i in leaves:
-            camera.apply(i, 0)
-        if len(leaves) < 40:
-            for i in range(40 - len(leaves)):
-                LeavesMain(screen, leaves)
-
-        leaves.update()
-        leaves.draw(screen)
 
         # очищаем спарйты
         draw_sprite.empty()
 
-        # UPDATE WATER
+        # UPDATE LEAVES #
+        for i in leaves:
+            camera.apply(i, 0)
+
+        if len(leaves) < 40:
+            for i in range(40 - len(leaves)):
+                LeavesMain(screen, leaves)
+
+        wind.update()
+        leaves.update(wind)
+        leaves.draw(screen)
+
+        # UPDATE WATER #
         for i in lvl.water:
             i.upd_camera(camera.dx, camera.dy, WIDTH, HEIGHT, screen)
 
         upd_player_water(player, lvl.water, all_sprites)
         upd_player_water(player2, lvl.water, all_sprites)
+        ######
 
         # стоим ли мы на объекте кнопка
         if not player2.btn:

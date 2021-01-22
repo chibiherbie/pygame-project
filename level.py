@@ -47,8 +47,6 @@ class Level:
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
         self.layer_generation('/'.join([dir, 'layer_1.txt']), layer_1, sprite)
         self.generate_level(self.load_level('/'.join([dir, 'map.txt'])))
-        for i in range(20):
-            LeavesMain(screen, leaves)
         self.layer_generation('/'.join([dir, 'layer_front.txt']), layer_front, sprite)
 
     def load_level(self, filename):
@@ -149,12 +147,50 @@ class Layers(pygame.sprite.Sprite):
 
 
 class Wind:
-    pass
+    def __init__(self, dir):
+        self.speed_x = -1
+        self.speed_y = 1
+        self.power = 0
+        self.transition_x = 0
+        self.transition_y = 0
+
+        self.time = 0
+
+        self.sound = []
+        for sound in os.listdir(dir):
+            if 'windy' in sound:
+                self.sound.append(pygame.mixer.Sound(dir + '/' + sound))
+                self.sound[-1].set_volume(0.07)
+
+    def update(self):
+        self.time += 1
+
+        if self.time == 1000:
+            if self.power == 0:
+                self.power = choice([0, 1, 0, 2, 0, 1, 0])  # 0, 1, 0, 2, 0, 1, 0
+            else:
+                self.power = 0
+            self.time = 0
+            # print('POWER:', self.power, self.speed_x)
+
+        if self.power != 0 and self.time == 0:
+            self.transition_x = -randrange(3, 6) * self.power
+            self.t = 1
+            self.sound[randrange(0, len(self.sound))].play()
+
+        elif self.power == 0 and self.time == 0 and self.speed_x < -1:
+            self.transition_x = self.speed_x + 1
+            self.t = -1
+
+        if self.transition_x < 0:
+            self.speed_x += -0.05 * self.t
+            self.transition_x += 0.05
 
 
 class LeavesMain(pygame.sprite.Sprite):
     def __init__(self, screen, *group):
         super().__init__(*group)
+
         dir = 'data/image/graphics/'
         name = ['leaves_1.png', 'leaves_2.png', 'leaves_3.png', 'leaves_4.png']
 
@@ -163,16 +199,20 @@ class LeavesMain(pygame.sprite.Sprite):
         self.image = pygame.image.load(dir + choice(name)).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(randrange(0, screen.get_size()[0] + 500), randrange(-100, 0))
-
+        if self.rect.x > screen.get_size()[0]:
+            self.rect = self.rect.move(0, randrange(0, screen.get_size()[1] // 2))
         self.image = pygame.transform.rotate(self.image, randrange(1, 100))
 
-        self.speed = choice([1, 2, 3, 4])
-        self.rotation = choice([0.3, 0.4, 0.5])
+        self.x = -randrange(1, 3)
+        self.m = 1
 
-    def update(self):
-        self.rect.y += self.speed
-        self.rect.x += -self.speed
+    def update(self, wind):
+        self.rect.y += wind.speed_y - self.x
+        self.rect.x += wind.speed_x + self.x
 
-        if not -self.rect.width - 100 <= self.rect.x <= self.screen.get_size()[0] + 500 and\
-            -self.rect.height - 100 <= self.rect.y <= self.screen.get_size()[1] + 100:
+        if wind.time % 100 == 0:
+            self.x = -randrange(1, 3)
+
+        if not (-self.rect.width - 500 <= self.rect.x <= self.screen.get_size()[0] + 500 and
+            -self.rect.height - 100 <= self.rect.y <= self.screen.get_size()[1] + 100):
             self.kill()
