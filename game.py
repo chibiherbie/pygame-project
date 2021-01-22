@@ -273,7 +273,8 @@ def main_loop(name_level):
 
         if len(leaves) < 40:
             for i in range(40 - len(leaves)):
-                LeavesMain(screen, leaves)
+                a = LeavesMain(screen, leaves)
+                camera.apply(a, 0)
 
         wind.update()
         leaves.update(wind)

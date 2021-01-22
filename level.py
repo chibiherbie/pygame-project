@@ -200,11 +200,16 @@ class LeavesMain(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(randrange(0, screen.get_size()[0] + 500), randrange(-100, 0))
         if self.rect.x > screen.get_size()[0]:
-            self.rect = self.rect.move(0, randrange(0, screen.get_size()[1] // 2))
+            self.rect = self.rect.move(0, randrange(0, screen.get_size()[1] - screen.get_size()[1] // 4))
         self.image = pygame.transform.rotate(self.image, randrange(1, 100))
 
+        self.rectx = self.rect.x
+        self.recty = self.rect.y
+
         self.x = -randrange(1, 3)
+        self.y = 0
         self.m = 1
+        self.l = True
 
     def update(self, wind):
         self.rect.y += wind.speed_y - self.x
@@ -212,6 +217,39 @@ class LeavesMain(pygame.sprite.Sprite):
 
         if wind.time % 100 == 0:
             self.x = -randrange(1, 3)
+
+        # ------------------------------ПЛАВНОЕ ДВИЖЕНИЕ ЛИСТВЫ --------------------------------
+        # self.rectx += wind.speed_x + self.x
+        # self.recty += wind.speed_y - self.y
+        #
+        # if wind.power == 0 and wind.time > 150:
+        #     t = choice([0.03, 0.08, 0.05])
+        #     if self.l:
+        #         self.x += t
+        #         self.m -= t
+        #     elif not self.l:
+        #         self.x -= t
+        #         self.m += t
+        #
+        #     if self.m > 1:
+        #         self.y += 0.05
+        #     elif -1 < self.m < 1:
+        #         if self.y > 0:
+        #             self.y -= 0.07
+        #     elif self.m < -1:
+        #         self.y += 0.05
+        #     if self.y < 0:
+        #         self.y = 0
+        # else:
+        #     if self.x > 0:
+        #         self.x = -randrange(1, 3)
+        #
+        # if self.m > 1.5 or self.m < -1.5:
+        #     self.l = not self.l
+        #
+        # self.rect.y = self.recty  # wind.speed_y - self.y
+        # self.rect.x = int(self.rectx)  # wind.speed_x + self.x
+        # --------------------------------------------------------------------------------
 
         if not (-self.rect.width - 500 <= self.rect.x <= self.screen.get_size()[0] + 500 and
             -self.rect.height - 100 <= self.rect.y <= self.screen.get_size()[1] + 100):
