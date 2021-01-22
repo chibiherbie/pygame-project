@@ -345,3 +345,6 @@ class Button(pygame.sprite.Sprite):
         self.close = True
 
 
+class Rope:
+    pass
+
