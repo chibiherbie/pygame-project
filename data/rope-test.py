@@ -4,7 +4,7 @@ from math import sqrt
 from pygame.locals import *
 
 
-r = [[0.0, 0.0], [0.0, -1.0], [0.0, -2.0], [0.0, -3.0], [0.0, -5.0]]
+r = [[0.0, 0.0], [0.0, -0.5], [0.0, -1.0], [0.0, -1.5], [0.0, -2.0]]
 connect = [[0, 1], [1, 2], [2, 3], [3, 4]]
 
 
@@ -23,14 +23,19 @@ class Rope:
 
         # размещаем на позицию
         point = self.points[0]
-        point[0] = self.orig_points[0][0] + 100 / self.scale
-        point[1] = self.orig_points[0][1] + 100 / self.scale
+        point[0] = self.orig_points[0][0] + 50 / self.scale
+        point[1] = self.orig_points[0][1] + 50 / self.scale
         point[2] = point[0]
         point[3] = point[1]
 
     # считаем расстояние между точками
     def get_distance(self, p1, p2):
         return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)  # находим гипотенузу
+
+    def wind(self, speed):
+        print(self.points[-1])
+        self.points[-1][0] -= speed
+
 
     def upd_sticks(self):
         for stick in self.sticks:
@@ -64,8 +69,8 @@ class Rope:
         y_points = [i[1] * self.scale for i in self.points]
         min_x, min_y = min(x_points), min(y_points)
 
-        surf = pygame.Surface(screen.get_size())
-        surf.set_colorkey((0, 0, 0))
+        surf = pygame.Surface((300, 300))
+        surf.fill((0, 0, 0, 0))
 
         # рисуем points
         render_points = [[i[0] * self.scale - int(min_x), i[1] * self.scale - int(min_y)] for i in self.points]
@@ -99,6 +104,8 @@ while True:
             if event.key == K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+            if event.key == pygame.K_f:
+                rope.wind(0.1)
 
     pygame.display.update()
     mainClock.tick(60)

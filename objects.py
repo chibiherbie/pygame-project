@@ -1,5 +1,6 @@
 import pygame
 import random
+from math import sqrt
 
 
 def upd_player_water(player, waters, all_sprites):
@@ -178,7 +179,7 @@ class Water:
             self.spread = 0.06  # скорость распространения волн
             self.alpha = 100
         else:
-            self.color = pygame.Color(79,131,57)
+            self.color = pygame.Color(79, 131, 57)
             self.spread = 0.09
             self.passes = 10
             self.sound_drop = pygame.mixer.Sound('data/sound/sound_swamp_drop.mp3')
@@ -226,7 +227,7 @@ class Water:
                         self.springs[num + 1].y_pos += right_d[num]
 
     def draw(self):
-        sur = pygame.Surface((self.x_e - self.x_s, self.y_e - self.y_s)).convert_alpha()  # self.x_e - self.x_s, self.y_e - self.y_s
+        sur = pygame.Surface((self.x_e - self.x_s, self.y_e - self.y_s)).convert_alpha()
         sur.fill((0, 0, 0, 0))
         sur.set_alpha(self.alpha)
         for i in range(len(self.springs) - 1):
@@ -316,6 +317,8 @@ class Button(pygame.sprite.Sprite):
         for i in self.sound_lever:
             i.set_volume(0.1)
 
+        self.rope = Rope([tile_width * pos_x, tile_height * pos_y])
+
     # режим заготовку на кадры
     def cut_sheet(self, sheet, columns, rows):
         sheet = pygame.image.load(sheet).convert_alpha()  # загружаем файл
@@ -342,9 +345,87 @@ class Button(pygame.sprite.Sprite):
                                (self.rect.x + 70, self.rect.y + 65), random.randrange(17, 19))
 
             self.screen.blit(s, (0, 0))
+
+        # upd rope
+        self.rope.update()
+        self.rope.upd_sticks()
+        self.rope.draw(self.screen, (160, 160, 164), self.rect.x, self.rect.y)
         self.close = True
 
 
+r = [[0.0, 0.0], [0.0, -0.5], [0.0, -1.0], [0.0, -1.5], [0.0, -2.0]]
+connect = [[0, 1], [1, 2], [2, 3], [3, 4]]
+
+
 class Rope:
-    pass
+    def __init__(self, pos):
+        self.points = [i + i for i in r]  # делаем дубликаты координат для плавного перемещения
+        self.orig_points = [i + i for i in r]
+
+        self.sticks = []  # линии между точками
+
+        self.scale = 15
+
+        self.x_surf, self.y_surf = pos[0], pos[1]
+
+        for stick in connect:
+            self.sticks.append([stick[0], stick[1],
+                                self.get_distance(self.points[stick[0]][:2], self.points[stick[1]][:2])])
+
+        # размещаем на позицию
+        point = self.points[0]
+        point[0] = self.orig_points[0][0] + 68 / self.scale
+        point[1] = self.orig_points[0][1] + 19 / self.scale
+        point[2] = point[0]
+        point[3] = point[1]
+
+    # считаем расстояние между точками
+    def get_distance(self, p1, p2):
+        return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)  # находим гипотенузу
+
+    def wind(self, speed):
+        print(self.points[-1])
+        self.points[-1][0] -= speed
+
+    def upd_sticks(self):
+        for stick in self.sticks:
+            d = self.get_distance(self.points[stick[0]][:2], self.points[stick[1]][:2])
+            mv_ratio = (stick[2] - d) / d / 2  # разница в дистанции
+
+            # положение
+            dx = self.points[stick[1]][0] - self.points[stick[0]][0]
+            dy = self.points[stick[1]][1] - self.points[stick[0]][1]
+
+            if stick[0] != 0:
+                self.points[stick[0]][0] -= dx * mv_ratio * 0.85
+                self.points[stick[0]][1] -= dy * mv_ratio * 0.85
+
+            self.points[stick[1]][0] += dx * mv_ratio * 0.85
+            self.points[stick[1]][1] += dy * mv_ratio * 0.85
+
+    def update(self):
+        for i, point in enumerate(self.points):
+            if i != 0:
+                d_x = point[0] - point[2]
+                d_y = point[1] - point[3]
+                point[2] = point[0]
+                point[3] = point[1]
+                point[0] += d_x
+                point[1] += d_y
+                point[1] += 0.05  # придаём массу, всгда тянем вниз
+
+    def draw(self, screen, color, dx, dy):
+        x_points = [i[0] * self.scale for i in self.points]
+        y_points = [i[1] * self.scale for i in self.points]
+        min_x, min_y = min(x_points), min(y_points)
+
+        surf = pygame.Surface((100, 100))
+        surf.set_colorkey((0, 0, 0))
+
+        # рисуем points
+        render_points = [[i[0] * self.scale - int(min_x), i[1] * self.scale - int(min_y)] for i in self.points]
+        for stick in self.sticks:
+            pygame.draw.line(surf, color, render_points[stick[0]], render_points[stick[1]], 5)
+
+        screen.blit(surf, (min_x + dx, min_y + dy))
 
