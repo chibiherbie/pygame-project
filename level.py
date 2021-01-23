@@ -162,6 +162,9 @@ class Wind:
                 self.sound.append(pygame.mixer.Sound(dir + '/' + sound))
                 self.sound[-1].set_volume(0.07)
 
+    def get_speedx(self):
+        return self.speed_x
+
     def update(self):
         self.time += 1
 

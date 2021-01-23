@@ -302,7 +302,7 @@ class Button(pygame.sprite.Sprite):
         self.cut_sheet('data/image/graphics/button.png', 1, 1)
 
         self.cur_frame = 0
-        self.upd = 0
+        self.upd, self.m = 0, 1
         self.screen = screen
 
         self.image = self.frames[self.cur_frame]
@@ -332,29 +332,62 @@ class Button(pygame.sprite.Sprite):
                 self.frames.append(cut)
 
     def update(self):
-        if not self.close:
-            s = pygame.Surface(self.screen.get_size()).convert_alpha()
-            s.fill((0, 0, 0, 0))
-            s.set_alpha(255)
-
-            # рисуем свет от лампы
-            pygame.draw.circle(s, pygame.Color(255, 207, 72, 50), (self.rect.x + 70, self.rect.y + 65), 60)
-            pygame.draw.circle(s, pygame.Color(255, 180, 72, 80),
-                               (self.rect.x + 70, self.rect.y + 65), random.randrange(29, 31))
-            pygame.draw.circle(s, pygame.Color(255, 130, 72, 80),
-                               (self.rect.x + 70, self.rect.y + 65), random.randrange(17, 19))
-
-            self.screen.blit(s, (0, 0))
-
         # upd rope
         self.rope.update()
         self.rope.upd_sticks()
-        self.rope.draw(self.screen, (160, 160, 164), self.rect.x, self.rect.y)
+        if -self.rect.width <= self.rect.x <= self.screen.get_size()[0] and \
+                -self.rect.height <= self.rect.y <= self.screen.get_size()[1]:
+            self.rope.draw(self.screen, (160, 160, 164), self.rect.x, self.rect.y)
+
+        if not self.close:
+            if self.m == 1:
+               self.upd += 0.03
+            elif self.m == -1:
+                self.upd -= 0.01
+
+            if self.m == 1 and self.upd > 1:
+                self.m = -1
+            elif self.m == -1 and self.upd < 0.7:
+                self.m = 1
+
+            self.draw_light()
+
+        if self.upd > 0 and self.close:
+            self.upd -= 0.08
+            self.draw_light()
+
         self.close = True
+
+    def draw_light(self):
+        s = pygame.Surface(self.screen.get_size()).convert_alpha()
+        s.fill((0, 0, 0, 0))
+        s.set_alpha(255)
+
+        # рисуем свет от лампы
+        pos = (self.rect.x + 65 + self.rope.img.rect.x, self.rect.y + 28 + self.rope.img.rect.y)
+        pygame.draw.circle(s, pygame.Color(255, 207, 72, 50), pos, 60 * self.upd)
+        pygame.draw.circle(s, pygame.Color(255, 180, 72, 80), pos, random.randrange(29, 31) * self.upd)
+        pygame.draw.circle(s, pygame.Color(255, 130, 72, 80), pos, random.randrange(17, 19) * self.upd)
+
+        self.screen.blit(s, (0, 0))
 
 
 r = [[0.0, 0.0], [0.0, -0.5], [0.0, -1.0], [0.0, -1.5], [0.0, -2.0]]
 connect = [[0, 1], [1, 2], [2, 3], [3, 4]]
+
+
+class LightRope(pygame.sprite.Sprite):
+    def __init__(self, group, x, y):
+        super().__init__(group)
+
+        self.image = pygame.image.load('data/image/graphics/button_ligth.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (18, 30))
+        self.rect = self.image.get_rect()
+        print(self.rect)
+
+    def update(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
 
 
 class Rope:
@@ -367,10 +400,14 @@ class Rope:
         self.scale = 15
 
         self.x_surf, self.y_surf = pos[0], pos[1]
+        self.w, self.h = self.x_surf + 100, self.x_surf + 100
 
         for stick in connect:
             self.sticks.append([stick[0], stick[1],
                                 self.get_distance(self.points[stick[0]][:2], self.points[stick[1]][:2])])
+
+        self.light = pygame.sprite.Group()
+        self.img = LightRope(self.light, self.sticks[-1], 0)
 
         # размещаем на позицию
         point = self.points[0]
@@ -384,7 +421,6 @@ class Rope:
         return sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)  # находим гипотенузу
 
     def wind(self, speed):
-        print(self.points[-1])
         self.points[-1][0] -= speed
 
     def upd_sticks(self):
@@ -425,7 +461,10 @@ class Rope:
         # рисуем points
         render_points = [[i[0] * self.scale - int(min_x), i[1] * self.scale - int(min_y)] for i in self.points]
         for stick in self.sticks:
-            pygame.draw.line(surf, color, render_points[stick[0]], render_points[stick[1]], 5)
+            pygame.draw.line(surf, color, render_points[stick[0]], render_points[stick[1]], 4)
+
+        self.light.update(render_points[self.sticks[-1][1]][0], render_points[self.sticks[-1][1]][1])
+        self.light.draw(surf)
 
         screen.blit(surf, (min_x + dx, min_y + dy))
 

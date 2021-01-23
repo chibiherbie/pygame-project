@@ -6,7 +6,7 @@ from level import Level, LeavesMain, Wind
 from game_menu import GameMenu
 from network import Network
 from objects import upd_player_water
-import pickle
+from random import randrange
 
 
 class Camera:
@@ -287,6 +287,10 @@ def main_loop(name_level):
         upd_player_water(player, lvl.water, all_sprites)
         upd_player_water(player2, lvl.water, all_sprites)
         ######
+
+        # UPD rope with button
+        for i in button:
+            i.rope.wind(-wind.speed_x / randrange(50, 55))
 
         # стоим ли мы на объекте кнопка
         if not player2.btn:
