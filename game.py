@@ -250,14 +250,19 @@ def main_loop(name_level):
         for sprite in layer_front:
             camera.apply(sprite, 1)
 
-        camera.apply(background.sprites()[0], -3)
+        for back in background:
+            back.rect.x += camera.dx
 
         # если спрайт не в зоне нашего зрения, он не рисуется
         for obj in all_sprites:
             if -obj.rect.width <= obj.rect.x <= WIDTH and -obj.rect.height <= obj.rect.y <= HEIGHT:
                 draw_sprite.add(obj)
 
-        # рисуем все объекты
+        # # рисуем все объекты
+        # for back in background:
+        #     if -back.rect.width <= back.rect.x <= WIDTH and -back.rect.height <= back.rect.y <= HEIGHT:
+        #         background[0].draw()
+
         background.draw(screen)
         draw_sprite.draw(screen)
         hero.draw(screen)

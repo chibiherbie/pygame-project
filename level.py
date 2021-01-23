@@ -28,6 +28,7 @@ class Level:
         self.save_point = save_point
         self.screen = screen
         self.water_pos = {}
+        self.pos_b = 0
 
         self.water = []
 
@@ -43,7 +44,9 @@ class Level:
         shuffle(self.sound_around)  # мешаем  звуки
 
         # загружаем спрайты в порядке иерархии по слоям (фон, 2 слой, 1 слой, плафтформа, передний план)
-        Background('/'.join([dir, 'background.png']), back)
+        for i in range(5):
+            n = Background('/'.join([dir, 'background.png']), self.pos_b, back)
+            self.pos_b += n.rect.w
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
         self.layer_generation('/'.join([dir, 'layer_1.txt']), layer_1, sprite)
         self.generate_level(self.load_level('/'.join([dir, 'map.txt'])))
@@ -130,11 +133,11 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, os_name, *group):
+    def __init__(self, os_name, pos, *group):
         super().__init__(*group)
         self.image = pygame.image.load(os_name).convert_alpha()
         # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
-        self.rect = self.image.get_rect().move(-150, 0)
+        self.rect = self.image.get_rect().move(-150 + pos, 0)
 
 
 class Layers(pygame.sprite.Sprite):
