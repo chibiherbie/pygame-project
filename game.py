@@ -295,7 +295,7 @@ def main_loop(name_level):
 
         # UPD rope with button
         for i in button:
-            i.rope.wind(-wind.speed_x / randrange(50, 55))
+            i.rope.wind(-wind.speed_x / randrange(50, 55))  # i.rope.wind(-wind.speed_x / randrange(7, 10))
 
         # стоим ли мы на объекте кнопка
         if not player2.btn:
@@ -322,8 +322,8 @@ def main_loop(name_level):
         screen.blit(fps_text, (0, 0))
 
         time.tick(FPS)
-        pygame.display.flip()
-        # pygame.display.update(pygame.rect.Rect(0, 0, 100, 100))
+        # pygame.display.flip()
+        pygame.display.update()
 
     pygame.quit()
 

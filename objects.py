@@ -1,6 +1,6 @@
 import pygame
 import random
-from math import sqrt
+from math import sqrt, degrees
 
 
 def upd_player_water(player, waters, all_sprites):
@@ -382,12 +382,16 @@ class LightRope(pygame.sprite.Sprite):
 
         self.image = pygame.image.load('data/image/graphics/button_ligth.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (18, 30))
-        self.rect = self.image.get_rect()
-        print(self.rect)
+        self.image = pygame.transform.rotate(self.image, 0)
+        self.rect = self.image.get_rect().move(x, y)
+        self.angle = 0
 
-    def update(self, x, y):
+    def update(self, x, y, angle):
         self.rect.x = x
         self.rect.y = y
+
+        self.angle = degrees(angle[1] / angle[0])
+        print(degrees(angle[1] / angle[0]))
 
 
 class Rope:
@@ -407,7 +411,7 @@ class Rope:
                                 self.get_distance(self.points[stick[0]][:2], self.points[stick[1]][:2])])
 
         self.light = pygame.sprite.Group()
-        self.img = LightRope(self.light, self.sticks[-1], 0)
+        self.img = LightRope(self.light, self.sticks[-1][0], self.sticks[-1][1])
 
         # размещаем на позицию
         point = self.points[0]
@@ -455,7 +459,7 @@ class Rope:
         y_points = [i[1] * self.scale for i in self.points]
         min_x, min_y = min(x_points), min(y_points)
 
-        surf = pygame.Surface((100, 100))
+        surf = pygame.Surface((50, 100))
         surf.set_colorkey((0, 0, 0))
 
         # рисуем points
@@ -463,8 +467,17 @@ class Rope:
         for stick in self.sticks:
             pygame.draw.line(surf, color, render_points[stick[0]], render_points[stick[1]], 4)
 
-        self.light.update(render_points[self.sticks[-1][1]][0], render_points[self.sticks[-1][1]][1])
+        screen.blit(surf, (min_x + dx, min_y + dy))
+
+        surf = pygame.Surface((100, 100))
+        surf.set_colorkey((0, 0, 0))
+
+        self.light.update(render_points[self.sticks[-1][1]][0] + 40,
+                          render_points[self.sticks[-1][1]][1],
+                          self.points[-1][:2])
         self.light.draw(surf)
 
-        screen.blit(surf, (min_x + dx, min_y + dy))
+        surf = pygame.transform.rotate(surf, -self.img.angle / 2)
+
+        screen.blit(surf, (min_x + dx, dy))
 
