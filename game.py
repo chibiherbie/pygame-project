@@ -265,6 +265,12 @@ def main_loop(name_level):
 
         background.draw(screen)
         draw_sprite.draw(screen)
+
+        # UPD rope with button and draw
+        for i in button:
+            i.rope.wind(-wind.speed_x / randrange(50, 55))  # i.rope.wind(-wind.speed_x / randrange(7, 10))
+            i.upd_rope()
+
         hero.draw(screen)
 
         all_sprites.update()
@@ -292,10 +298,6 @@ def main_loop(name_level):
         upd_player_water(player, lvl.water, all_sprites)
         upd_player_water(player2, lvl.water, all_sprites)
         ######
-
-        # UPD rope with button
-        for i in button:
-            i.rope.wind(-wind.speed_x / randrange(50, 55))  # i.rope.wind(-wind.speed_x / randrange(7, 10))
 
         # стоим ли мы на объекте кнопка
         if not player2.btn:

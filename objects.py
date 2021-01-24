@@ -331,14 +331,14 @@ class Button(pygame.sprite.Sprite):
                 cut = pygame.transform.scale(cut, (100, 100))
                 self.frames.append(cut)
 
-    def update(self):
-        # upd rope
+    def upd_rope(self):
         self.rope.update()
         self.rope.upd_sticks()
         if -self.rect.width <= self.rect.x <= self.screen.get_size()[0] and \
                 -self.rect.height <= self.rect.y <= self.screen.get_size()[1]:
             self.rope.draw(self.screen, (160, 160, 164), self.rect.x, self.rect.y)
 
+    def update(self):
         if not self.close:
             if self.m == 1:
                self.upd += 0.03
@@ -359,17 +359,16 @@ class Button(pygame.sprite.Sprite):
         self.close = True
 
     def draw_light(self):
-        s = pygame.Surface(self.screen.get_size()).convert_alpha()
-        s.fill((0, 0, 0, 0))
-        s.set_alpha(255)
+        surf = pygame.Surface((200, 200)).convert_alpha()
+        surf.set_colorkey((0, 0, 0))
 
         # рисуем свет от лампы
-        pos = (self.rect.x + 65 + self.rope.img.rect.x, self.rect.y + 28 + self.rope.img.rect.y)
-        pygame.draw.circle(s, pygame.Color(255, 207, 72, 50), pos, 60 * self.upd)
-        pygame.draw.circle(s, pygame.Color(255, 180, 72, 80), pos, random.randrange(29, 31) * self.upd)
-        pygame.draw.circle(s, pygame.Color(255, 130, 72, 80), pos, random.randrange(17, 19) * self.upd)
+        pos = (self.rope.img.rect.x + 6, self.rope.img.rect.y + 22)
+        pygame.draw.circle(surf, pygame.Color(255, 207, 72, 50), pos, 60 * self.upd)
+        pygame.draw.circle(surf, pygame.Color(255, 180, 72, 80), pos, random.randrange(29, 31) * self.upd)
+        pygame.draw.circle(surf, pygame.Color(255, 130, 72, 80), pos, random.randrange(17, 19) * self.upd)
 
-        self.screen.blit(s, (0, 0))
+        self.screen.blit(surf, (self.rect.x - 50, self.rect.y - 10))  # , special_flags=pygame.BLENDMODE_ADD
 
 
 r = [[0.0, 0.0], [0.0, -0.5], [0.0, -1.0], [0.0, -1.5], [0.0, -2.0]]
@@ -391,7 +390,6 @@ class LightRope(pygame.sprite.Sprite):
         self.rect.y = y
 
         self.angle = degrees(angle[1] / angle[0])
-        print(degrees(angle[1] / angle[0]))
 
 
 class Rope:
@@ -465,19 +463,21 @@ class Rope:
         # рисуем points
         render_points = [[i[0] * self.scale - int(min_x), i[1] * self.scale - int(min_y)] for i in self.points]
         for stick in self.sticks:
+
             pygame.draw.line(surf, color, render_points[stick[0]], render_points[stick[1]], 4)
 
         screen.blit(surf, (min_x + dx, min_y + dy))
 
-        surf = pygame.Surface((100, 100))
+        surf = pygame.Surface((150, 150)).convert_alpha()
+        # surf.fill((0,0,0))
         surf.set_colorkey((0, 0, 0))
 
-        self.light.update(render_points[self.sticks[-1][1]][0] + 40,
-                          render_points[self.sticks[-1][1]][1],
+        self.light.update(min_x + 44 + render_points[self.sticks[-1][1]][0],
+                          render_points[self.sticks[-1][1]][1] + 16,
                           self.points[-1][:2])
         self.light.draw(surf)
 
-        surf = pygame.transform.rotate(surf, -self.img.angle / 2)
+        # surf = pygame.transform.rotate(surf, self.img.angle // 2)  # поворт спрайта по силе ветра
 
-        screen.blit(surf, (min_x + dx, dy))
+        screen.blit(surf, (dx - 50, dy))
 
