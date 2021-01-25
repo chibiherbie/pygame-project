@@ -29,6 +29,7 @@ class Hero(pygame.sprite.Sprite):
         self.anim = AnimatedSprite(self.os_name, 3, 1, self.pos_x, self.pos_y)
         self.image = self.anim.image
         self.rect = self.anim.rect
+        # self.rx, self.ry = self.rect.x, self.rect.y
 
         self.death_colide = False
         self.isWater = False
@@ -73,20 +74,19 @@ class Hero(pygame.sprite.Sprite):
         if not self.isGround:
             self.yvel += self.gravity
 
-        self.isGround = False
         for i in self.wall:
-            if (i.rect.collidepoint(self.rect.bottomleft[0] + 10, self.rect.bottomleft[1] + 1) or
-                        i.rect.collidepoint(self.rect.bottomright[0] - 10, self.rect.bottomright[1] + 1)):
+            self.isGround = False
+            if (i.rect.collidepoint(self.rect.bottomleft[0], self.rect.bottomleft[1]) or
+                        i.rect.collidepoint(self.rect.bottomright[0], self.rect.bottomright[1])):
                 self.isGround = True
                 break
 
-        self.rect.y += self.yvel
-        self.rect.x += self.xvel
+        self.rect.y += int(self.yvel)
+        self.rect.x += int(self.xvel)
 
         wall = pygame.sprite.spritecollide(self, self.wall, False)  # касаемся ли мы стен
         if wall:
             self.rect.x -= self.xvel
-
             for spr in pygame.sprite.spritecollide(self, self.wall, False):  # for spr in wall:
                 if self.yvel > 0:
                     self.rect.bottom = spr.rect.top
