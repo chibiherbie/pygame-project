@@ -4,7 +4,7 @@ from _thread import *
 from game_server import Game
 import sys
 
-server = "192.168.0.163"
+server = "192.168.0.15"  # 15 163
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # тип подключенпия и как передаем информацию

@@ -143,10 +143,47 @@ class Background(pygame.sprite.Sprite):
 class Layers(pygame.sprite.Sprite):
     def __init__(self, os_name, pos, scale, *group):
         super().__init__(*group)
-        self.image = pygame.image.load(os_name).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
-                                                         int(self.image.get_height() / scale)))
-        self.rect = self.image.get_rect().move(pos)
+        self.frames = []
+
+        if 'anim' in os_name:
+            self.cut_sheet(os_name, 5, 1)
+
+            self.cur_frame = 0
+            self.upd = 0
+
+            self.image = self.frames[self.cur_frame]
+            self.rect = self.rect.move(pos)
+        else:
+            self.image = pygame.image.load(os_name).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
+                                                             int(self.image.get_height() / scale)))
+            self.rect = self.image.get_rect().move(pos)
+
+        # режим заготовку на кадры
+
+    def cut_sheet(self, sheet, columns, rows):
+        sheet = pygame.image.load(sheet).convert_alpha()  # загружаем файл
+
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns, sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
+                self.frames.append(cut)
+
+    def update(self):
+        if self.frames:
+            if self.upd % 20 == 0:
+
+                self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+                self.image = self.frames[self.cur_frame]
+            self.upd += 1
+        # if self.upd % 4 == 0:  # раз в 4 инетраций меняется кадр
+        #     self.upd += 1
+        #     self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        #     self.image = self.frames[self.cur_frame]
+        #
+        # self.upd += 1
 
 
 class Wind:
