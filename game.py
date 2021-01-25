@@ -27,15 +27,14 @@ class Camera:
             obj.rect.x += self.dx
             obj.rect.y += self.dy
         elif layer == -2:
-            obj.rect.x += self.dx * 0.2
-            # obj.rect.y += self.dy * 0.2
+            obj.rect.x += self.parallax_x(100)
+            # obj.rect.y += self.parallax_y(100)
         elif layer == -1:
             obj.rect.x += self.parallax_x(60)
+            # obj.rect.y += self.parallax_y(60)
         elif layer == 1:
             obj.rect.x += self.parallax_x(40)
-        else:
-            obj.rect.x += self.dx * 0.4
-            obj.rect.y += self.dy * 0.4
+            obj.rect.y += self.parallax_y(40)
 
     # позиционировать камеру на объекте target
     def update(self, target):
@@ -239,7 +238,8 @@ def main_loop(name_level):
         # двигаем объекты за персонажем
         camera.update(player)
         for sprite in all_sprites:
-            camera.apply(sprite, 0)
+            if sprite.__class__.__name__ != 'Layers':
+                camera.apply(sprite, 0)
 
         for sprite in layer_2:
             camera.apply(sprite, -2)
@@ -251,7 +251,7 @@ def main_loop(name_level):
             camera.apply(sprite, 1)
 
         for back in background:
-            back.rect.x += camera.dx
+            back.rect.x += camera.dx // 3
 
         # если спрайт не в зоне нашего зрения, он не рисуется
         for obj in all_sprites:

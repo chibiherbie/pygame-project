@@ -44,7 +44,7 @@ class Level:
         shuffle(self.sound_around)  # мешаем  звуки
 
         # загружаем спрайты в порядке иерархии по слоям (фон, 2 слой, 1 слой, плафтформа, передний план)
-        for i in range(5):
+        for i in range(10):
             n = Background('/'.join([dir, 'background.png']), self.pos_b, back)
             self.pos_b += n.rect.w
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
