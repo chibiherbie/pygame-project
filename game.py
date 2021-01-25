@@ -297,7 +297,6 @@ def main_loop(name_level):
 
         upd_player_water(player, lvl.water, all_sprites)
         upd_player_water(player2, lvl.water, all_sprites)
-        ######
 
         # стоим ли мы на объекте кнопка
         if not player2.btn:

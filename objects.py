@@ -155,7 +155,6 @@ class Spring:
 
     def update(self):
         x = self.y_pos - self.max_y  # смещение пружины от начала
-
         a = -self.k * x - self.d * self.velocity  # ускорение
 
         self.y_pos += self.velocity
@@ -172,16 +171,15 @@ class Water:
         self.spring_segment = spring_segment
         self.upd = False
         self.type = type
+        self.passes = 5
 
         if type == 'water':
             self.color = pygame.Color(0, 0, 255)
-            self.passes = 20
             self.spread = 0.06  # скорость распространения волн
             self.alpha = 100
         else:
             self.color = pygame.Color(79, 131, 57)
             self.spread = 0.09
-            self.passes = 10
             self.sound_drop = pygame.mixer.Sound('data/sound/sound_swamp_drop.mp3')
             self.sound_drop.set_volume(0.1)
             self.alpha = 175
@@ -212,18 +210,17 @@ class Water:
         if self.upd:
             for _ in range(self.passes):
                 for num in range(len(self.springs) - 1):
-                    if num > 0:
+                    if num > 0 or num < len(self.springs) - 1:
                         left_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num - 1].y_pos)
                         self.springs[num - 1].velocity += left_d[num]
-                    if num < len(self.springs) - 1:
+
                         right_d[num] = self.spread * (self.springs[num].y_pos - self.springs[num + 1].y_pos)
                         self.springs[num + 1].velocity += right_d[num]
 
                 # обновляем скорость
                 for num in range(len(self.springs) - 1):
-                    if num > 0:
+                    if num > 0 or num < len(self.springs) - 1:
                         self.springs[num - 1].y_pos += left_d[num]
-                    if num < len(self.springs) - 1:
                         self.springs[num + 1].y_pos += right_d[num]
 
     def draw(self):
@@ -231,12 +228,11 @@ class Water:
         sur.fill((0, 0, 0, 0))
         sur.set_alpha(self.alpha)
         for i in range(len(self.springs) - 1):
+            # рисуем трапецию
             pygame.draw.polygon(sur, self.color, [(self.springs[i].x_pos, self.springs[i].y_pos),
-                                                   (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
-                                                   (self.springs[i].x_pos, self.y_e)])
-            pygame.draw.polygon(sur, self.color, [(self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
-                                                   (self.springs[i + 1].x_pos, self.y_e),
-                                                   (self.springs[i].x_pos, self.y_e)])
+                                                  (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),
+                                                  (self.springs[i + 1].x_pos, self.h),
+                                                  (self.springs[i].x_pos, self.h)])
         return sur
 
     def force(self, place, speed):
