@@ -163,7 +163,6 @@ def main_loop(name_level):
 
     # основной цикл
     while running:
-        screen.fill(pygame.Color('white'))
         check = False
 
         lvl.update()
@@ -336,10 +335,6 @@ def start_game():
 
     # подключаемся к серверу
     NETWORK = Network('')
-
-    pygame.mixer.music.load('data/music/1.mp3')
-    pygame.mixer.music.play(-1)
-    pygame.mixer.music.set_volume(0.1)
 
     while True:
         a = main_loop('1_level')
