@@ -105,6 +105,7 @@ def main_loop(name_level):
     # внутриигровое меню
     show_manager = False
     game_menu = GameMenu(screen, SIZE, FPS)
+    fps_text = False
 
     # перемещение
     p_x = 0
@@ -174,6 +175,8 @@ def main_loop(name_level):
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F12:
+                    fps_text = not fps_text
                 if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
                     game_menu.settings_show = False
@@ -188,9 +191,10 @@ def main_loop(name_level):
                     show_manager = False
                 elif answer == 'exit':
                     running = False
+                    quit()
                 elif answer == 'menu':
-                    print('ВЫХОД В МЕНЮ')
-
+                    running = False
+                    return 
         for i in save_point.sprites():
             if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
                 i.active = True
@@ -318,8 +322,9 @@ def main_loop(name_level):
                 player.death_colide = True
 
         # выводим фпс
-        fps_text = pygame.font.Font(None, 40).render(str(int(time.get_fps())), True, (100, 255, 100))
-        screen.blit(fps_text, (0, 0))
+        if fps_text:
+            fps_text = pygame.font.Font(None, 40).render(str(int(time.get_fps())), True, (100, 255, 100))
+            screen.blit(fps_text, (0, 0))
 
         time.tick(FPS)
         # pygame.display.flip()

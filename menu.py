@@ -91,8 +91,9 @@ def back_upd(scr):
 
 def main_menu():
     generation()
+    start_t = False
     while True:
-        back(screen, (250, 250, 250, 20))
+        back(screen, (250, 250, 250, 0))
 
         font4 = pygame.font.Font(None, 70)
         font = pygame.font.Font(None, 25)
@@ -112,7 +113,7 @@ def main_menu():
 
         if button_1.collidepoint((mx, my)):
             if click:
-                start_game()
+                start_t = True
         if button_2.collidepoint((mx, my)):
             if click:
                 options()
@@ -142,6 +143,15 @@ def main_menu():
         # fps_text = pygame.font.Font(None, 40).render(str(int(mainClock.get_fps())), True, (100, 255, 100))
         # screen.blit(fps_text, (0, 0))
         mainClock.tick(FPS)
+        if transition.type:
+            transition.update()
+            if transition.time_count == -transition.max_time:
+                transition.type = ''
+                transition.start()
+        if start_t:
+            transition.update()
+            if transition.time_count == 0:
+                start_game()
 
         pygame.display.flip()
 
@@ -214,13 +224,49 @@ def back(screen, color):
     back_upd(screen)
 
     f = pygame.Surface(screen.get_size()).convert_alpha()
-    f.set_colorkey((0, 0, 0))
 
     # затемняем картинку
     pygame.draw.rect(f, color, (0, 0, WIDTH, HEIGHT))
     screen.blit(f, (0, 0))
 
 
+def start_screen():
+    upd = 254
+    side = 1
+    img_s = pygame.image.load('data/levels/menu/start_image.png')
+    img_s = pygame.transform.scale(img_s, (WIDTH, HEIGHT))
+    while True:
+        screen.blit(img_s, (0, 0))
+        if upd >= 255:
+            break
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+        f = pygame.Surface(screen.get_size()).convert_alpha()
+
+        # затемняем картинку
+        pygame.draw.rect(f, (0, 0, 0, upd), (0, 0, WIDTH, HEIGHT))
+        screen.blit(f, (0, 0))
+
+        if upd == 0:
+            side = -1
+        if upd < 150:
+            speed = 1
+        elif upd < 20:
+            speed = 0.2
+        else:
+            speed = 2
+
+        upd -= speed * side
+
+        pygame.display.flip()
+        mainClock.tick(FPS)
+
+
 if __name__ == '__main__':
     transition = Transition(screen)
-    main_menu()
+    start_screen()
+    while True:
+        main_menu()
