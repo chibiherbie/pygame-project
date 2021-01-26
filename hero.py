@@ -76,6 +76,13 @@ class Hero(pygame.sprite.Sprite):
 
         for i in self.wall:
             self.isGround = False
+            # если игрок встаёт на дверь
+            if i.__class__.__name__ == 'Door' and self.rect.colliderect(i.rect):
+                if i.rect.centerx > self.rect.centerx:
+                    self.rect.x -= 5
+                else:
+                    self.rect.x += 5
+
             if (i.rect.collidepoint(self.rect.bottomleft[0], self.rect.bottomleft[1]) or
                         i.rect.collidepoint(self.rect.bottomright[0], self.rect.bottomright[1])):
                 self.isGround = True
@@ -87,7 +94,7 @@ class Hero(pygame.sprite.Sprite):
         wall = pygame.sprite.spritecollide(self, self.wall, False)  # касаемся ли мы стен
         if wall:
             self.rect.x -= self.xvel
-            for spr in pygame.sprite.spritecollide(self, self.wall, False):  # for spr in wall:
+            for spr in pygame.sprite.spritecollide(self, wall, False):  # for spr in wall:
                 if self.yvel > 0:
                     self.rect.bottom = spr.rect.top
                     self.isGround = True
