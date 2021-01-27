@@ -173,7 +173,8 @@ def main_loop(name_level):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                a = NETWORK.send(('dis', 0, check))
+                quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F12:
                     fps_text = not fps_text
@@ -190,11 +191,12 @@ def main_loop(name_level):
                 if answer == 'res':
                     show_manager = False
                 elif answer == 'exit':
-                    running = False
+                    a = NETWORK.send(('dis', 0, check))
                     quit()
                 elif answer == 'menu':
-                    running = False
+                    a = NETWORK.send(('dis', 0, check))
                     return
+
         for i in save_point.sprites():
             if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
                 i.active = True
@@ -226,8 +228,18 @@ def main_loop(name_level):
         if check:
             check = True
 
+        # -----------------NETWORK-----------------
         pl2 = NETWORK.send((p_x, p_y, check))
+
+        if pl2[0] == 'dis':
+            fps_text = pygame.font.Font(None, 70).render('ОТКЛЮЧЕНИЕ', True, (255, 0, 0))
+            screen.blit(fps_text, (WIDTH // 2 - fps_text.get_rect().w // 2,
+                                   HEIGHT // 2 - fps_text.get_rect().h // 2))
+            pygame.display.flip()
+            return
+
         player2.move(int(pl2[0]), int(pl2[1]))
+
         if pl2[2]:
             check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
             if check:
@@ -333,13 +345,13 @@ def main_loop(name_level):
     pygame.quit()
 
 
-def start_game(code):
+def start_game(net):
     global NETWORK
     # инициализируем
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network(code)
+    NETWORK = net
 
     while True:
         a = main_loop('1_level')

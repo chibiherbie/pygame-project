@@ -2,7 +2,7 @@ import sys
 import pygame
 from game import WIDTH, HEIGHT, start_game, FPS, Transition
 from level import Level, Wind, LeavesMain
-from hero import Hero
+from hero import Hero, AnimatedSprite
 from random import randrange
 from pygame.locals import *
 from network import Network
@@ -16,7 +16,7 @@ def draw_text(text, font, color, surface, x, y, w=0):
     textrect.topleft = (x - w, y)
     surface.blit(textobj, textrect)
 
-
+game_ready = False
 mainClock = pygame.time.Clock()
 
 pygame.init()
@@ -29,22 +29,6 @@ pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.1)
 
 font = pygame.font.SysFont(None, 20)
-
-draw_sprite = pygame.sprite.Group()
-all_sprites = pygame.sprite.Group()
-level = pygame.sprite.Group()
-wall = pygame.sprite.Group()
-death = pygame.sprite.Group()
-hero = pygame.sprite.Group()
-background = pygame.sprite.Group()
-layer_2 = pygame.sprite.Group()
-layer_1 = pygame.sprite.Group()
-layer_front = pygame.sprite.Group()
-lever = pygame.sprite.Group()
-door = pygame.sprite.Group()
-save_point = pygame.sprite.Group()
-button = pygame.sprite.Group()
-leaves = pygame.sprite.Group()
 
 
 # background
@@ -93,8 +77,10 @@ def back_upd(scr):
 
 
 def main_menu():
+    global game_ready
     generation()
-    start_t = False
+
+    game_ready = False
     while True:
         back(screen, (250, 250, 250, 0))
 
@@ -152,10 +138,9 @@ def main_menu():
             if transition.time_count == -transition.max_time:
                 transition.type = ''
                 transition.start()
-        if start_t:
-            transition.update()
-            if transition.time_count == 0:
-                start_game('')
+
+        if game_ready:
+            break
 
         pygame.display.flip()
 
@@ -203,11 +188,10 @@ def lobby_enter():
                 if event.key == K_ESCAPE:
                     running = False
                 elif event.key == K_RETURN:
-                    print('ПОИСК ЛОББИ')
-                    print(''.join(code.lower().split()))
                     net = Network(''.join(code.lower().split()))
                     if net.isConnect:
-                        lobby()
+                        lobby(net)
+                        return
                     else:
                         color_rect = [230, 100, 100]
                 elif event.key == K_BACKSPACE:
@@ -228,24 +212,109 @@ def lobby_enter():
         mainClock.tick(FPS)
 
 
-def lobby():
+def lobby(net=None):
+    global game_ready
+
+    start_t = False
+
     font4 = pygame.font.Font(None, 70)
-    window = pygame.Rect(WIDTH // 2 - 300 // 2, HEIGHT // 2 - 100 // 2, 300, 100)
-    code = 'c o d e'
-    color_rect = [230, 230, 230]
+    window1 = pygame.Rect(WIDTH * 10 // 100, HEIGHT * 20 // 100, 200, 300)
+    window2 = pygame.Rect(WIDTH - 200 - WIDTH * 10 // 100,  HEIGHT * 20 // 100, 200, 300)
+    window_code = pygame.Rect(WIDTH // 2 - 100, window1.y + window1.h // 2 - 25, 200, 50)
+
+    button_start = pygame.Rect(WIDTH // 2 - 200, HEIGHT - HEIGHT * 20 // 100, 400, 100)
+    start = False
+    bnt_start = False
+
+    isPlayer2 = True
+    if not net:
+        net = Network('')
+        bnt_start = True
+        isPlayer2 = False
+    code = net.open
+    code = ' '.join(list(code))
+
+    pl1 = AnimatedSprite('data/image/hero1', 3, 1, 0, 0, (75, 110))
+    pl2 = AnimatedSprite('data/image/hero2', 3, 1, 0, 0, (75, 110))
 
     running = True
     while running:
         back(screen, (200, 200, 200, 100))
 
-        draw_text('ЛОББИ', font4, (0, 0, 0), screen, WIDTH // 2, 40, 1)
+        # обнуляем данные
+        count_lobby = 1
+        mx, my = pygame.mouse.get_pos()
+        click = False
+        status_2 = (255, 150, 154)
+
         for event in pygame.event.get():
             if event.type == QUIT:
+                a = net.send((start, 0, 0))
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    running = False
+                    a = net.send((start, 0, 0))
+                    return
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        # title
+        draw_text('ЛОББИ', font4, (0, 0, 0), screen, WIDTH // 2, 40, 1)
+
+        # network
+        a = net.send((start, 1, 0))
+        if start or a[0]:
+            start_t = True
+        if a[1]:
+            count_lobby = 2
+            status_2 = (143, 200, 154)
+
+        # рисуеи ячейки для игроков
+        pygame.draw.rect(screen, (240, 240, 240), window1)
+        pygame.draw.rect(screen, (0, 0, 0), window1, 5)
+        pygame.draw.rect(screen, (240, 240, 240), window2)
+        pygame.draw.rect(screen, (0, 0, 0), window2, 5)
+        draw_text('в сети', font4, (143, 200, 154), screen,
+                  window1.centerx, window1.y + window1.h - window1.h / 5, 1)
+        draw_text('в сети', font4, status_2, screen,
+                  window2.centerx, window2.y + window2.h - window2.h / 5, 1)
+
+        # рисуем код
+        pygame.draw.rect(screen, (240, 240, 240), window_code)
+        pygame.draw.rect(screen, (143, 200, 154), window_code, 2)
+        draw_text(code, font4, (143, 200, 154), screen,
+                  window_code.centerx, window_code.y, 1)
+
+        # рисуем игроков
+        pl1.update((0, 0))
+        pl2.update((0, 0))
+        screen.blit(pl1.image, (window1.x + window1.w // 2 - pl1.rect.w,
+                                window1.y + window1.h // 2 - pl1.rect.h))
+        screen.blit(pl2.image, (window2.x + window2.w // 2 - pl2.rect.w,
+                                window2.y + window2.h // 2 - pl2.rect.h))
+
+        # кнпока старта
+        if bnt_start:
+            pygame.draw.rect(screen, (240, 240, 240,), button_start)
+            draw_text('НАЧАТЬ ИГРУ', font4, (0, 0, 0), screen,
+                      button_start.centerx, button_start.y + 27, 1)
+
+        if button_start.collidepoint((mx, my)) and bnt_start:
+            if click and count_lobby == 2:
+                start = True
+
+        # анимация перехода в игру
+        if start_t:
+            transition.update()
+            if transition.time_count == 0:
+                game_ready = True
+                start_game(net)
+                return
+        if count_lobby == 1 and isPlayer2:
+            print('ВЫХОД')
+            return
 
         pygame.display.update()
         mainClock.tick(FPS)
@@ -274,9 +343,8 @@ def saved_games():
 def back(screen, color):
     back_upd(screen)
 
-    f = pygame.Surface(screen.get_size()).convert_alpha()
-
     # затемняем картинку
+    f = pygame.Surface(screen.get_size()).convert_alpha()
     pygame.draw.rect(f, color, (0, 0, WIDTH, HEIGHT))
     screen.blit(f, (0, 0))
 
@@ -317,7 +385,22 @@ def start_screen():
 
 
 if __name__ == '__main__':
-    transition = Transition(screen)
     # start_screen()
     while True:
+        draw_sprite = pygame.sprite.Group()
+        all_sprites = pygame.sprite.Group()
+        level = pygame.sprite.Group()
+        wall = pygame.sprite.Group()
+        death = pygame.sprite.Group()
+        hero = pygame.sprite.Group()
+        background = pygame.sprite.Group()
+        layer_2 = pygame.sprite.Group()
+        layer_1 = pygame.sprite.Group()
+        layer_front = pygame.sprite.Group()
+        lever = pygame.sprite.Group()
+        door = pygame.sprite.Group()
+        save_point = pygame.sprite.Group()
+        button = pygame.sprite.Group()
+        leaves = pygame.sprite.Group()
+        transition = Transition(screen)
         main_menu()
