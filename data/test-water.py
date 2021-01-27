@@ -65,8 +65,8 @@ class Water:
 
     def draw(self):
         sur = pygame.Surface(size).convert_alpha()
-        sur.fill((0, 255, 255))
-        sur.set_alpha(50)
+        sur.fill((0, 0, 0))
+        sur.set_alpha(100)
         for i in range(len(self.springs) - 1):
             pygame.draw.polygon(sur, (0, 0, 255), [(self.springs[i].x_pos, self.springs[i].y_pos),
                                                    (self.springs[i + 1].x_pos, self.springs[i + 1].y_pos),

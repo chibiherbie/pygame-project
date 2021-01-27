@@ -86,12 +86,13 @@ def main_menu():
         font4 = pygame.font.Font(None, 70)
         font = pygame.font.Font(None, 25)
 
-        draw_text('Ангкар', font4, (0, 0, 0), screen, 160, 200)
+        draw_text('Ангкор', font4, (0, 0, 0), screen, 160, 200)
         draw_text('Начать новую игру', font, (0, 0, 0), screen, 162, 280)
         draw_text('Настройки', font, (0, 0, 0), screen, 200, 480)
         draw_text('Продолжить', font, (0, 0, 0), screen, 130, 380)
         draw_text('Найти лобби', font, (0, 0, 0), screen, 250, 380)
         draw_text('Выйти', font, (0, 0, 0), screen, 280, 580)
+
 
         mx, my = pygame.mouse.get_pos()
 

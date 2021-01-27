@@ -49,50 +49,6 @@
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libopusfile-0.dll',
    'BINARY'),
-  ('libvorbisfile-3.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libvorbisfile-3.dll',
-   'BINARY'),
-  ('libvorbis-0.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libvorbis-0.dll',
-   'BINARY'),
-  ('SDL2.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\SDL2.dll',
-   'BINARY'),
-  ('zlib1.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\zlib1.dll',
-   'BINARY'),
-  ('libogg-0.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libogg-0.dll',
-   'BINARY'),
-  ('libopus-0.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libopus-0.dll',
-   'BINARY'),
-  ('libmodplug-1.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libmodplug-1.dll',
-   'BINARY'),
-  ('libfreetype-6.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libfreetype-6.dll',
-   'BINARY'),
-  ('portmidi.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\portmidi.dll',
-   'BINARY'),
-  ('libtiff-5.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libtiff-5.dll',
-   'BINARY'),
-  ('libmpg123-0.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libmpg123-0.dll',
-   'BINARY'),
   ('libwebp-7.dll',
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libwebp-7.dll',
@@ -101,13 +57,29 @@
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\SDL2_mixer.dll',
    'BINARY'),
-  ('libFLAC-8.dll',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libFLAC-8.dll',
-   'BINARY'),
   ('SDL2_ttf.dll',
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\SDL2_ttf.dll',
+   'BINARY'),
+  ('libmpg123-0.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libmpg123-0.dll',
+   'BINARY'),
+  ('zlib1.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\zlib1.dll',
+   'BINARY'),
+  ('libmodplug-1.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libmodplug-1.dll',
+   'BINARY'),
+  ('libtiff-5.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libtiff-5.dll',
+   'BINARY'),
+  ('SDL2.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\SDL2.dll',
    'BINARY'),
   ('libpng16-16.dll',
    'd:\\program files '
@@ -117,12 +89,52 @@
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\SDL2_image.dll',
    'BINARY'),
+  ('libopus-0.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libopus-0.dll',
+   'BINARY'),
+  ('libvorbisfile-3.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libvorbisfile-3.dll',
+   'BINARY'),
+  ('libogg-0.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libogg-0.dll',
+   'BINARY'),
+  ('libfreetype-6.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libfreetype-6.dll',
+   'BINARY'),
+  ('portmidi.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\portmidi.dll',
+   'BINARY'),
   ('libjpeg-9.dll',
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libjpeg-9.dll',
    'BINARY'),
+  ('libvorbis-0.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libvorbis-0.dll',
+   'BINARY'),
+  ('libFLAC-8.dll',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\libFLAC-8.dll',
+   'BINARY'),
+  ('_ctypes',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_ctypes.pyd',
+   'EXTENSION'),
+  ('_lzma',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_lzma.pyd',
+   'EXTENSION'),
+  ('_bz2',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_bz2.pyd',
+   'EXTENSION'),
   ('select',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\select.pyd',
+   'EXTENSION'),
+  ('_socket',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_socket.pyd',
    'EXTENSION'),
   ('_overlapped',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_overlapped.pyd',
@@ -139,6 +151,9 @@
   ('unicodedata',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\unicodedata.pyd',
    'EXTENSION'),
+  ('_hashlib',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_hashlib.pyd',
+   'EXTENSION'),
   ('_multiprocessing',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_multiprocessing.pyd',
    'EXTENSION'),
@@ -147,21 +162,6 @@
    'EXTENSION'),
   ('_decimal',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_decimal.pyd',
-   'EXTENSION'),
-  ('_hashlib',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_hashlib.pyd',
-   'EXTENSION'),
-  ('_ctypes',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_ctypes.pyd',
-   'EXTENSION'),
-  ('_socket',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_socket.pyd',
-   'EXTENSION'),
-  ('_lzma',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_lzma.pyd',
-   'EXTENSION'),
-  ('_bz2',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\_bz2.pyd',
    'EXTENSION'),
   ('pygame.color',
    'd:\\program files '
@@ -278,11 +278,14 @@
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\base.cp38-win32.pyd',
    'EXTENSION'),
-  ('python38.dll',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\python38.dll',
+  ('libffi-7.dll',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\libffi-7.dll',
    'BINARY'),
   ('VCRUNTIME140.dll',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\VCRUNTIME140.dll',
+   'BINARY'),
+  ('python38.dll',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\python38.dll',
    'BINARY'),
   ('libcrypto-1_1.dll',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\libcrypto-1_1.dll',
@@ -290,23 +293,20 @@
   ('libssl-1_1.dll',
    'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\libssl-1_1.dll',
    'BINARY'),
-  ('libffi-7.dll',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\DLLs\\libffi-7.dll',
-   'BINARY'),
   ('base_library.zip',
    'D:\\Program Files (x86)\\проект игра '
    'pygame\\pygame-project\\build\\menu\\base_library.zip',
    'DATA'),
-  ('Include\\pyconfig.h',
-   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\Include\\pyconfig.h',
+  ('pygame\\freesansbold.ttf',
+   'd:\\program files '
+   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\freesansbold.ttf',
    'DATA'),
   ('pygame\\pygame_icon.bmp',
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\pygame_icon.bmp',
    'DATA'),
-  ('pygame\\freesansbold.ttf',
-   'd:\\program files '
-   '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\freesansbold.ttf',
+  ('Include\\pyconfig.h',
+   'C:\\Users\\bekke_lx\\AppData\\Local\\Programs\\Python\\Python38-32\\Include\\pyconfig.h',
    'DATA'),
   ('game.py', 'game.py', 'DATA'),
   ('Angkor.exe.manifest',
@@ -317,7 +317,7 @@
  [],
  False,
  False,
- 1611741615,
+ 1611742665,
  [('runw.exe',
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-32bit\\runw.exe',
