@@ -194,7 +194,7 @@ def main_loop(name_level):
                     quit()
                 elif answer == 'menu':
                     running = False
-                    return 
+                    return
         for i in save_point.sprites():
             if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
                 i.active = True
@@ -333,13 +333,13 @@ def main_loop(name_level):
     pygame.quit()
 
 
-def start_game():
+def start_game(code):
     global NETWORK
     # инициализируем
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network('')
+    NETWORK = Network(code)
 
     while True:
         a = main_loop('1_level')

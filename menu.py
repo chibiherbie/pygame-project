@@ -5,12 +5,15 @@ from level import Level, Wind, LeavesMain
 from hero import Hero
 from random import randrange
 from pygame.locals import *
+from network import Network
 
 
-def draw_text(text, font, color, surface, x, y):
+def draw_text(text, font, color, surface, x, y, w=0):
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
+    if w:
+        w = textrect.w // 2
+    textrect.topleft = (x - w, y)
     surface.blit(textobj, textrect)
 
 
@@ -113,7 +116,8 @@ def main_menu():
 
         if button_1.collidepoint((mx, my)):
             if click:
-                start_t = True
+                # start_t = True
+                lobby()
         if button_2.collidepoint((mx, my)):
             if click:
                 options()
@@ -122,7 +126,7 @@ def main_menu():
                 saved_games()
         if button_4.collidepoint((mx, my)):
             if click:
-                lobby()
+                lobby_enter()
 
         pygame.draw.rect(screen, (120, 120, 120), button_1)
         pygame.draw.rect(screen, (120, 120, 120), button_2)
@@ -151,7 +155,7 @@ def main_menu():
         if start_t:
             transition.update()
             if transition.time_count == 0:
-                start_game()
+                start_game('')
 
         pygame.display.flip()
 
@@ -177,17 +181,64 @@ def options():
                     running = False
 
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
-def lobby():
+def lobby_enter():
     font4 = pygame.font.Font(None, 70)
+    window = pygame.Rect(WIDTH // 2 - 300 // 2, HEIGHT // 2 - 100 // 2, 300, 100)
+    code = 'c o d e'
+    color_rect = [230, 230, 230]
 
     running = True
     while running:
         back(screen, (200, 200, 200, 100))
 
-        draw_text('Лобби', font4, (0, 0, 0), screen, 180, 20)
+        draw_text('Введите код команты', font4, (0, 0, 0), screen, WIDTH // 2, 40, 1)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    running = False
+                elif event.key == K_RETURN:
+                    print('ПОИСК ЛОББИ')
+                    print(''.join(code.lower().split()))
+                    net = Network(''.join(code.lower().split()))
+                    if net.isConnect:
+                        lobby()
+                    else:
+                        color_rect = [230, 100, 100]
+                elif event.key == K_BACKSPACE:
+                    code = code[:-2]
+                elif len(code) < 7:
+                    code += event.unicode + ' '
+                    if len(code) == 8:
+                        code = code[:-1]
+
+        pygame.draw.rect(screen, color_rect, window)
+        draw_text(code, font4, (0, 0, 0), screen, window.centerx, window.y + window.h // 3, 1)
+
+        if color_rect[1] != 230:
+            color_rect[1] += 1
+            color_rect[2] += 1
+
+        pygame.display.update()
+        mainClock.tick(FPS)
+
+
+def lobby():
+    font4 = pygame.font.Font(None, 70)
+    window = pygame.Rect(WIDTH // 2 - 300 // 2, HEIGHT // 2 - 100 // 2, 300, 100)
+    code = 'c o d e'
+    color_rect = [230, 230, 230]
+
+    running = True
+    while running:
+        back(screen, (200, 200, 200, 100))
+
+        draw_text('ЛОББИ', font4, (0, 0, 0), screen, WIDTH // 2, 40, 1)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -197,7 +248,7 @@ def lobby():
                     running = False
 
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
 def saved_games():
@@ -217,7 +268,7 @@ def saved_games():
                     running = False
 
         pygame.display.update()
-        mainClock.tick(60)
+        mainClock.tick(FPS)
 
 
 def back(screen, color):
@@ -267,6 +318,6 @@ def start_screen():
 
 if __name__ == '__main__':
     transition = Transition(screen)
-    start_screen()
+    # start_screen()
     while True:
         main_menu()
