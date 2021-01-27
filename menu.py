@@ -22,7 +22,7 @@ game_ready = False
 mainClock = pygame.time.Clock()
 
 pygame.init()
-pygame.display.set_caption('Ангкар')
+pygame.display.set_caption('Ангкор')
 screen = pygame.display.set_mode((WIDTH, HEIGHT), HWSURFACE | DOUBLEBUF)
 
 font = pygame.font.SysFont(None, 20)
@@ -105,10 +105,10 @@ def main_menu():
             if click:
                 sound_click.play()
                 lobby()
-        if button_2.collidepoint((mx, my)):
-            if click:
-                sound_click.play()
-                options()
+        # if button_2.collidepoint((mx, my)):
+        #     if click:
+        #         sound_click.play()
+        #         options()
         if button_3.collidepoint((mx, my)):
             if click:
                 sound_click.play()
@@ -123,7 +123,7 @@ def main_menu():
                 quit()
 
         pygame.draw.rect(screen, (120, 120, 120), button_1)
-        pygame.draw.rect(screen, (120, 120, 120), button_2)
+        pygame.draw.rect(screen, (80, 80, 80), button_2)
         pygame.draw.rect(screen, (120, 120, 120), button_3)
         pygame.draw.rect(screen, (120, 120, 120), button_4)
         pygame.draw.rect(screen, (120, 120, 120), button_5)
