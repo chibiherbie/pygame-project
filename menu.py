@@ -23,7 +23,7 @@ mainClock = pygame.time.Clock()
 
 pygame.init()
 pygame.display.set_caption('Ангкар')
-screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), HWSURFACE | DOUBLEBUF)
 
 font = pygame.font.SysFont(None, 20)
 sound_click = pygame.mixer.Sound('data/sound/sound_click_btn.mp3')
@@ -76,7 +76,7 @@ def back_upd(scr):
 
 
 def main_menu():
-    global game_ready
+    global game_ready, WIDTH, HEIGHT, screen
     generation()
 
     game_ready = False
@@ -91,6 +91,7 @@ def main_menu():
         draw_text('Настройки', font, (0, 0, 0), screen, 200, 480)
         draw_text('Продолжить', font, (0, 0, 0), screen, 130, 380)
         draw_text('Найти лобби', font, (0, 0, 0), screen, 250, 380)
+        draw_text('Выйти', font, (0, 0, 0), screen, 280, 580)
 
         mx, my = pygame.mouse.get_pos()
 
@@ -98,6 +99,7 @@ def main_menu():
         button_2 = pygame.Rect(120, 500, 250, 50)
         button_3 = pygame.Rect(120, 400, 125, 50)
         button_4 = pygame.Rect(250, 400, 120, 50)
+        button_5 = pygame.Rect(250, 600, 120, 50)
 
         if button_1.collidepoint((mx, my)):
             if click:
@@ -115,17 +117,24 @@ def main_menu():
             if click:
                 sound_click.play()
                 lobby_enter()
+        if button_5.collidepoint((mx, my)):
+            if click:
+                sound_click.play()
+                quit()
 
         pygame.draw.rect(screen, (120, 120, 120), button_1)
         pygame.draw.rect(screen, (120, 120, 120), button_2)
         pygame.draw.rect(screen, (120, 120, 120), button_3)
         pygame.draw.rect(screen, (120, 120, 120), button_4)
+        pygame.draw.rect(screen, (120, 120, 120), button_5)
 
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            # if event.type == VIDEORESIZE:
+            #     screen = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)
             if event.type == KEYDOWN:
                 pass
             if event.type == MOUSEBUTTONDOWN:

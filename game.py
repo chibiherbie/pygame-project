@@ -97,7 +97,7 @@ NETWORK = None
 def main_loop(name_save):
     pygame.display.set_caption('Ангкар')
 
-    screen = pygame.display.set_mode(SIZE, HWSURFACE | DOUBLEBUF)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), HWSURFACE | DOUBLEBUF | FULLSCREEN | RESIZABLE)
     # screen.set_alpha(None)
 
     running = True
