@@ -160,7 +160,6 @@ class Hero(pygame.sprite.Sprite):
                     if j.stat and not i.close:
                         j.upd = 1
 
-
     def death_anim(self, type):
         if self.stop_death <= 8:
             if self.stop_death == 0:
@@ -177,12 +176,12 @@ class Hero(pygame.sprite.Sprite):
 
 
 class AnimatedSprite:
-    def __init__(self, folder, columns, rows, x, y):
+    def __init__(self, folder, columns, rows, x, y, scale=(35, 60)):
         self.frames = []
         self.anim = []
 
         # os.listdir(folder) - получаем название всех файлов в папке
-        self.cut_sheet(folder, os.listdir(folder), columns, rows)
+        self.cut_sheet(folder, os.listdir(folder), columns, rows, scale)
 
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
@@ -192,7 +191,7 @@ class AnimatedSprite:
         self.move = 0
 
     # режим заготовку на кадры
-    def cut_sheet(self, folder, sheets, columns, rows):
+    def cut_sheet(self, folder, sheets, columns, rows, scale):
         for count in range(len(sheets)):
             sheet = pygame.image.load(folder + '/' + sheets[count]).convert_alpha()  # загружаем файл
 
@@ -202,7 +201,7 @@ class AnimatedSprite:
                 for i in range(columns):
                     frame_location = (self.rect.w * i, self.rect.h * j)
                     cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
-                    self.frames.append(pygame.transform.scale(cut, (35, 60)))
+                    self.frames.append(pygame.transform.scale(cut, scale))
             self.anim.append(self.frames)
 
     def update(self, action):

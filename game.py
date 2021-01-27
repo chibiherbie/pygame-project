@@ -62,7 +62,8 @@ class Transition:
 
     def update(self):
         mask = pygame.Surface(SIZE)
-        pygame.draw.circle(mask, (255, 255, 255), (WIDTH // 2, HEIGHT // 2), (self.time_count / self.max_time) ** 4 * WIDTH)
+        pygame.draw.circle(mask, (255, 255, 255), (WIDTH // 2, HEIGHT // 2),
+                           (self.time_count / self.max_time) ** 4 * WIDTH)
         mask.set_colorkey((255, 255, 255))
         self.screen.blit(mask, (0, 0))
 
@@ -93,10 +94,10 @@ RECT_HERO = (32, 58)
 NETWORK = None
 
 
-def main_loop(name_level):
-    pygame.display.set_caption('GAME')
+def main_loop(name_save):
+    pygame.display.set_caption('Ангкор')
 
-    screen = pygame.display.set_mode(SIZE, HWSURFACE | DOUBLEBUF)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), HWSURFACE | DOUBLEBUF)
     # screen.set_alpha(None)
 
     running = True
@@ -104,6 +105,7 @@ def main_loop(name_level):
     # внутриигровое меню
     show_manager = False
     game_menu = GameMenu(screen, SIZE, FPS)
+    fps_text = False
 
     # перемещение
     p_x = 0
@@ -128,7 +130,7 @@ def main_loop(name_level):
     button = pygame.sprite.Group()
     leaves = pygame.sprite.Group()
 
-    with open('data/save/1_save.txt') as f:
+    with open('data/save/' + name_save) as f:
         save_pos = f.read()
 
     player = NETWORK.getP()
@@ -145,7 +147,7 @@ def main_loop(name_level):
     player2.add_group(wall, death, hero, all_sprites)
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
-    lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
+    lvl = Level(list(name_save)[-5] + '_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death, save_point, button, screen, leaves)
 
     # размещаем воду
@@ -158,27 +160,29 @@ def main_loop(name_level):
     transition = Transition(screen)
 
     # ветер
-    wind = Wind('data/levels/' + name_level + '/sound_environment')
+    wind = Wind('data/levels/' + list(name_save)[-5] + '_level' + '/sound_environment')
 
     # основной цикл
     while running:
-        screen.fill(pygame.Color('white'))
         check = False
 
         lvl.update()
 
-        with open('data/save/1_save.txt', mode='w') as f:
+        with open('data/save/' + name_save, mode='w') as f:
             f.write(save_pos)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                a = NETWORK.send(('dis', 0, check))
+                quit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F12:
+                    fps_text = not fps_text
                 if event.key == pygame.K_ESCAPE:  # запускаем внутриигровое меню
                     show_manager = not show_manager
                     game_menu.settings_show = False
                 if event.key == pygame.K_f:
-                    check = player.check_objects(lever)   # проверка на пересечение с объектами, в случаи успеха отклик
+                    check = player.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
                     if check:
                         player_with_obj(check[0], check[1], check[2], door)
             if show_manager:
@@ -187,9 +191,11 @@ def main_loop(name_level):
                 if answer == 'res':
                     show_manager = False
                 elif answer == 'exit':
-                    running = False
+                    a = NETWORK.send(('dis', 0, check))
+                    quit()
                 elif answer == 'menu':
-                    print('ВЫХОД В МЕНЮ')
+                    a = NETWORK.send(('dis', 0, check))
+                    return
 
         for i in save_point.sprites():
             if (i.rect.x <= player.rect.x or i.rect.x <= player2.rect.x) and not i.active:  # если пересекаем точку сохранения
@@ -222,8 +228,18 @@ def main_loop(name_level):
         if check:
             check = True
 
+        # -----------------NETWORK-----------------
         pl2 = NETWORK.send((p_x, p_y, check))
+
+        if pl2[0] == 'dis':
+            fps_text = pygame.font.Font(None, 70).render('ОТКЛЮЧЕНИЕ', True, (255, 0, 0))
+            screen.blit(fps_text, (WIDTH // 2 - fps_text.get_rect().w // 2,
+                                   HEIGHT // 2 - fps_text.get_rect().h // 2))
+            pygame.display.flip()
+            return
+
         player2.move(int(pl2[0]), int(pl2[1]))
+
         if pl2[2]:
             check = player2.check_objects(lever)  # проверка на пересечение с объектами, в случаи успеха отклик
             if check:
@@ -295,6 +311,7 @@ def main_loop(name_level):
 
         upd_player_water(player, lvl.water, all_sprites)
         upd_player_water(player2, lvl.water, all_sprites)
+        ######
 
         # стоим ли мы на объекте кнопка
         if not player2.btn:
@@ -317,8 +334,9 @@ def main_loop(name_level):
                 player.death_colide = True
 
         # выводим фпс
-        fps_text = pygame.font.Font(None, 40).render(str(int(time.get_fps())), True, (100, 255, 100))
-        screen.blit(fps_text, (0, 0))
+        if fps_text:
+            fps_text = pygame.font.Font(None, 40).render(str(int(time.get_fps())), True, (100, 255, 100))
+            screen.blit(fps_text, (0, 0))
 
         time.tick(FPS)
         # pygame.display.flip()
@@ -327,23 +345,19 @@ def main_loop(name_level):
     pygame.quit()
 
 
-def start_game():
+def start_game(net, save):
     global NETWORK
     # инициализируем
     pygame.init()
 
     # подключаемся к серверу
-    NETWORK = Network('')
+    NETWORK = net
 
     pygame.mixer.music.load('data/music/1.mp3')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.1)
 
     while True:
-        a = main_loop('1_level')
+        a = main_loop(save)
         if a != 'reset':
             break
-
-
-if __name__ == '__main__':
-    start_game()

@@ -47,12 +47,11 @@ def threaded_client(conn, player, gameId):
 
     games[gameId].count_player -= 1
     currentPlayer -= 1
+    conn.sendall(pickle.dumps((0, 0, 0)))
+    if games[gameId].count_player == 0:
+        del games[gameId]
+        print("Closing Game", gameId)
 
-    conn.send(pickle.dumps((0, 0, 0)))
-    pickle.loads(conn.recv(2048))
-
-    del games[gameId]
-    print("Closing Game", gameId)
     print('Lost connection')
 
     conn.close()
