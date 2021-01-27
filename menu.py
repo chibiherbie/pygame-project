@@ -25,12 +25,9 @@ pygame.init()
 pygame.display.set_caption('Ангкар')
 screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 
-# музыка
-pygame.mixer.music.load('data/music/1.mp3')
-pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.1)
-
 font = pygame.font.SysFont(None, 20)
+sound_click = pygame.mixer.Sound('data/sound/sound_click_btn.mp3')
+sound_click.set_volume(0.1)
 
 
 # background
@@ -104,15 +101,19 @@ def main_menu():
 
         if button_1.collidepoint((mx, my)):
             if click:
+                sound_click.play()
                 lobby()
         if button_2.collidepoint((mx, my)):
             if click:
+                sound_click.play()
                 options()
         if button_3.collidepoint((mx, my)):
             if click:
+                sound_click.play()
                 saved_games()
         if button_4.collidepoint((mx, my)):
             if click:
+                sound_click.play()
                 lobby_enter()
 
         pygame.draw.rect(screen, (120, 120, 120), button_1)
@@ -191,6 +192,7 @@ def lobby_enter():
                 elif event.key == K_RETURN:
                     net = Network(''.join(code.lower().split()))
                     if net.isConnect:
+                        sound_click.play()
                         lobby(net)
                         return
                     else:
@@ -290,8 +292,7 @@ def lobby(net=None, save=None):
             save = a[2][0]
             coor = a[2][1]
 
-
-        # рисуеи ячейки для игроков
+        # рисуем ячейки для игроков
         pygame.draw.rect(screen, (240, 240, 240), window1)
         pygame.draw.rect(screen, (0, 0, 0), window1, 5)
         pygame.draw.rect(screen, (240, 240, 240), window2)
@@ -323,11 +324,13 @@ def lobby(net=None, save=None):
 
         if button_start.collidepoint((mx, my)) and bnt_start:
             if click and count_lobby == 2:
+                sound_click.play()
                 start = True
 
         # анимация перехода в игру
         if start_t:
             transition.update()
+            pygame.mixer.music.fadeout(2000)
             if transition.time_count == 0:
                 game_ready = True
                 start_game(net, save)
@@ -353,7 +356,6 @@ def saved_games():
     while running:
         back(screen, (200, 200, 200, 100))
         draw_text('Сохранённые игры', font4, (0, 0, 0), screen, WIDTH // 2, HEIGHT * 10 // 100, 1)
-
         mx, my = pygame.mouse.get_pos()
 
         # рисуем сохранения
@@ -367,7 +369,7 @@ def saved_games():
         for btn in save_scr:
             if btn.collidepoint((mx, my)):
                 if click:
-                    print(file[save_scr.index(btn)])
+                    sound_click.play()
                     lobby(save=file[save_scr.index(btn)])
                     return
 
@@ -434,6 +436,12 @@ def start_screen():
 if __name__ == '__main__':
     # start_screen()
     while True:
+        # музыка
+        pygame.mixer.music.load('data/music/3.mp3')
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.1)
+
+        # обнуляем группы
         draw_sprite = pygame.sprite.Group()
         all_sprites = pygame.sprite.Group()
         level = pygame.sprite.Group()
@@ -449,5 +457,7 @@ if __name__ == '__main__':
         save_point = pygame.sprite.Group()
         button = pygame.sprite.Group()
         leaves = pygame.sprite.Group()
+
         transition = Transition(screen)
+
         main_menu()

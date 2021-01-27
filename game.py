@@ -353,6 +353,10 @@ def start_game(net, save):
     # подключаемся к серверу
     NETWORK = net
 
+    pygame.mixer.music.load('data/music/1.mp3')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.1)
+
     while True:
         a = main_loop(save)
         if a != 'reset':
