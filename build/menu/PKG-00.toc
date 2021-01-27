@@ -304,6 +304,7 @@
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\freesansbold.ttf',
    'DATA'),
+  ('game.py', 'game.py', 'DATA'),
   ('Angkor.exe.manifest',
    'D:\\Program Files (x86)\\проект игра '
    'pygame\\pygame-project\\build\\menu\\menu.exe.manifest',

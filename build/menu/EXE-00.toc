@@ -308,6 +308,7 @@
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\pygame\\freesansbold.ttf',
    'DATA'),
+  ('game.py', 'game.py', 'DATA'),
   ('Angkor.exe.manifest',
    'D:\\Program Files (x86)\\проект игра '
    'pygame\\pygame-project\\build\\menu\\menu.exe.manifest',
@@ -316,7 +317,7 @@
  [],
  False,
  False,
- 1611740889,
+ 1611741615,
  [('runw.exe',
    'd:\\program files '
    '(x86)\\pygame-test\\venv\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-32bit\\runw.exe',
