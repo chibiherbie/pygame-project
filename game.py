@@ -94,8 +94,8 @@ RECT_HERO = (32, 58)
 NETWORK = None
 
 
-def main_loop(name_level):
-    pygame.display.set_caption('GAME')
+def main_loop(name_save):
+    pygame.display.set_caption('Ангкар')
 
     screen = pygame.display.set_mode(SIZE, HWSURFACE | DOUBLEBUF)
     # screen.set_alpha(None)
@@ -130,7 +130,7 @@ def main_loop(name_level):
     button = pygame.sprite.Group()
     leaves = pygame.sprite.Group()
 
-    with open('data/save/1_save.txt') as f:
+    with open('data/save/' + name_save) as f:
         save_pos = f.read()
 
     player = NETWORK.getP()
@@ -147,7 +147,7 @@ def main_loop(name_level):
     player2.add_group(wall, death, hero, all_sprites)
 
     # вместо пути, после запуска игры, будет передеваться индекс уровня или его название
-    lvl = Level(name_level, level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
+    lvl = Level(list(name_save)[-5] + '_level', level, all_sprites, wall, background, layer_2, layer_1, layer_front, lever,
                 door, death, save_point, button, screen, leaves)
 
     # размещаем воду
@@ -160,7 +160,7 @@ def main_loop(name_level):
     transition = Transition(screen)
 
     # ветер
-    wind = Wind('data/levels/' + name_level + '/sound_environment')
+    wind = Wind('data/levels/' + list(name_save)[-5] + '_level' + '/sound_environment')
 
     # основной цикл
     while running:
@@ -168,7 +168,7 @@ def main_loop(name_level):
 
         lvl.update()
 
-        with open('data/save/1_save.txt', mode='w') as f:
+        with open('data/save/' + name_save, mode='w') as f:
             f.write(save_pos)
 
         for event in pygame.event.get():
@@ -345,7 +345,7 @@ def main_loop(name_level):
     pygame.quit()
 
 
-def start_game(net):
+def start_game(net, save):
     global NETWORK
     # инициализируем
     pygame.init()
@@ -354,6 +354,6 @@ def start_game(net):
     NETWORK = net
 
     while True:
-        a = main_loop('1_level')
+        a = main_loop(save)
         if a != 'reset':
             break

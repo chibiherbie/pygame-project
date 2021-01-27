@@ -6,6 +6,7 @@ from hero import Hero, AnimatedSprite
 from random import randrange
 from pygame.locals import *
 from network import Network
+import os
 
 
 def draw_text(text, font, color, surface, x, y, w=0):
@@ -15,6 +16,7 @@ def draw_text(text, font, color, surface, x, y, w=0):
         w = textrect.w // 2
     textrect.topleft = (x - w, y)
     surface.blit(textobj, textrect)
+
 
 game_ready = False
 mainClock = pygame.time.Clock()
@@ -88,7 +90,7 @@ def main_menu():
         font = pygame.font.Font(None, 25)
 
         draw_text('Ангкар', font4, (0, 0, 0), screen, 160, 200)
-        draw_text('Начать игру', font, (0, 0, 0), screen, 200, 280)
+        draw_text('Начать новую игру', font, (0, 0, 0), screen, 162, 280)
         draw_text('Настройки', font, (0, 0, 0), screen, 200, 480)
         draw_text('Продолжить', font, (0, 0, 0), screen, 130, 380)
         draw_text('Найти лобби', font, (0, 0, 0), screen, 250, 380)
@@ -102,7 +104,6 @@ def main_menu():
 
         if button_1.collidepoint((mx, my)):
             if click:
-                # start_t = True
                 lobby()
         if button_2.collidepoint((mx, my)):
             if click:
@@ -212,7 +213,7 @@ def lobby_enter():
         mainClock.tick(FPS)
 
 
-def lobby(net=None):
+def lobby(net=None, save=None):
     global game_ready
 
     start_t = False
@@ -227,10 +228,22 @@ def lobby(net=None):
     bnt_start = False
 
     isPlayer2 = True
+    coor = 0
     if not net:
         net = Network('')
         bnt_start = True
         isPlayer2 = False
+        if not save:
+            with open('data/save/' + str(len(os.listdir('data/save')) + 1) + '_save_1.txt', mode='w') as f:
+                f.write('650, 700, 440')
+            save = os.listdir('data/save')[-1]
+            coor = '650, 700, 440'
+
+    if save and not coor:
+        with open('data/save/' + save, mode='r') as f:
+            coor = f.read()
+    print(coor, save)
+
     code = net.open
     code = ' '.join(list(code))
 
@@ -264,12 +277,19 @@ def lobby(net=None):
         draw_text('ЛОББИ', font4, (0, 0, 0), screen, WIDTH // 2, 40, 1)
 
         # network
-        a = net.send((start, 1, 0))
+        a = net.send((start, 1, (save, coor)))
         if start or a[0]:
             start_t = True
         if a[1]:
             count_lobby = 2
             status_2 = (143, 200, 154)
+        if not save:
+            print(a[2][0], a[2][1])
+            with open('data/save/' + a[2][0], mode='w') as f:
+                f.write(a[2][1])
+            save = a[2][0]
+            coor = a[2][1]
+
 
         # рисуеи ячейки для игроков
         pygame.draw.rect(screen, (240, 240, 240), window1)
@@ -310,7 +330,7 @@ def lobby(net=None):
             transition.update()
             if transition.time_count == 0:
                 game_ready = True
-                start_game(net)
+                start_game(net, save)
                 return
         if count_lobby == 1 and isPlayer2:
             print('ВЫХОД')
@@ -323,11 +343,35 @@ def lobby(net=None):
 def saved_games():
     font4 = pygame.font.Font(None, 70)
 
+    save_scr = []
+    for i in range(2, 7):
+        save_scr.append(pygame.Rect(WIDTH // 2 - 100, HEIGHT * (i * 10) // 100 + 50, 200, 50))
+
+    file = os.listdir('data/save')
+
     running = True
     while running:
         back(screen, (200, 200, 200, 100))
+        draw_text('Сохранённые игры', font4, (0, 0, 0), screen, WIDTH // 2, HEIGHT * 10 // 100, 1)
 
-        draw_text('Сохранённые игры', font4, (0, 0, 0), screen, 180, 20)
+        mx, my = pygame.mouse.get_pos()
+
+        # рисуем сохранения
+        for btn in save_scr:
+            pygame.draw.rect(screen, (255, 255, 255), btn)
+        for i in range(len(file)):
+            draw_text('save ' + str(i + 1), font4, (0, 0, 0), screen,
+                      save_scr[i].centerx, save_scr[i].y + 0, 1)
+
+        # проверяем на клик
+        for btn in save_scr:
+            if btn.collidepoint((mx, my)):
+                if click:
+                    print(file[save_scr.index(btn)])
+                    lobby(save=file[save_scr.index(btn)])
+                    return
+
+        click = False
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -335,6 +379,9 @@ def saved_games():
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     running = False
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
 
         pygame.display.update()
         mainClock.tick(FPS)
