@@ -9,18 +9,22 @@ class Network:
         self.port = 5555
         self.addr = (self.server, self.port)
         self.connect()
+        self.isConnect = False
 
         if password:
             self.client.send(pickle.dumps(password))
             next = self.get_server()
+            self.isConnect = True
             if next == 'no':
                 print('НЕ правильный пароль или нет такого лобби')
-                quit()
+                self.isConnect = False
         else:
             self.client.send(pickle.dumps('new'))
             next = self.get_server()
+            self.isConnect = True
 
-        self.p, self.open = self.get_server()
+        if self.isConnect:
+            self.p, self.open = self.get_server()
 
     def getP(self):
         return self.p

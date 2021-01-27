@@ -1,7 +1,7 @@
 import pygame
 import os
-from objects import Lever, Door, Spikes, SavePoint
-from random import choice, shuffle
+from objects import Lever, Door, Spikes, SavePoint, Water, Button
+from random import choice, shuffle, randrange
 
 
 tile_images = {
@@ -17,14 +17,20 @@ tile_width = 50
 
 class Level:
     def __init__(self, folder, lvl, sprite, wall, back, layer_2, layer_1,
-                 layer_front, lever, door, death, save_point):
+                 layer_front, lever, door, death, save_point, button, screen, leaves):
         self.lvl = lvl
         self.all_sprite = sprite
         self.wall = wall
         self.lever = lever
+        self.button = button
         self.door = door
         self.death = death
         self.save_point = save_point
+        self.screen = screen
+        self.water_pos = {}
+        self.pos_b = 0
+
+        self.water = []
 
         dir = 'data/levels/' + folder
 
@@ -38,7 +44,9 @@ class Level:
         shuffle(self.sound_around)  # мешаем  звуки
 
         # загружаем спрайты в порядке иерархии по слоям (фон, 2 слой, 1 слой, плафтформа, передний план)
-        Background('/'.join([dir, 'background.png']), back)
+        for i in range(10):
+            n = Background('/'.join([dir, 'background.png']), self.pos_b, back)
+            self.pos_b += n.rect.w
         self.layer_generation('/'.join([dir, 'layer_2.txt']), layer_2, sprite)
         self.layer_generation('/'.join([dir, 'layer_1.txt']), layer_1, sprite)
         self.generate_level(self.load_level('/'.join([dir, 'map.txt'])))
@@ -83,6 +91,26 @@ class Level:
                     Spikes(x, y, tile_width, tile_height, self.death, self.all_sprite)
                 elif level[y][x] == '!':
                     SavePoint(x, y, tile_width, tile_height, self.save_point, self.all_sprite)
+                elif level[y][x] == '~':
+                    if int(level[y][x + 1] + level[y][x + 2]) not in self.water_pos:
+                        self.water_pos[int(level[y][x + 1] + level[y][x + 2])] = [x * tile_width,
+                                                                                  y * tile_height]
+                    else:
+                        pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
+                        self.water.append(Water(pos[0], pos[1], (x + 3) * tile_width,
+                                                (y + 1) * tile_height, 4, self.all_sprite, 'water'))
+                elif level[y][x] == '_':
+                    if int(level[y][x + 1] + level[y][x + 2]) not in self.water_pos:
+                        self.water_pos[int(level[y][x + 1] + level[y][x + 2])] = [x * tile_width,
+                                                                                  y * tile_height]
+                    else:
+
+                        pos = self.water_pos[int(level[y][x + 1] + level[y][x + 2])]
+                        self.water.append(Water(pos[0], pos[1], (x + 3) * tile_width,
+                                                (y + 1) * tile_height, 4, self.all_sprite, 'swamp'))
+                elif level[y][x] == '?':
+                    Button(x, y - 1, tile_width, tile_height, int(level[y][x + 1] + level[y][x + 2]),
+                          self.screen, self.button, self.all_sprite)
 
     def layer_generation(self, file, *layer):
         with open(file, mode='r', encoding='utf8') as f:
@@ -105,17 +133,167 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, os_name, *group):
+    def __init__(self, os_name, pos, *group):
         super().__init__(*group)
         self.image = pygame.image.load(os_name).convert_alpha()
         # self.image = self.image.subsurface(pygame.Rect(0, 0, 500, 800))  # размер изображения
-        self.rect = self.image.get_rect().move(-150, 0)
+        self.rect = self.image.get_rect().move(-150 + pos, 0)
 
 
 class Layers(pygame.sprite.Sprite):
     def __init__(self, os_name, pos, scale, *group):
         super().__init__(*group)
-        self.image = pygame.image.load(os_name).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
-                                                         int(self.image.get_height() / scale)))
-        self.rect = self.image.get_rect().move(pos)
+        self.frames = []
+
+        if 'anim' in os_name:
+            self.cut_sheet(os_name, 5, 1)
+
+            self.cur_frame = 0
+            self.upd = 0
+
+            self.image = self.frames[self.cur_frame]
+            self.rect = self.rect.move(pos)
+        else:
+            self.image = pygame.image.load(os_name).convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(self.image.get_width() / scale),
+                                                             int(self.image.get_height() / scale)))
+            self.rect = self.image.get_rect().move(pos)
+
+        # режим заготовку на кадры
+
+    def cut_sheet(self, sheet, columns, rows):
+        sheet = pygame.image.load(sheet).convert_alpha()  # загружаем файл
+
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns, sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
+                self.frames.append(cut)
+
+    def update(self):
+        if self.frames:
+            if self.upd % 20 == 0:
+
+                self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+                self.image = self.frames[self.cur_frame]
+            self.upd += 1
+        # if self.upd % 4 == 0:  # раз в 4 инетраций меняется кадр
+        #     self.upd += 1
+        #     self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        #     self.image = self.frames[self.cur_frame]
+        #
+        # self.upd += 1
+
+
+class Wind:
+    def __init__(self, dir):
+        self.speed_x = -1
+        self.speed_y = 1
+        self.power = 0
+        self.transition_x = 0
+        self.transition_y = 0
+
+        self.time = 0
+
+        self.sound = []
+        for sound in os.listdir(dir):
+            if 'windy' in sound:
+                self.sound.append(pygame.mixer.Sound(dir + '/' + sound))
+                self.sound[-1].set_volume(0.07)
+
+    def get_speedx(self):
+        return self.speed_x
+
+    def update(self):
+        self.time += 1
+
+        if self.time == 1000:
+            if self.power == 0:
+                self.power = choice([0, 1, 0, 2, 0, 1, 0])  # 0, 1, 0, 2, 0, 1, 0
+            else:
+                self.power = 0
+            self.time = 0
+            # print('POWER:', self.power, self.speed_x)
+
+        if self.power != 0 and self.time == 0:
+            self.transition_x = -randrange(3, 6) * self.power
+            self.t = 1
+            self.sound[randrange(0, len(self.sound))].play()
+
+        elif self.power == 0 and self.time == 0 and self.speed_x < -1:
+            self.transition_x = self.speed_x + 1
+            self.t = -1
+
+        if self.transition_x < 0:
+            self.speed_x += -0.05 * self.t
+            self.transition_x += 0.05
+
+
+class LeavesMain(pygame.sprite.Sprite):
+    def __init__(self, screen, *group):
+        super().__init__(*group)
+
+        dir = 'data/image/graphics/'
+        name = ['leaves_1.png', 'leaves_2.png', 'leaves_3.png', 'leaves_4.png']
+
+        self.screen = screen
+
+        self.image = pygame.image.load(dir + choice(name)).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(randrange(0, screen.get_size()[0] + 500), randrange(-100, 0))
+        if self.rect.x > screen.get_size()[0]:
+            self.rect = self.rect.move(0, randrange(0, screen.get_size()[1] - screen.get_size()[1] // 4))
+        self.image = pygame.transform.rotate(self.image, randrange(1, 100))
+
+        self.rectx = self.rect.x
+        self.recty = self.rect.y
+
+        self.x = -randrange(1, 3)
+        self.y = 0
+        self.m = 1
+        self.l = True
+
+    def update(self, wind):
+        self.rect.y += wind.speed_y - self.x
+        self.rect.x += wind.speed_x + self.x
+
+        if wind.time % 100 == 0:
+            self.x = -randrange(1, 3)
+
+        # ------------------------------ПЛАВНОЕ ДВИЖЕНИЕ ЛИСТВЫ --------------------------------
+        # self.rectx += wind.speed_x + self.x
+        # self.recty += wind.speed_y - self.y
+        #
+        # if wind.power == 0 and wind.time > 150:
+        #     t = choice([0.03, 0.08, 0.05])
+        #     if self.l:
+        #         self.x += t
+        #         self.m -= t
+        #     elif not self.l:
+        #         self.x -= t
+        #         self.m += t
+        #
+        #     if self.m > 1:
+        #         self.y += 0.05
+        #     elif -1 < self.m < 1:
+        #         if self.y > 0:
+        #             self.y -= 0.07
+        #     elif self.m < -1:
+        #         self.y += 0.05
+        #     if self.y < 0:
+        #         self.y = 0
+        # else:
+        #     if self.x > 0:
+        #         self.x = -randrange(1, 3)
+        #
+        # if self.m > 1.5 or self.m < -1.5:
+        #     self.l = not self.l
+        #
+        # self.rect.y = self.recty  # wind.speed_y - self.y
+        # self.rect.x = int(self.rectx)  # wind.speed_x + self.x
+        # --------------------------------------------------------------------------------
+
+        if not (-self.rect.width - 500 <= self.rect.x <= self.screen.get_size()[0] + 500 and
+            -self.rect.height - 100 <= self.rect.y <= self.screen.get_size()[1] + 100):
+            self.kill()

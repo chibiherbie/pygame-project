@@ -4,7 +4,7 @@ from _thread import *
 from game_server import Game
 import sys
 
-server = "192.168.0.163"
+server = "192.168.0.163"  # 15 163
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # тип подключенпия и как передаем информацию
@@ -47,8 +47,8 @@ def threaded_client(conn, player, gameId):
 
     games[gameId].count_player -= 1
     currentPlayer -= 1
-    print(games[gameId])
-    if games[gameId].count_player == 0 or player == 0:
+    conn.sendall(pickle.dumps((0, 0, 0)))
+    if games[gameId].count_player == 0:
         del games[gameId]
         print("Closing Game", gameId)
 
@@ -94,6 +94,4 @@ while True:
         start_new_thread(threaded_client, (conn, p, gameId))  # запускаем игру
     except Exception as e:
         print(e)
-
-
 

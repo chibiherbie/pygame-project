@@ -29,37 +29,42 @@ class Hero(pygame.sprite.Sprite):
         self.anim = AnimatedSprite(self.os_name, 3, 1, self.pos_x, self.pos_y)
         self.image = self.anim.image
         self.rect = self.anim.rect
+        # self.rx, self.ry = self.rect.x, self.rect.y
 
         self.death_colide = False
+        self.isWater = False
         self.stop_death = 0
+        self.btn = False
 
-
+        self.sound_water_drop = pygame.mixer.Sound('data/sound/sound_water.mp3')
+        self.sound_water_nodrop = pygame.mixer.Sound('data/sound/sound_not_water.mp3')
         self.sound_drop = pygame.mixer.Sound('data/sound/sound_drop.mp3')
-        self.sound_spike = pygame.mixer.Sound('data/sound/sound_spike.mp3')
+        self.sound_death = {
+            'spikes': pygame.mixer.Sound('data/sound/sound_spike.mp3'),
+            'swamp': pygame.mixer.Sound('data/sound/sound_swamp.mp3'),
+        }
         self.sound_grass = [pygame.mixer.Sound('data/sound/sound_walk1.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk2.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk3.mp3'),
                             pygame.mixer.Sound('data/sound/sound_walk4.mp3')]
+        for i in self.sound_death.values():
+            i.set_volume(0.06)
         for i in self.sound_grass:
             i.set_volume(0.1)
-        self.sound_spike.set_volume(0.06)
         self.sound_drop.set_volume(0)
+        self.sound_water_drop.set_volume(0.04)
+        self.sound_water_nodrop.set_volume(0.04)
+
         self.sound_timer = 0
 
     # передвижение персонажа
     def move(self, x, y):
+
         # если наткнулись на шипы, останавливаем игрока
         if pygame.sprite.spritecollideany(self, self.death):
-            if self.stop_death <= 8:
-                if self.stop_death == 0:
-                    self.sound_spike.play()
-                self.create_particles((self.rect.x + self.rect.w // 2,
-                                       self.rect.bottom - self.rect.h // 5), -5, 'death')
-            elif self.stop_death == 30:  # перезапускаем игру
-                self.stop_death = 29
+            self.death_anim('spikes')
 
-            self.stop_death += 1
-            # в дальнейшем игра будет перезапускаться
+        if self.stop_death:
             return
 
         self.image = self.anim.update((x, y))
@@ -69,21 +74,27 @@ class Hero(pygame.sprite.Sprite):
         if not self.isGround:
             self.yvel += self.gravity
 
-        self.isGround = False
         for i in self.wall:
-            if (i.rect.collidepoint(self.rect.bottomleft[0] + 10, self.rect.bottomleft[1] + 1) or
-                        i.rect.collidepoint(self.rect.bottomright[0] - 10, self.rect.bottomright[1] + 1)):
+            self.isGround = False
+            # если игрок встаёт на дверь
+            if i.__class__.__name__ == 'Door' and self.rect.colliderect(i.rect):
+                if i.rect.centerx > self.rect.centerx:
+                    self.rect.x -= 5
+                else:
+                    self.rect.x += 5
+
+            if (i.rect.collidepoint(self.rect.bottomleft[0], self.rect.bottomleft[1]) or
+                        i.rect.collidepoint(self.rect.bottomright[0], self.rect.bottomright[1])):
                 self.isGround = True
                 break
 
-        self.rect.y += self.yvel
-        self.rect.x += self.xvel
+        self.rect.y += int(self.yvel)
+        self.rect.x += int(self.xvel)
 
         wall = pygame.sprite.spritecollide(self, self.wall, False)  # касаемся ли мы стен
         if wall:
             self.rect.x -= self.xvel
-
-            for spr in pygame.sprite.spritecollide(self, self.wall, False):  # for spr in wall:
+            for spr in pygame.sprite.spritecollide(self, wall, False):  # for spr in wall:
                 if self.yvel > 0:
                     self.rect.bottom = spr.rect.top
                     self.isGround = True
@@ -119,7 +130,7 @@ class Hero(pygame.sprite.Sprite):
         if type == 'walk':
             for _ in range(particle_count):
                 Particle(position, self.all_sprites, x)
-        else:
+        elif type == 'spikes':
             for _ in range(particle_count):
                 ParticleDeath(position, self.all_sprites, x)
 
@@ -128,17 +139,49 @@ class Hero(pygame.sprite.Sprite):
         for i in group:
             wall = pygame.sprite.spritecollide(self, i, False)  # касаемся ли мы объектов
             if wall:
-                wall[0].animation()  # запускаем анимацию
-                return (wall[0].close, 'door', wall[0].value)
+                if wall[0].__class__.__name__ == 'Lever':
+                    wall[0].animation()  # запускаем анимацию
+                    return (wall[0].close, 'door', wall[0].value)
+
+    def player_stay_button(self, btn, door):
+        wall = pygame.sprite.spritecollide(self, btn, False)  # касаемся ли мы объектов
+        if wall:
+            wall[0].close = False
+            self.btn = True
+        else:
+            self.btn = False
+
+        for i in btn.sprites():
+            for j in door.sprites():
+                if i.value == j.value:
+                    # взаимодействуем с дверью
+                    if not j.stat and i.close:
+                        j.upd = -1
+                    if j.stat and not i.close:
+                        j.upd = 1
+
+    def death_anim(self, type):
+        if self.stop_death <= 8:
+            if self.stop_death == 0:
+                self.sound_death[type].play()
+            self.create_particles((self.rect.x + self.rect.w // 2,
+                                   self.rect.bottom - self.rect.h // 5), -5, type)
+        elif self.stop_death == 30:  # перезапускаем игру
+            self.stop_death = 29
+
+        self.stop_death += 1
+        # погружаемся вниз
+        if self.stop_death % 6 == 0:
+            self.rect.y += 1
 
 
 class AnimatedSprite:
-    def __init__(self, folder, columns, rows, x, y):
+    def __init__(self, folder, columns, rows, x, y, scale=(35, 60)):
         self.frames = []
         self.anim = []
 
         # os.listdir(folder) - получаем название всех файлов в папке
-        self.cut_sheet(folder, os.listdir(folder), columns, rows)
+        self.cut_sheet(folder, os.listdir(folder), columns, rows, scale)
 
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
@@ -148,7 +191,7 @@ class AnimatedSprite:
         self.move = 0
 
     # режим заготовку на кадры
-    def cut_sheet(self, folder, sheets, columns, rows):
+    def cut_sheet(self, folder, sheets, columns, rows, scale):
         for count in range(len(sheets)):
             sheet = pygame.image.load(folder + '/' + sheets[count]).convert_alpha()  # загружаем файл
 
@@ -158,7 +201,7 @@ class AnimatedSprite:
                 for i in range(columns):
                     frame_location = (self.rect.w * i, self.rect.h * j)
                     cut = sheet.subsurface(pygame.Rect(frame_location, self.rect.size))  # размер изображения
-                    self.frames.append(pygame.transform.scale(cut, (35, 60)))
+                    self.frames.append(pygame.transform.scale(cut, scale))
             self.anim.append(self.frames)
 
     def update(self, action):
