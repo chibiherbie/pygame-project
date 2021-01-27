@@ -443,7 +443,7 @@ def start_screen():
 
 
 if __name__ == '__main__':
-    # start_screen()
+    start_screen()
     while True:
         # музыка
         pygame.mixer.music.load('data/music/3.mp3')
