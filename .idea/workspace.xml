@@ -2,20 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5c29b7d6-4a17-484b-903f-7f680d2b16af" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/pygame-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pygame-project.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Angkor.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Angkor.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/Analysis-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/EXE-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/PKG-00.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PKG-00.pkg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PKG-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PYZ-00.pyz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PYZ-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/menu/warn-menu.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/warn-menu.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/image/icon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/data/image/icon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/levels/1_level/layer_1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/levels/1_level/layer_1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rope-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/rope-test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/test-water.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/test-water.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/save/4_save_1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/save/4_save_1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -192,9 +180,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.menu" />
+        <item itemvalue="Python.server" />
         <item itemvalue="Python.game" />
         <item itemvalue="Python.test-water" />
-        <item itemvalue="Python.server" />
         <item itemvalue="Python.objects" />
       </list>
     </recent_temporary>

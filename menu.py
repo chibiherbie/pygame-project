@@ -184,14 +184,15 @@ def options():
 def lobby_enter():
     font4 = pygame.font.Font(None, 70)
     window = pygame.Rect(WIDTH // 2 - 300 // 2, HEIGHT // 2 - 100 // 2, 300, 100)
-    code = 'c o d e'
+    code_back = 'c o d e'  # placeholder
+    code = ''
     color_rect = [230, 230, 230]
 
     running = True
     while running:
         back(screen, (200, 200, 200, 100))
-
         draw_text('Введите код команты', font4, (0, 0, 0), screen, WIDTH // 2, 40, 1)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -200,21 +201,26 @@ def lobby_enter():
                 if event.key == K_ESCAPE:
                     running = False
                 elif event.key == K_RETURN:
-                    net = Network(''.join(code.lower().split()))
-                    if net.isConnect:
-                        sound_click.play()
-                        lobby(net)
-                        return
-                    else:
-                        color_rect = [230, 100, 100]
+                    if code:
+                        net = Network(''.join(code.lower().split()))
+                        if net.isConnect:  # Проверяем такой код
+                            sound_click.play()
+                            lobby(net)
+                            return
+                    # подсвечиваем окошко ввода красным
+                    color_rect = [230, 100, 100]
                 elif event.key == K_BACKSPACE:
                     code = code[:-2]
+                elif event.key == K_SPACE:
+                    pass
                 elif len(code) < 7:
                     code += event.unicode + ' '
                     if len(code) == 8:
                         code = code[:-1]
 
         pygame.draw.rect(screen, color_rect, window)
+        if not code:  # скрываем placeholder
+            draw_text(code_back, font4, (100, 100, 100), screen, window.centerx, window.y + window.h // 3, 1)
         draw_text(code, font4, (0, 0, 0), screen, window.centerx, window.y + window.h // 3, 1)
 
         if color_rect[1] != 230:
@@ -444,14 +450,16 @@ def start_screen():
 
 
 if __name__ == '__main__':
-    start_screen()
+    # Загрузочный экран
+    # start_screen()
+
     while True:
         # музыка
         pygame.mixer.music.load('data/music/3.mp3')
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.1)
 
-        # обнуляем группы
+        # обнуляем группы для фона
         draw_sprite = pygame.sprite.Group()
         all_sprites = pygame.sprite.Group()
         level = pygame.sprite.Group()
@@ -470,4 +478,4 @@ if __name__ == '__main__':
 
         transition = Transition(screen)
 
-        main_menu()
+        main_menu()  # Запуск меню
