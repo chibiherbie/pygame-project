@@ -11,17 +11,22 @@ class Network:
         self.connect()
         self.isConnect = False
 
-        if password:
-            self.client.send(pickle.dumps(password))
-            next = self.get_server()
-            self.isConnect = True
-            if next == 'no':
-                print('НЕ правильный пароль или нет такого лобби')
-                self.isConnect = False
-        else:
-            self.client.send(pickle.dumps('new'))
-            next = self.get_server()
-            self.isConnect = True
+        print(self.client)
+
+        try:
+            if password:
+                self.client.send(pickle.dumps(password))
+                next = self.get_server()
+                self.isConnect = True
+                if next == 'no':
+                    print('НЕ правильный пароль или нет такого лобби')
+                    self.isConnect = False
+            else:
+                self.client.send(pickle.dumps('new'))
+                next = self.get_server()
+                self.isConnect = True
+        except Exception as e:
+            print(e, 'Проблемы с сервером')
 
         if self.isConnect:
             self.p, self.open = self.get_server()
@@ -33,7 +38,7 @@ class Network:
         try:
             self.client.connect(self.addr)
         except:
-            pass
+            print('Нет сервера')
 
     def get_server(self):
         try:

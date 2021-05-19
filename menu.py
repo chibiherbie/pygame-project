@@ -29,6 +29,8 @@ font = pygame.font.SysFont(None, 20)
 sound_click = pygame.mixer.Sound('data/sound/sound_click_btn.mp3')
 sound_click.set_volume(0.1)
 
+MAX_SAVE = 5  # максимальное кол-во сейвов
+
 
 # background
 def generation():
@@ -93,7 +95,6 @@ def main_menu():
         draw_text('Найти лобби', font, (0, 0, 0), screen, 250, 380)
         draw_text('Выйти', font, (0, 0, 0), screen, 280, 580)
 
-
         mx, my = pygame.mouse.get_pos()
 
         button_1 = pygame.Rect(120, 300, 250, 50)
@@ -104,8 +105,9 @@ def main_menu():
 
         if button_1.collidepoint((mx, my)):
             if click:
-                sound_click.play()
-                lobby()
+                if len(os.listdir('data/save')) < MAX_SAVE:
+                    sound_click.play()
+                    lobby()
         # if button_2.collidepoint((mx, my)):
         #     if click:
         #         sound_click.play()
@@ -185,7 +187,7 @@ def lobby_enter():
     font4 = pygame.font.Font(None, 70)
     window = pygame.Rect(WIDTH // 2 - 300 // 2, HEIGHT // 2 - 100 // 2, 300, 100)
     code_back = 'c o d e'  # placeholder
-    code = ''
+    code = []  # храним код
     color_rect = [230, 230, 230]
 
     running = True
@@ -201,27 +203,27 @@ def lobby_enter():
                 if event.key == K_ESCAPE:
                     running = False
                 elif event.key == K_RETURN:
-                    if code:
-                        net = Network(''.join(code.lower().split()))
+                    if len(code) == 4:
+                        net = Network(''.join([i.strip() for i in code]))
                         if net.isConnect:  # Проверяем такой код
                             sound_click.play()
                             lobby(net)
                             return
-                    # подсвечиваем окошко ввода красным
+                    # подсвечиваем окошко ввода красным при не верном коде
                     color_rect = [230, 100, 100]
                 elif event.key == K_BACKSPACE:
-                    code = code[:-2]
+                    code = code[:-1]
                 elif event.key == K_SPACE:
                     pass
-                elif len(code) < 7:
-                    code += event.unicode + ' '
-                    if len(code) == 8:
-                        code = code[:-1]
+                elif len(code) < 4:
+                    code.append(' ' + event.unicode)
+                    if len(code) == 1:  # таким образом делаем центрирования кода
+                        code[-1] = code[-1][1]
 
         pygame.draw.rect(screen, color_rect, window)
         if not code:  # скрываем placeholder
             draw_text(code_back, font4, (100, 100, 100), screen, window.centerx, window.y + window.h // 3, 1)
-        draw_text(code, font4, (0, 0, 0), screen, window.centerx, window.y + window.h // 3, 1)
+        draw_text(''.join(code), font4, (0, 0, 0), screen, window.centerx, window.y + window.h // 3, 1)
 
         if color_rect[1] != 230:
             color_rect[1] += 1
@@ -385,9 +387,10 @@ def saved_games():
         for btn in save_scr:
             if btn.collidepoint((mx, my)):
                 if click:
-                    sound_click.play()
-                    lobby(save=file[save_scr.index(btn)])
-                    return
+                    if save_scr.index(btn) < len(file):  # проверка на существование сейва
+                        sound_click.play()
+                        lobby(save=file[save_scr.index(btn)])
+                        return
 
         click = False
         for event in pygame.event.get():
@@ -407,6 +410,11 @@ def saved_games():
 
 def back(screen, color):
     back_upd(screen)
+
+    # подсказка для позвращение на предыыдущий экран с помощбю "esc"
+    if color[3]:
+        font4 = pygame.font.Font(None, 70)
+        draw_text('< esc', font4, (0, 0, 0), screen, WIDTH - WIDTH * 99 // 100, HEIGHT * 90 // 100)
 
     # затемняем картинку
     f = pygame.Surface(screen.get_size()).convert_alpha()
