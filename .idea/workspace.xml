@@ -3,12 +3,21 @@
   <component name="ChangeListManager">
     <list default="true" id="5c29b7d6-4a17-484b-903f-7f680d2b16af" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/save/1_save_1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/save/1_save_1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/save/2_save_1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/save/3_save_1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/save/4_save_1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Angkor.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Angkor.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/PKG-00.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PKG-00.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PYZ-00.pyz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PYZ-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/warn-menu.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/warn-menu.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/menu/xref-menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/xref-menu.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hero.py" beforeDir="false" afterPath="$PROJECT_DIR$/hero.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,10 +53,10 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../trash/ФАСТ/pyrace-main" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
-  <component name="RunManager" selected="Python.menu">
+  <component name="RunManager" selected="Python.rope-test">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -111,7 +120,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="objects" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="rope-test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pygame-project" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -119,11 +128,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="D:\Program Files (x86)\pygame-test\venv\Scripts\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/objects.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/rope-test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -177,17 +186,17 @@
     <list>
       <item itemvalue="Python.game" />
       <item itemvalue="Python.server" />
-      <item itemvalue="Python.objects" />
       <item itemvalue="Python.menu" />
       <item itemvalue="Python.test-water" />
+      <item itemvalue="Python.rope-test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.server" />
+        <item itemvalue="Python.rope-test" />
         <item itemvalue="Python.menu" />
+        <item itemvalue="Python.server" />
         <item itemvalue="Python.game" />
         <item itemvalue="Python.test-water" />
-        <item itemvalue="Python.objects" />
       </list>
     </recent_temporary>
   </component>

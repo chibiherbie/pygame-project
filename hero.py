@@ -231,7 +231,7 @@ class AnimatedSprite:
 
 class Particle(pygame.sprite.Sprite):
     # генерируем частицы разного размера
-    smoke = [pygame.image.load("data\image\graphics\circle.png")]
+    smoke = [pygame.image.load("data/image/graphics/circle.png")]
     for scale in (10, 12, 14):
         smoke.append(pygame.transform.scale(smoke[0], (scale, scale)))
     del smoke[0]  # удаляем изначально загруженое изображение
@@ -263,7 +263,7 @@ class Particle(pygame.sprite.Sprite):
 
 class ParticleDeath(pygame.sprite.Sprite):
     # генерируем частицы разного размера
-    blood = [pygame.image.load("data\image\graphics\circle_death.png")]
+    blood = [pygame.image.load("data/image/graphics/circle_death.png")]
     for scale in (10, 12, 14):
         blood.append(pygame.transform.scale(blood[0], (scale, scale)))
     del blood[0]  # удаляем изначально загруженое изображение

@@ -212,14 +212,12 @@ def main_loop(name_save):
         key = pygame.key.get_pressed()
         # if key[pygame.K_DOWN]:
         #     hero.update(0, 1)
-        if key[pygame.K_UP]:
+        if key[pygame.K_UP] or key[pygame.K_w]:
             p_y = 1
-        if key[pygame.K_RIGHT]:
+        if key[pygame.K_RIGHT] or key[pygame.K_d]:
             p_x = 5
-        if key[pygame.K_LEFT]:
+        if key[pygame.K_LEFT] or key[pygame.K_a]:
             p_x = -5
-        if key[pygame.K_UP]:
-            p_y = 1
 
         # если включено внетриигровое меню, то двигать персонажем нельзя, но всё окружение работает
         if show_manager:

@@ -213,9 +213,7 @@ def lobby_enter():
                     color_rect = [230, 100, 100]
                 elif event.key == K_BACKSPACE:
                     code = code[:-1]
-                elif event.key == K_SPACE:
-                    pass
-                elif len(code) < 4:
+                elif len(code) < 4 and event.unicode:
                     code.append(' ' + event.unicode)
                     if len(code) == 1:  # таким образом делаем центрирования кода
                         code[-1] = code[-1][1]
@@ -238,6 +236,7 @@ def lobby(net=None, save=None):
 
     start_t = False
 
+    font = pygame.font.Font(None, 40)
     font4 = pygame.font.Font(None, 70)
     window1 = pygame.Rect(WIDTH * 10 // 100, HEIGHT * 20 // 100, 200, 300)
     window2 = pygame.Rect(WIDTH - 200 - WIDTH * 10 // 100,  HEIGHT * 20 // 100, 200, 300)
@@ -325,6 +324,10 @@ def lobby(net=None, save=None):
         pygame.draw.rect(screen, (143, 200, 154), window_code, 2)
         draw_text(code, font4, (143, 200, 154), screen,
                   window_code.centerx, window_code.y, 1)
+
+        # рисуем управление
+        draw_text('W A S D - передвижение', font, (0, 0, 0), screen, WIDTH // 2, HEIGHT // 2 + HEIGHT * 0.04, 1)
+        draw_text('F - взаимодействие', font, (0, 0, 0), screen, WIDTH // 2, HEIGHT // 2 + HEIGHT * 0.1, 1)
 
         # рисуем игроков
         pl1.update((0, 0))
@@ -459,7 +462,7 @@ def start_screen():
 
 if __name__ == '__main__':
     # Загрузочный экран
-    # start_screen()
+    start_screen()
 
     while True:
         # музыка

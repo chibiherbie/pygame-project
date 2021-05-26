@@ -3,8 +3,10 @@ import socket
 from _thread import *
 from game_server import Game
 import sys
+import os
 
-server = "192.168.0.163"  # 15 163
+server = '192.168.0.163'  # 15 163
+print('SERVER:', server)
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # тип подключенпия и как передаем информацию
@@ -15,7 +17,7 @@ except socket.error as e:
     str(e)
 
 s.listen(4)  # лимит подключений
-print("Waiting for a connection, Server Started")
+print("Waiting for a connection")
 
 games = {}
 
