@@ -4,7 +4,6 @@
     <list default="true" id="5c29b7d6-4a17-484b-903f-7f680d2b16af" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Angkor.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Angkor.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/menu/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/Analysis-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/menu/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/EXE-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/menu/PKG-00.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PKG-00.pkg" afterDir="false" />
@@ -13,11 +12,10 @@
       <change beforePath="$PROJECT_DIR$/build/menu/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/PYZ-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/menu/warn-menu.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/warn-menu.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/menu/xref-menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/menu/xref-menu.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hero.py" beforeDir="false" afterPath="$PROJECT_DIR$/hero.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pygame-project.zip" beforeDir="false" afterPath="$PROJECT_DIR$/pygame-project.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,10 +51,10 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../trash/ФАСТ/pyrace-main" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../project/eye-of-god" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
-  <component name="RunManager" selected="Python.rope-test">
+  <component name="RunManager" selected="Python.menu">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -192,10 +190,10 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.rope-test" />
         <item itemvalue="Python.menu" />
-        <item itemvalue="Python.server" />
         <item itemvalue="Python.game" />
+        <item itemvalue="Python.rope-test" />
+        <item itemvalue="Python.server" />
         <item itemvalue="Python.test-water" />
       </list>
     </recent_temporary>

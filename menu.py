@@ -108,6 +108,8 @@ def main_menu():
                 if len(os.listdir('data/save')) < MAX_SAVE:
                     sound_click.play()
                     lobby()
+                else:
+                    print('Ограничение по сейвам')
         # if button_2.collidepoint((mx, my)):
         #     if click:
         #         sound_click.play()
@@ -414,10 +416,10 @@ def saved_games():
 def back(screen, color):
     back_upd(screen)
 
-    # подсказка для позвращение на предыыдущий экран с помощбю "esc"
+    # подсказка для позвращение на предыыдущий экран с помощью "esc"
     if color[3]:
         font4 = pygame.font.Font(None, 70)
-        draw_text('< esc', font4, (0, 0, 0), screen, WIDTH - WIDTH * 99 // 100, HEIGHT * 90 // 100)
+        draw_text('< esc', font4, (0, 0, 0), screen, WIDTH - WIDTH * 99 // 100, HEIGHT * 2 // 100)
 
     # затемняем картинку
     f = pygame.Surface(screen.get_size()).convert_alpha()

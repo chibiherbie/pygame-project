@@ -20,7 +20,7 @@ class Network:
                 next = self.get_server()
                 self.isConnect = True
                 if next == 'no':
-                    print('НЕ правильный пароль или нет такого лобби')
+                    print('Не правильный пароль или нет такого лобби')
                     self.isConnect = False
             else:
                 self.client.send(pickle.dumps('new'))
